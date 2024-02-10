@@ -1,13 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import styles from './app.module.scss';
 
-import { Ui } from '@frontend.suprasy.com/ui';
+import { Button } from '@frontend.suprasy.com/ui';
 import NxWelcome from './nx-welcome';
 
 export function App() {
   return (
     <div>
-      <Ui />
+      <Button variant={'destructive'}> Submit Form</Button>
       <NxWelcome title="web" />
     </div>
   );

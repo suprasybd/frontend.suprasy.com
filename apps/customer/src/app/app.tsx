@@ -2,14 +2,17 @@
 import styles from './app.module.scss';
 
 import NxWelcome from './nx-welcome';
-
+import { Button } from '@frontend.suprasy.com/ui';
 import { Route, Routes, Link } from 'react-router-dom';
 
 export function App() {
   return (
     <div>
       <NxWelcome title="customer" />
-
+      <Button className="ml-3" variant={'destructive'}>
+        {' '}
+        Hello
+      </Button>
       {/* START: routes */}
       {/* These routes and navigation have been generated for you */}
       {/* Feel free to move and update them to fit your needs */}

@@ -9,6 +9,8 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.5",
+    "@babel/preset-react": "^7.14.5",
     "@nx/eslint": "18.0.4",
     "@nx/eslint-plugin": "18.0.4",
     "@nx/js": "18.0.4",
@@ -29,6 +31,7 @@
     "@vitejs/plugin-react": "^4.2.0",
     "@vitest/coverage-v8": "^1.0.4",
     "@vitest/ui": "^1.0.4",
+    "autoprefixer": "10.4.13",
     "eslint": "~8.48.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "2.27.5",
@@ -37,10 +40,13 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "jsdom": "~22.1.0",
     "nx": "18.0.4",
+    "postcss": "8.4.21",
     "prettier": "^2.6.2",
     "sass": "^1.55.0",
+    "tailwindcss": "3.2.7",
     "typescript": "~5.3.2",
     "vite": "~5.0.0",
+    "vite-plugin-dts": "~2.3.0",
     "vitest": "^1.0.4"
   }
 }

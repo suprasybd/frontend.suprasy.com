@@ -13,13 +13,21 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as StoreImport } from './routes/store'
+import { Route as StoreStoreKeyLayoutImport } from './routes/store/$storeKey/_layout'
+import { Route as StoreStoreKeyLayoutProductsImport } from './routes/store/$storeKey/_layout/products'
 
 // Create Virtual Routes
 
 const ProductsLazyImport = createFileRoute('/products')()
-const OrdersLazyImport = createFileRoute('/orders')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
+const StoreStoreKeyOrdersLazyImport = createFileRoute(
+  '/store/$storeKey/orders',
+)()
+const StoreStoreKeyDashboardLazyImport = createFileRoute(
+  '/store/$storeKey/dashboard',
+)()
 
 // Create/Update Routes
 
@@ -28,20 +36,47 @@ const ProductsLazyRoute = ProductsLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/products.lazy').then((d) => d.Route))
 
-const OrdersLazyRoute = OrdersLazyImport.update({
-  path: '/orders',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/orders.lazy').then((d) => d.Route))
-
 const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 
+const StoreRoute = StoreImport.update({
+  path: '/store',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const StoreStoreKeyOrdersLazyRoute = StoreStoreKeyOrdersLazyImport.update({
+  path: '/$storeKey/orders',
+  getParentRoute: () => StoreRoute,
+} as any).lazy(() =>
+  import('./routes/store/$storeKey/orders.lazy').then((d) => d.Route),
+)
+
+const StoreStoreKeyDashboardLazyRoute = StoreStoreKeyDashboardLazyImport.update(
+  {
+    path: '/$storeKey/dashboard',
+    getParentRoute: () => StoreRoute,
+  } as any,
+).lazy(() =>
+  import('./routes/store/$storeKey/dashboard.lazy').then((d) => d.Route),
+)
+
+const StoreStoreKeyLayoutRoute = StoreStoreKeyLayoutImport.update({
+  path: '/$storeKey/layout',
+  getParentRoute: () => StoreRoute,
+} as any)
+
+const StoreStoreKeyLayoutProductsRoute =
+  StoreStoreKeyLayoutProductsImport.update({
+    path: '/products',
+    getParentRoute: () => StoreStoreKeyLayoutRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -51,17 +86,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
-    '/about': {
-      preLoaderRoute: typeof AboutLazyImport
+    '/store': {
+      preLoaderRoute: typeof StoreImport
       parentRoute: typeof rootRoute
     }
-    '/orders': {
-      preLoaderRoute: typeof OrdersLazyImport
+    '/about': {
+      preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
     '/products': {
       preLoaderRoute: typeof ProductsLazyImport
       parentRoute: typeof rootRoute
+    }
+    '/store/$storeKey/_layout': {
+      preLoaderRoute: typeof StoreStoreKeyLayoutImport
+      parentRoute: typeof StoreImport
+    }
+    '/store/$storeKey/dashboard': {
+      preLoaderRoute: typeof StoreStoreKeyDashboardLazyImport
+      parentRoute: typeof StoreImport
+    }
+    '/store/$storeKey/orders': {
+      preLoaderRoute: typeof StoreStoreKeyOrdersLazyImport
+      parentRoute: typeof StoreImport
+    }
+    '/store/$storeKey/_layout/products': {
+      preLoaderRoute: typeof StoreStoreKeyLayoutProductsImport
+      parentRoute: typeof StoreStoreKeyLayoutImport
     }
   }
 }
@@ -70,8 +121,12 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
+  StoreRoute.addChildren([
+    StoreStoreKeyLayoutRoute.addChildren([StoreStoreKeyLayoutProductsRoute]),
+    StoreStoreKeyDashboardLazyRoute,
+    StoreStoreKeyOrdersLazyRoute,
+  ]),
   AboutLazyRoute,
-  OrdersLazyRoute,
   ProductsLazyRoute,
 ])
 

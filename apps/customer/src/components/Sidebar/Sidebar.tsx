@@ -46,7 +46,7 @@ const Sidebar = () => {
           </li>
           <li>
             <Link
-              to="/store/$storeKey/layout/products"
+              to="/store/$storeKey/products"
               params={{ storeKey: '1234' }}
               className={cn(
                 styles['link'],

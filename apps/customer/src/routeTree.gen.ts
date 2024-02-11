@@ -14,14 +14,14 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as StoreImport } from './routes/store'
-import { Route as StoreStoreKeyLayoutImport } from './routes/store/$storeKey/_layout'
-import { Route as StoreStoreKeyLayoutProductsImport } from './routes/store/$storeKey/_layout/products'
 
 // Create Virtual Routes
 
-const ProductsLazyImport = createFileRoute('/products')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
+const StoreStoreKeyProductsLazyImport = createFileRoute(
+  '/store/$storeKey/products',
+)()
 const StoreStoreKeyOrdersLazyImport = createFileRoute(
   '/store/$storeKey/orders',
 )()
@@ -30,11 +30,6 @@ const StoreStoreKeyDashboardLazyImport = createFileRoute(
 )()
 
 // Create/Update Routes
-
-const ProductsLazyRoute = ProductsLazyImport.update({
-  path: '/products',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/products.lazy').then((d) => d.Route))
 
 const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
@@ -50,6 +45,13 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const StoreStoreKeyProductsLazyRoute = StoreStoreKeyProductsLazyImport.update({
+  path: '/$storeKey/products',
+  getParentRoute: () => StoreRoute,
+} as any).lazy(() =>
+  import('./routes/store/$storeKey/products.lazy').then((d) => d.Route),
+)
 
 const StoreStoreKeyOrdersLazyRoute = StoreStoreKeyOrdersLazyImport.update({
   path: '/$storeKey/orders',
@@ -67,17 +69,6 @@ const StoreStoreKeyDashboardLazyRoute = StoreStoreKeyDashboardLazyImport.update(
   import('./routes/store/$storeKey/dashboard.lazy').then((d) => d.Route),
 )
 
-const StoreStoreKeyLayoutRoute = StoreStoreKeyLayoutImport.update({
-  path: '/$storeKey/layout',
-  getParentRoute: () => StoreRoute,
-} as any)
-
-const StoreStoreKeyLayoutProductsRoute =
-  StoreStoreKeyLayoutProductsImport.update({
-    path: '/products',
-    getParentRoute: () => StoreStoreKeyLayoutRoute,
-  } as any)
-
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -94,14 +85,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
-    '/products': {
-      preLoaderRoute: typeof ProductsLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/store/$storeKey/_layout': {
-      preLoaderRoute: typeof StoreStoreKeyLayoutImport
-      parentRoute: typeof StoreImport
-    }
     '/store/$storeKey/dashboard': {
       preLoaderRoute: typeof StoreStoreKeyDashboardLazyImport
       parentRoute: typeof StoreImport
@@ -110,9 +93,9 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreStoreKeyOrdersLazyImport
       parentRoute: typeof StoreImport
     }
-    '/store/$storeKey/_layout/products': {
-      preLoaderRoute: typeof StoreStoreKeyLayoutProductsImport
-      parentRoute: typeof StoreStoreKeyLayoutImport
+    '/store/$storeKey/products': {
+      preLoaderRoute: typeof StoreStoreKeyProductsLazyImport
+      parentRoute: typeof StoreImport
     }
   }
 }
@@ -122,12 +105,11 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   StoreRoute.addChildren([
-    StoreStoreKeyLayoutRoute.addChildren([StoreStoreKeyLayoutProductsRoute]),
     StoreStoreKeyDashboardLazyRoute,
     StoreStoreKeyOrdersLazyRoute,
+    StoreStoreKeyProductsLazyRoute,
   ]),
   AboutLazyRoute,
-  ProductsLazyRoute,
 ])
 
 /* prettier-ignore-end */

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Folders, LogOut, Microwave, ShoppingBasket } from 'lucide-react';
 import cn from 'classnames';
-import styles from './Sidebar.module.scss';
+import styles from './StoreSidebar.module.scss';
 import { Link } from '@tanstack/react-router';
 
-const Sidebar = () => {
+const StoreSidebar = () => {
   return (
     <div className="min-h-screen flex flex-row bg-gray-100 border border-r-2">
       <div className="flex flex-col w-56 bg-white  overflow-hidden">
@@ -77,4 +77,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default StoreSidebar;

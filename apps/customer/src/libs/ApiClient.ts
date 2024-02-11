@@ -6,16 +6,16 @@ import { SUPRASY_API_URL } from '../config/api';
 
 const SuprasyApiHost = SUPRASY_API_URL;
 
-const MainApi = axios.create({
+const ApiClient = axios.create({
   baseURL: SuprasyApiHost,
 });
 
-MainApi.interceptors.request.use((request) => {
+ApiClient.interceptors.request.use((request) => {
   accessTokenHandler(request);
   return request;
 });
 
-MainApi.interceptors.response.use(
+ApiClient.interceptors.response.use(
   (response: AxiosResponse) => Promise.resolve(response),
   (error: AxiosError) => {
     void errorResponseHandler(error);
@@ -23,4 +23,4 @@ MainApi.interceptors.response.use(
   }
 );
 
-export default MainApi;
+export default ApiClient;

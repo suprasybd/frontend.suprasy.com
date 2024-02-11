@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link } from '@tanstack/react-router';
+import { Link, Navigate } from '@tanstack/react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -15,17 +15,29 @@ import {
   FormMessage,
   Input,
 } from '@frontend.suprasy.com/ui';
+import { useMutation } from '@tanstack/react-query';
+import { login } from './api';
 
 const Login: React.FC = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { password: '', email: '' },
+    defaultValues: { Password: '', Email: '' },
   });
 
+  const { data, mutateAsync: loginMutation } = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      Navigate({
+        to: '/store/$storeKey/dashboard',
+        params: { storeKey: '234' },
+      });
+      console.log('success data', data);
+    },
+  });
+  console.log('ddata', data);
+
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    loginMutation(values);
   }
 
   return (
@@ -46,12 +58,12 @@ const Login: React.FC = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="email"
+              name="Email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="email" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -60,12 +72,12 @@ const Login: React.FC = () => {
             />
             <FormField
               control={form.control}
-              name="password"
+              name="Password"
               render={({ field }) => (
                 <FormItem className="space-y-0 !mt-3">
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input type="password" placeholder="password" {...field} />
                   </FormControl>
 
                   <FormMessage />

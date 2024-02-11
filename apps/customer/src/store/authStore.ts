@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { UserType } from './interfaces/userInterface';
 
-interface AuthStoreType {
+export interface AuthStoreType {
   isAuthenticated: boolean;
   user: UserType | object;
   setAuth: (data: AuthStoreType) => void;

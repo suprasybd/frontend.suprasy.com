@@ -1,7 +1,12 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router';
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import { AuthStoreType } from '../store/authStore';
 
-export const Route = createRootRoute({
+interface MyRouterContext {
+  auth: AuthStoreType | undefined;
+}
+
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <>
       <div className="flex gap-2">

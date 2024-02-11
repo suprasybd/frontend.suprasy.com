@@ -1,13 +1,25 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from '@tanstack/react-router';
 import React from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { loginSchema } from './zod/loginSchema';
 
+import {
+  Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+} from '@frontend.suprasy.com/ui';
+
 const Login: React.FC = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
+    defaultValues: { password: '', email: '' },
   });
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
@@ -34,21 +46,35 @@ const Login: React.FC = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="username"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input placeholder="shadcn" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
+
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="space-y-0 !mt-3">
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full">
+              Login
+            </Button>
           </form>
         </Form>
 

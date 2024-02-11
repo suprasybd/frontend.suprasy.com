@@ -5,6 +5,7 @@ export interface AuthStoreType {
   isAuthenticated: boolean;
   user: UserType | object;
   setAuth: (data: AuthStoreType) => void;
+  logout: () => void;
 }
 
 export const useAuthStore = create<AuthStoreType>((set) => ({
@@ -12,5 +13,8 @@ export const useAuthStore = create<AuthStoreType>((set) => ({
   user: {},
   setAuth(data: AuthStoreType) {
     set(data);
+  },
+  logout() {
+    set({});
   },
 }));

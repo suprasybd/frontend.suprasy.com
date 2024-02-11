@@ -1,0 +1,10 @@
+.link {
+  &[data-status='active'] {
+    @apply text-blue-500;
+    span {
+      svg {
+        @apply text-blue-500;
+      }
+    }
+  }
+}

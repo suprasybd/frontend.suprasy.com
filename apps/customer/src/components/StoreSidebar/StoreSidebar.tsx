@@ -146,16 +146,14 @@ const StoreSidebar = () => {
               <span className="text-sm font-medium">Billing</span>
             </Link>
           </li>
-
-          <li>
-            <Button variant={'secondary'} onClick={logoutUser}>
-              <span className="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400">
-                <LogOut className="text-gray-400" />
-              </span>
-              <span className="text-sm font-medium text-gray-400">Logout</span>
-            </Button>
-          </li>
         </ul>
+
+        <Button className="w-fit" variant={'default'} onClick={logoutUser}>
+          <span className="inline-flex items-center justify-center h-12 w-12 text-lg ">
+            <LogOut className="" />
+          </span>
+          <span className="text-sm font-medium  ">Logout</span>
+        </Button>
       </div>
     </div>
   );

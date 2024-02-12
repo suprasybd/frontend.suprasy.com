@@ -1,10 +1,7 @@
-import React from 'react';
-
 import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -12,8 +9,11 @@ import {
 import { Link } from '@tanstack/react-router';
 import { Power, UserRound } from 'lucide-react';
 import { logoutUser } from '../../config/profile/logout';
+import { useAuthStore } from '../../store/authStore';
 
 const NavBar = () => {
+  const user = useAuthStore((state) => state.user);
+
   return (
     <nav className="bg-gradient-to-r from-violet-600 to-indigo-600">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -94,7 +94,7 @@ const NavBar = () => {
                       <span>Signed in as</span>
                     </div>
                     <div>
-                      <h4>M.Alvee8141@gmail.com</h4>
+                      <h4>{user?.Email}</h4>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />

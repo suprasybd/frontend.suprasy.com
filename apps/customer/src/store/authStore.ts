@@ -4,7 +4,7 @@ import { UserType } from './interfaces/userInterface';
 
 export interface AuthStoreType {
   isAuthenticated: boolean;
-  user: UserType | object;
+  user: UserType | undefined;
   setAuth: (data: AuthStoreType) => void;
   login: (data: UserType) => void;
   logout: () => void;
@@ -13,12 +13,12 @@ export interface AuthStoreType {
 export const useAuthStore = create<AuthStoreType>()(
   devtools((set) => ({
     isAuthenticated: false,
-    user: {},
+    user: undefined,
     setAuth(data: AuthStoreType) {
       set(data);
     },
     logout() {
-      set({ isAuthenticated: false, user: {} });
+      set({ isAuthenticated: false, user: undefined });
     },
     login(data: UserType) {
       set({ isAuthenticated: true, user: data });

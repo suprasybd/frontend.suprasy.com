@@ -1,13 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
-import React from 'react';
-import { getUserStoresProductsList } from './api';
-import { DataTable } from './table/table';
-import { productsColumn } from './table/columns';
-import { ProductType } from './api/types';
 import { Button } from '@frontend.suprasy.com/ui';
+import { useQuery } from '@tanstack/react-query';
+import { Link, useParams } from '@tanstack/react-router';
 import { Plus, ShoppingCart } from 'lucide-react';
+import React from 'react';
 import { LoaderMain } from '../../components/Loader/Loader';
-import { useParams } from '@tanstack/react-router';
+import { getUserStoresProductsList } from './api';
+import { productsColumn } from './table/columns';
+import { DataTable } from './table/table';
 
 const Products: React.FC = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
@@ -19,18 +18,37 @@ const Products: React.FC = () => {
   return (
     <section className="w-full max-w-[94rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       {isLoading && <LoaderMain />}
+      {!isLoading && products?.Data && products?.Data?.length > 0 && (
+        <Button className="mt-3 my-6" variant={'defaultGradiant'}>
+          <Link
+            className="flex items-center justify-center"
+            to="/store/$storeKey/product/create"
+            params={{ storeKey }}
+          >
+            <Plus className="mr-2" /> Create Product
+          </Link>
+        </Button>
+      )}
+
       {!isLoading && !products?.Data?.length && (
-        <div className="flex justify-center py-5">
+        <div className="flex justify-center py-5 ">
           <div className="flex flex-col items-center">
             <ShoppingCart size={'60px'} strokeWidth={'1px'} />
             <h3 className="font-bold">No products</h3>
             <p>Get started by creating a new project.</p>
             <Button className="mt-3" variant={'defaultGradiant'}>
-              <Plus className="mr-2" /> Create Product
+              <Link
+                className="flex items-center justify-center"
+                to="/store/$storeKey/product/create"
+                params={{ storeKey }}
+              >
+                <Plus className="mr-2" /> Create Product
+              </Link>
             </Button>
           </div>
         </div>
       )}
+
       {!isLoading && products?.Data && products?.Data?.length > 0 && (
         <DataTable columns={productsColumn} data={products?.Data || []} />
       )}

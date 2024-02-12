@@ -22,7 +22,7 @@ const Products: React.FC = () => {
         <Button className="mt-3 my-6" variant={'defaultGradiant'}>
           <Link
             className="flex items-center justify-center"
-            to="/store/$storeKey/product/create"
+            to="/store/$storeKey/products/create"
             params={{ storeKey }}
           >
             <Plus className="mr-2" /> Create Product
@@ -39,7 +39,7 @@ const Products: React.FC = () => {
             <Button className="mt-3" variant={'defaultGradiant'}>
               <Link
                 className="flex items-center justify-center"
-                to="/store/$storeKey/product/create"
+                to="/store/$storeKey/products/create"
                 params={{ storeKey }}
               >
                 <Plus className="mr-2" /> Create Product

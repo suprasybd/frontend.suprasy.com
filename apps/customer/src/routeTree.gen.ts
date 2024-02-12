@@ -45,8 +45,8 @@ const StoreStoreKeyCustomersLazyImport = createFileRoute(
 const StoreStoreKeyBillingLazyImport = createFileRoute(
   '/store/$storeKey/billing',
 )()
-const StoreStoreKeyProductCreateLazyImport = createFileRoute(
-  '/store/$storeKey/product/create',
+const StoreStoreKeyProductsCreateLazyImport = createFileRoute(
+  '/store/$storeKey/products/create',
 )()
 
 // Create/Update Routes
@@ -148,12 +148,14 @@ const StoreStoreKeyShippingRoute = StoreStoreKeyShippingImport.update({
   getParentRoute: () => StoreRoute,
 } as any)
 
-const StoreStoreKeyProductCreateLazyRoute =
-  StoreStoreKeyProductCreateLazyImport.update({
-    path: '/$storeKey/product/create',
+const StoreStoreKeyProductsCreateLazyRoute =
+  StoreStoreKeyProductsCreateLazyImport.update({
+    path: '/$storeKey/products/create',
     getParentRoute: () => StoreRoute,
   } as any).lazy(() =>
-    import('./routes/store/$storeKey/product/create.lazy').then((d) => d.Route),
+    import('./routes/store/$storeKey/products_/create.lazy').then(
+      (d) => d.Route,
+    ),
   )
 
 // Populate the FileRoutesByPath interface
@@ -220,8 +222,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreStoreKeyProductsLazyImport
       parentRoute: typeof StoreImport
     }
-    '/store/$storeKey/product/create': {
-      preLoaderRoute: typeof StoreStoreKeyProductCreateLazyImport
+    '/store/$storeKey/products/create': {
+      preLoaderRoute: typeof StoreStoreKeyProductsCreateLazyImport
       parentRoute: typeof StoreImport
     }
   }
@@ -242,7 +244,7 @@ export const routeTree = rootRoute.addChildren([
     StoreStoreKeyOrdersLazyRoute,
     StoreStoreKeyPaymentsLazyRoute,
     StoreStoreKeyProductsLazyRoute,
-    StoreStoreKeyProductCreateLazyRoute,
+    StoreStoreKeyProductsCreateLazyRoute,
   ]),
   AboutLazyRoute,
   ForgotpasswordLazyRoute,

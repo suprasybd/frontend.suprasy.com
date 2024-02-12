@@ -12,7 +12,7 @@ export const Route = createFileRoute('/store')({
     Cookies.set('storeKey', (params as { storeKey: string }).storeKey);
   },
   component: () => (
-    <div className="flex gap-2">
+    <div className="flex gap-2 w-full">
       <StoreSidebar />
       <Outlet />
     </div>

@@ -30,9 +30,15 @@ const Home: React.FC = () => {
             <CardHeader>
               <CardTitle>{store.StoreName}</CardTitle>
               <CardDescription>
-                <span className="mr-2">Site Status</span>
-                {store.IsActive && <Badge variant="secondary">Active</Badge>}
-                {!store.IsActive && <Badge variant="destructive">Down</Badge>}
+                <div>
+                  <span className="mr-2">Site Status</span>
+                  {store.IsActive && <Badge variant="secondary">Active</Badge>}
+                  {!store.IsActive && <Badge variant="destructive">Down</Badge>}
+                </div>
+                <div className="mt-2">
+                  <span className="mr-2">Deployment Status</span>
+                  <Badge variant="secondary">{store.Status}</Badge>
+                </div>
               </CardDescription>
             </CardHeader>
             <CardContent>

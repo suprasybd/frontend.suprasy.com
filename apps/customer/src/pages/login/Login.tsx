@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, Navigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -24,17 +24,18 @@ const Login: React.FC = () => {
     defaultValues: { Password: '', Email: '' },
   });
 
-  const { data, mutateAsync: loginMutation } = useMutation({
+  const navigate = useNavigate();
+
+  const { mutate: loginMutation } = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      Navigate({
-        to: '/store/$storeKey/dashboard',
-        params: { storeKey: '234' },
+      console.log('run', data);
+
+      navigate({
+        to: '/',
       });
-      console.log('success data', data);
     },
   });
-  console.log('ddata', data);
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
     loginMutation(values);

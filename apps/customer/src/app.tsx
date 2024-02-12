@@ -1,8 +1,9 @@
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-import React from 'react';
-import { routeTree } from './routeTree.gen';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
+import React, { useEffect } from 'react';
+import { routeTree } from './routeTree.gen';
 import { useAuthStore } from './store/authStore';
+import loadCurrentUser from './config/profile/loadUser';
 
 const router = createRouter({
   routeTree,
@@ -21,6 +22,12 @@ const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   const auth = useAuthStore((state) => state);
+  console.log('auth state root', auth);
+
+  useEffect(() => {
+    loadCurrentUser();
+  }, []);
+
   return (
     <>
       <div></div>

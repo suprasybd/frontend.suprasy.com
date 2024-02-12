@@ -1,4 +1,6 @@
-import React from 'react';
+import { Button } from '@frontend.suprasy.com/ui';
+import { Link } from '@tanstack/react-router';
+import cn from 'classnames';
 import {
   CreditCard,
   Folders,
@@ -9,11 +11,9 @@ import {
   Microwave,
   ShoppingBasket,
   UsersRound,
-  Webcam,
 } from 'lucide-react';
-import cn from 'classnames';
+import { logoutUser } from '../../config/profile/logout';
 import styles from './StoreSidebar.module.scss';
-import { Link } from '@tanstack/react-router';
 
 const StoreSidebar = () => {
   return (
@@ -148,15 +148,12 @@ const StoreSidebar = () => {
           </li>
 
           <li>
-            <Link
-              to="/"
-              className="flex flex-row items-center h-12 transform  transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800"
-            >
+            <Button variant={'secondary'} onClick={logoutUser}>
               <span className="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400">
-                <LogOut />
+                <LogOut className="text-gray-400" />
               </span>
-              <span className="text-sm font-medium">Logout</span>
-            </Link>
+              <span className="text-sm font-medium text-gray-400">Logout</span>
+            </Button>
           </li>
         </ul>
       </div>

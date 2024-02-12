@@ -8,6 +8,7 @@ import {
   Mails,
   Microwave,
   ShoppingBasket,
+  Truck,
   UsersRound,
 } from 'lucide-react';
 import styles from './StoreSidebar.module.scss';
@@ -84,6 +85,22 @@ const StoreSidebar = () => {
               <span className="text-sm font-medium">Customers</span>
             </Link>
           </li>
+          <li>
+            <Link
+              to="/store/$storeKey/shipping"
+              params={{ storeKey: storeKey }}
+              className={cn(
+                styles['link'],
+                'flex flex-row items-center h-12 transform  transition-transform [&.active]:!bg-gray-100  ease-in duration-200  text-gray-500 hover:text-gray-800 [&.active]:border-l-2 [&.active]:border-blue-600'
+              )}
+            >
+              <span className="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400">
+                <Truck />
+              </span>
+              <span className="text-sm font-medium">Shipping</span>
+            </Link>
+          </li>
+
           <li>
             <Link
               to="/store/$storeKey/payments"

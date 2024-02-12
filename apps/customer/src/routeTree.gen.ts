@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as StoreImport } from './routes/store'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
+import { Route as StoreStoreKeyShippingImport } from './routes/store/$storeKey/shipping'
 
 // Create Virtual Routes
 
@@ -142,6 +143,11 @@ const StoreStoreKeyBillingLazyRoute = StoreStoreKeyBillingLazyImport.update({
   import('./routes/store/$storeKey/billing.lazy').then((d) => d.Route),
 )
 
+const StoreStoreKeyShippingRoute = StoreStoreKeyShippingImport.update({
+  path: '/$storeKey/shipping',
+  getParentRoute: () => StoreRoute,
+} as any)
+
 const StoreStoreKeyProductCreateLazyRoute =
   StoreStoreKeyProductCreateLazyImport.update({
     path: '/$storeKey/product/create',
@@ -177,6 +183,10 @@ declare module '@tanstack/react-router' {
     '/register': {
       preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
+    }
+    '/store/$storeKey/shipping': {
+      preLoaderRoute: typeof StoreStoreKeyShippingImport
+      parentRoute: typeof StoreImport
     }
     '/store/$storeKey/billing': {
       preLoaderRoute: typeof StoreStoreKeyBillingLazyImport
@@ -223,6 +233,7 @@ export const routeTree = rootRoute.addChildren([
   IndexRoute,
   LoginRoute,
   StoreRoute.addChildren([
+    StoreStoreKeyShippingRoute,
     StoreStoreKeyBillingLazyRoute,
     StoreStoreKeyCustomersLazyRoute,
     StoreStoreKeyDashboardLazyRoute,

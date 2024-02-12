@@ -4,7 +4,7 @@ import Login from '../pages/login/Login';
 export const Route = createFileRoute('/login')({
   beforeLoad: ({ context }) => {
     console.log('auth state', context.auth);
-    if (context && context.auth?.isAuthenticated) {
+    if (context && context.hasCookie) {
       throw redirect({ to: '/' });
     }
   },

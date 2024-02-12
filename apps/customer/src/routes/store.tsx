@@ -3,7 +3,7 @@ import StoreSidebar from '../components/StoreSidebar/StoreSidebar';
 
 export const Route = createFileRoute('/store')({
   beforeLoad: async ({ context }) => {
-    if (context && !context.auth?.isAuthenticated) {
+    if (context && !context.hasCookie) {
       throw redirect({
         to: '/login',
       });

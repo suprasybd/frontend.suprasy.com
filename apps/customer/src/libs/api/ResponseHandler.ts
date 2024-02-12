@@ -3,7 +3,7 @@ import Cookie from 'js-cookie';
 import { useAuthStore } from '../../store/authStore';
 import { SITE_URL } from '../../config/api';
 
-const cleanRemoveTokens = () => {
+export const cleanRemoveTokens = () => {
   Cookie.remove('accessToken', { domain: SITE_URL });
   Cookie.remove('userDetails', { domain: SITE_URL });
 };

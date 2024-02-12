@@ -4,6 +4,7 @@ import { AuthStoreType } from '../store/authStore';
 
 interface MyRouterContext {
   auth: AuthStoreType | undefined;
+  hasCookie: boolean;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({

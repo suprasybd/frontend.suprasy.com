@@ -4,11 +4,13 @@ import React, { useEffect } from 'react';
 import { routeTree } from './routeTree.gen';
 import { useAuthStore } from './store/authStore';
 import loadCurrentUser from './config/profile/loadUser';
+import { hasCookie } from './config/profile/hasCookie';
 
 const router = createRouter({
   routeTree,
   context: {
     auth: undefined,
+    hasCookie: false,
   },
 });
 
@@ -28,11 +30,16 @@ const App: React.FC = () => {
     loadCurrentUser();
   }, []);
 
+  const hasCookie_ = hasCookie();
+
   return (
     <>
       <div></div>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} context={{ auth }}></RouterProvider>
+        <RouterProvider
+          router={router}
+          context={{ auth, hasCookie: hasCookie_ }}
+        ></RouterProvider>
       </QueryClientProvider>
     </>
   );

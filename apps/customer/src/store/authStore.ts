@@ -12,7 +12,7 @@ export interface AuthStoreType {
 
 export const useAuthStore = create<AuthStoreType>()(
   devtools((set) => ({
-    isAuthenticated: true,
+    isAuthenticated: false,
     user: {},
     setAuth(data: AuthStoreType) {
       set(data);

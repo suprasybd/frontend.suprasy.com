@@ -6,7 +6,7 @@ import { useAuthStore } from './store/authStore';
 import loadCurrentUser from './config/profile/loadUser';
 import { hasCookie } from './config/profile/hasCookie';
 
-const router = createRouter({
+export const router = createRouter({
   routeTree,
   context: {
     auth: undefined,

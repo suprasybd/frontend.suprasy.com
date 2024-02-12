@@ -1,9 +1,9 @@
-import { redirect } from '@tanstack/react-router';
-import { useAuthStore } from '../../store/authStore';
+import { router } from '../../app';
 import { cleanRemoveTokens } from '../../libs/api/ResponseHandler';
+import { useAuthStore } from '../../store/authStore';
 
 export const logoutUser = () => {
   useAuthStore.getState().logout();
   cleanRemoveTokens();
-  redirect({ to: '/login' });
+  router.history.push('/login');
 };

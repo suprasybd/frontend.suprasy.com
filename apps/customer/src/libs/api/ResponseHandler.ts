@@ -2,6 +2,7 @@ import { AxiosError } from 'axios';
 import Cookie from 'js-cookie';
 import { useAuthStore } from '../../store/authStore';
 import { SITE_URL } from '../../config/api';
+import { router } from '../../app';
 
 export const cleanRemoveTokens = () => {
   Cookie.remove('accessToken', { domain: SITE_URL });
@@ -15,6 +16,7 @@ const errorResponseHandler = async (error: AxiosError) => {
       // LOGOUT
       cleanRemoveTokens();
       useAuthStore.getState().logout();
+      router.history.push('/login');
     }
   }
   return error;

@@ -15,13 +15,13 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as StoreImport } from './routes/store'
 import { Route as LoginImport } from './routes/login'
+import { Route as IndexImport } from './routes/index'
 
 // Create Virtual Routes
 
 const RegisterLazyImport = createFileRoute('/register')()
 const ForgotpasswordLazyImport = createFileRoute('/forgotpassword')()
 const AboutLazyImport = createFileRoute('/about')()
-const IndexLazyImport = createFileRoute('/')()
 const StoreStoreKeyProductsLazyImport = createFileRoute(
   '/store/$storeKey/products',
 )()
@@ -74,10 +74,10 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexLazyRoute = IndexLazyImport.update({
+const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any)
 
 const StoreStoreKeyProductsLazyRoute = StoreStoreKeyProductsLazyImport.update({
   path: '/$storeKey/products',
@@ -144,7 +144,7 @@ const StoreStoreKeyBillingLazyRoute = StoreStoreKeyBillingLazyImport.update({
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      preLoaderRoute: typeof IndexLazyImport
+      preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -205,7 +205,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren([
-  IndexLazyRoute,
+  IndexRoute,
   LoginRoute,
   StoreRoute.addChildren([
     StoreStoreKeyBillingLazyRoute,

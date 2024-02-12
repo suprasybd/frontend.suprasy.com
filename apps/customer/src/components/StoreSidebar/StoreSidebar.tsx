@@ -148,7 +148,11 @@ const StoreSidebar = () => {
           </li>
         </ul>
 
-        <Button className="w-fit" variant={'default'} onClick={logoutUser}>
+        <Button
+          className="w-fit bg-gradient-to-r from-blue-600 to-violet-600"
+          variant={'default'}
+          onClick={logoutUser}
+        >
           <span className="inline-flex items-center justify-center h-12 w-12 text-lg ">
             <LogOut className="" />
           </span>

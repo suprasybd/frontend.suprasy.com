@@ -17,6 +17,7 @@ import {
 } from '@frontend.suprasy.com/ui';
 import { useMutation } from '@tanstack/react-query';
 import { login } from './api';
+import { ReloadIcon } from '@radix-ui/react-icons';
 
 const Login: React.FC = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -26,7 +27,7 @@ const Login: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const { mutate: loginMutation } = useMutation({
+  const { mutate: loginMutation, isPending } = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
       console.log('run', data);
@@ -85,8 +86,18 @@ const Login: React.FC = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Login
+            <Button
+              type="submit"
+              className="w-full "
+              variant={'defaultGradiant'}
+            >
+              {isPending && (
+                <>
+                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                  Loging In..
+                </>
+              )}
+              {!isPending && <>Login</>}
             </Button>
           </form>
         </Form>

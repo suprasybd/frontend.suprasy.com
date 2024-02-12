@@ -1,21 +1,20 @@
-import { Button } from '@frontend.suprasy.com/ui';
-import { Link } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
 import cn from 'classnames';
 import {
   CreditCard,
   Folders,
   Globe,
   HandCoins,
-  LogOut,
   Mails,
   Microwave,
   ShoppingBasket,
   UsersRound,
 } from 'lucide-react';
-import { logoutUser } from '../../config/profile/logout';
 import styles from './StoreSidebar.module.scss';
 
 const StoreSidebar = () => {
+  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+
   return (
     <div className="min-h-screen flex flex-row bg-gray-100 border border-r-2">
       <div className="flex flex-col w-56 bg-white  overflow-hidden">
@@ -27,7 +26,7 @@ const StoreSidebar = () => {
             <Link
               to="/store/$storeKey/dashboard"
               params={{
-                storeKey: '1234',
+                storeKey: storeKey,
               }}
               className={cn(
                 styles['link'],
@@ -43,7 +42,7 @@ const StoreSidebar = () => {
           <li>
             <Link
               to="/store/$storeKey/orders"
-              params={{ storeKey: '1234' }}
+              params={{ storeKey: storeKey }}
               className={cn(
                 styles['link'],
                 'flex flex-row items-center h-12 transform  transition-transform [&.active]:!bg-gray-100  ease-in duration-200  text-gray-500 hover:text-gray-800 [&.active]:border-l-2 [&.active]:border-blue-600'
@@ -58,7 +57,7 @@ const StoreSidebar = () => {
           <li>
             <Link
               to="/store/$storeKey/products"
-              params={{ storeKey: '1234' }}
+              params={{ storeKey: storeKey }}
               className={cn(
                 styles['link'],
                 'flex flex-row items-center h-12 transform  transition-transform [&.active]:!bg-gray-100  ease-in duration-200  text-gray-500 hover:text-gray-800 [&.active]:border-l-2 [&.active]:border-blue-600'
@@ -73,7 +72,7 @@ const StoreSidebar = () => {
           <li>
             <Link
               to="/store/$storeKey/customers"
-              params={{ storeKey: '1234' }}
+              params={{ storeKey: storeKey }}
               className={cn(
                 styles['link'],
                 'flex flex-row items-center h-12 transform  transition-transform [&.active]:!bg-gray-100  ease-in duration-200  text-gray-500 hover:text-gray-800 [&.active]:border-l-2 [&.active]:border-blue-600'
@@ -88,7 +87,7 @@ const StoreSidebar = () => {
           <li>
             <Link
               to="/store/$storeKey/payments"
-              params={{ storeKey: '1234' }}
+              params={{ storeKey: storeKey }}
               className={cn(
                 styles['link'],
                 'flex flex-row items-center h-12 transform  transition-transform [&.active]:!bg-gray-100  ease-in duration-200  text-gray-500 hover:text-gray-800 [&.active]:border-l-2 [&.active]:border-blue-600'
@@ -103,7 +102,7 @@ const StoreSidebar = () => {
           <li>
             <Link
               to="/store/$storeKey/domain"
-              params={{ storeKey: '1234' }}
+              params={{ storeKey: storeKey }}
               className={cn(
                 styles['link'],
                 'flex flex-row items-center h-12 transform  transition-transform [&.active]:!bg-gray-100  ease-in duration-200  text-gray-500 hover:text-gray-800 [&.active]:border-l-2 [&.active]:border-blue-600'
@@ -118,7 +117,7 @@ const StoreSidebar = () => {
           <li>
             <Link
               to="/store/$storeKey/email"
-              params={{ storeKey: '1234' }}
+              params={{ storeKey: storeKey }}
               className={cn(
                 styles['link'],
                 'flex flex-row items-center h-12 transform  transition-transform [&.active]:!bg-gray-100  ease-in duration-200  text-gray-500 hover:text-gray-800 [&.active]:border-l-2 [&.active]:border-blue-600'
@@ -134,7 +133,7 @@ const StoreSidebar = () => {
           <li>
             <Link
               to="/store/$storeKey/billing"
-              params={{ storeKey: '1234' }}
+              params={{ storeKey: storeKey }}
               className={cn(
                 styles['link'],
                 'flex flex-row items-center h-12 transform  transition-transform [&.active]:!bg-gray-100  ease-in duration-200  text-gray-500 hover:text-gray-800 [&.active]:border-l-2 [&.active]:border-blue-600'

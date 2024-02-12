@@ -10,7 +10,8 @@ import {
   DropdownMenuTrigger,
 } from '@frontend.suprasy.com/ui';
 import { Link } from '@tanstack/react-router';
-import { UserRound } from 'lucide-react';
+import { Power, UserRound } from 'lucide-react';
+import { logoutUser } from '../../config/profile/logout';
 
 const NavBar = () => {
   return (
@@ -97,10 +98,18 @@ const NavBar = () => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Billing</DropdownMenuItem>
-                  <DropdownMenuItem>Team</DropdownMenuItem>
-                  <DropdownMenuItem>Subscription</DropdownMenuItem>
+                  <div className="p-2">
+                    <Button
+                      onClick={logoutUser}
+                      variant={'dropdown'}
+                      className="w-full justify-start"
+                    >
+                      <div className="flex gap-[8px] items-center">
+                        <Power size={'17px'} />
+                        Sign out
+                      </div>
+                    </Button>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

@@ -36,7 +36,7 @@ const CreateProduct: React.FC = () => {
 
   const hasVariants = form.watch('HasVariants');
 
-  const { fields } = useFieldArray({
+  const { fields, append } = useFieldArray({
     name: 'VariantsOptions',
     control: form.control,
   });
@@ -150,7 +150,7 @@ const CreateProduct: React.FC = () => {
                   <div className="mt-3">
                     {fields.map((option, index) => {
                       return (
-                        <Card>
+                        <Card className="mb-3">
                           <CardContent>
                             <div>
                               <FormField
@@ -201,6 +201,17 @@ const CreateProduct: React.FC = () => {
                         </Card>
                       );
                     })}
+
+                    <Button
+                      onClick={() =>
+                        append({
+                          Name: 'Default Name',
+                          Options: ['Value 1', 'Value 2'],
+                        })
+                      }
+                    >
+                      Add More Option
+                    </Button>
                   </div>
                 )}
               </div>

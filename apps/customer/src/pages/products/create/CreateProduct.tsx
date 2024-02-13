@@ -13,16 +13,32 @@ import {
   FormMessage,
   Input,
   Textarea,
+  FormDescription,
+  Switch,
 } from '@frontend.suprasy.com/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { productSchema } from './zod/productSchema';
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
-    defaultValues: { Description: '', Price: 0, Slug: '', Title: '', Type: '' },
+    defaultValues: {
+      Description: '',
+      Price: 0,
+      Slug: '',
+      Title: '',
+      Type: '',
+      VariantsOptions: [{ Name: 'Size', Options: ['xl', 'lg', 'sm'] }],
+    },
+  });
+
+  const hasVariants = form.watch('HasVariants');
+
+  const { fields } = useFieldArray({
+    name: 'VariantsOptions',
+    control: form.control,
   });
 
   function onSubmit(values: z.infer<typeof productSchema>) {
@@ -96,6 +112,98 @@ const CreateProduct: React.FC = () => {
                   </FormItem>
                 )}
               />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Options & Variants</CardTitle>
+              <CardDescription>
+                Does this product has options like size, color etc.?
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="HasVariants"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                          <FormLabel>Product has variants</FormLabel>
+                          <FormDescription>
+                            Check here if this product has options and variants.
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                {hasVariants && (
+                  <div className="mt-3">
+                    {fields.map((option, index) => {
+                      return (
+                        <Card>
+                          <CardContent>
+                            <div>
+                              <FormField
+                                control={form.control}
+                                name={`VariantsOptions.${index}.Name`}
+                                render={({ field }) => (
+                                  <FormItem className=" rounded-lg pt-3">
+                                    <div className="space-y-0.5">
+                                      <FormLabel>Option Name</FormLabel>
+                                      <FormDescription></FormDescription>
+                                    </div>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="Option Name"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <Card className="mt-3">
+                                <CardContent>
+                                  <h3 className="mt-3">Values</h3>
+                                  {option.Options.map((value, vindex) => {
+                                    return (
+                                      <FormField
+                                        control={form.control}
+                                        name={`VariantsOptions.${index}.Options.${vindex}`}
+                                        render={({ field }) => (
+                                          <FormItem className=" rounded-lg pt-3">
+                                            <FormControl>
+                                              <Input
+                                                placeholder="Value"
+                                                {...field}
+                                              />
+                                            </FormControl>
+                                            <FormMessage />
+                                          </FormItem>
+                                        )}
+                                      />
+                                    );
+                                  })}
+                                </CardContent>
+                              </Card>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 

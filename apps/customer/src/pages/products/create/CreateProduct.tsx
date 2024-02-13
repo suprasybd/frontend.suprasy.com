@@ -35,6 +35,8 @@ const CreateProduct: React.FC = () => {
   });
 
   const hasVariants = form.watch('HasVariants');
+  const Variants = form.watch('VariantsOptions');
+  console.log(Variants);
 
   const { fields, append } = useFieldArray({
     name: 'VariantsOptions',
@@ -44,6 +46,21 @@ const CreateProduct: React.FC = () => {
   function onSubmit(values: z.infer<typeof productSchema>) {
     console.log(values);
   }
+
+  const addMoreValue = (indexp: number) => {
+    const addedValueFieldVariants = Variants.map((variant, index) => {
+      if (indexp === index) {
+        return {
+          ...variant,
+          Options: [...variant.Options, ''],
+        };
+      } else {
+        return variant;
+      }
+    });
+    form.setValue('VariantsOptions', addedValueFieldVariants);
+  };
+
   return (
     <section className="w-full max-w-[54rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       <Form {...form}>
@@ -175,6 +192,19 @@ const CreateProduct: React.FC = () => {
                               <Card className="mt-3">
                                 <CardContent>
                                   <h3 className="mt-3">Values</h3>
+
+                                  <div className="flex gap-1 items-center">
+                                    {Variants[index].Options.map((option) => (
+                                      <span>
+                                        {option && (
+                                          <span className="block bg-gradient-to-r from-violet-600 to-indigo-600 p-2 w-fit rounded text-sm text-white">
+                                            {option}
+                                          </span>
+                                        )}
+                                      </span>
+                                    ))}
+                                  </div>
+
                                   {option.Options.map((value, vindex) => {
                                     return (
                                       <FormField
@@ -194,6 +224,15 @@ const CreateProduct: React.FC = () => {
                                       />
                                     );
                                   })}
+                                  <Button
+                                    className="mt-3"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      addMoreValue(index);
+                                    }}
+                                  >
+                                    Add More
+                                  </Button>
                                 </CardContent>
                               </Card>
                             </div>
@@ -203,12 +242,13 @@ const CreateProduct: React.FC = () => {
                     })}
 
                     <Button
-                      onClick={() =>
+                      onClick={(e) => {
+                        e.preventDefault();
                         append({
                           Name: 'Default Name',
                           Options: ['Value 1', 'Value 2'],
-                        })
-                      }
+                        });
+                      }}
                     >
                       Add More Option
                     </Button>

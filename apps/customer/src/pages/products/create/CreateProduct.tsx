@@ -17,7 +17,7 @@ import {
   Switch,
 } from '@frontend.suprasy.com/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { productSchema } from './zod/productSchema';
@@ -45,11 +45,6 @@ const CreateProduct: React.FC = () => {
     control: form.control,
   });
 
-  const { fields: sku, insert: insertSku } = useFieldArray({
-    name: 'Variants',
-    control: form.control,
-  });
-
   function onSubmit(values: z.infer<typeof productSchema>) {
     console.log(values);
   }
@@ -71,17 +66,11 @@ const CreateProduct: React.FC = () => {
       Options: string[];
     }[],
     currentIndex = 0,
-    currentCombination: any[] = []
+    currentCombination = []
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): any => {
     if (currentIndex === options.length) {
-      return [
-        {
-          Price: Math.random() * 20, // Random price between 0 and 20
-          Sku: 'ABC', // Default SKU value
-          Inventory: Math.floor(Math.random() * 100) + 1, // Random inventory between 1 and 100
-          Options: currentCombination,
-        },
-      ];
+      return [currentCombination];
     }
 
     const currentOption = options[currentIndex];
@@ -90,36 +79,23 @@ const CreateProduct: React.FC = () => {
     for (const value of currentOption.Options) {
       const nextCombination = [
         ...currentCombination,
-
-        {
-          OptionName: currentOption.Name,
-          Value: value,
-        },
+        { OptionName: currentOption.Name, Value: value },
       ];
       combinations.push(
-        ...generateCombinations(options, currentIndex + 1, nextCombination)
+        ...generateCombinations(
+          options,
+          currentIndex + 1,
+          nextCombination as never
+        )
       );
     }
 
     return combinations;
   };
 
-  const allCombinations = useMemo(
-    () => generateCombinations(Variants),
-    [Variants]
-  );
+  const allCombinations = generateCombinations(Variants);
 
-  console.log('all', allCombinations);
-
-  useEffect(() => {
-    console.log('run');
-    allCombinations.map((item: any, index: number) => {
-      console.log(`printing ${index}`, item);
-      insertSku(index, item);
-    });
-  }, [allCombinations, insertSku]);
-
-  console.log('feilds', sku);
+  console.log(allCombinations);
 
   return (
     <section className="w-full max-w-[54rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">

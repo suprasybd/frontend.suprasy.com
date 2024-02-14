@@ -5,6 +5,18 @@ const Options = z.object({
   Options: z.array(z.string().min(1)),
 });
 
+const OptionSchema = z.object({
+  OptionName: z.string(),
+  Value: z.string(),
+});
+
+const VariantSchema = z.object({
+  Price: z.number(),
+  Sku: z.string(),
+  Inventory: z.number(),
+  Options: z.array(OptionSchema),
+});
+
 export const productSchema = z
   .object({
     Type: z.string(),
@@ -15,6 +27,7 @@ export const productSchema = z
     Price: z.string().optional(),
     HasVariants: z.boolean().default(false).optional(),
     VariantsOptions: z.array(Options),
+    Variants: z.array(VariantSchema),
   })
   .refine(
     (schema) => {

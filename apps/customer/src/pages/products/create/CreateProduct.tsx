@@ -33,6 +33,7 @@ const CreateProduct: React.FC = () => {
       Title: '',
       Type: '',
       VariantsOptions: [{ Name: 'Size', Options: ['xl', 'lg', 'sm'] }],
+      Variants: [{ Inventory: 33, Options: [{ OptionName: 'd', Value: '' }] }],
     },
   });
 
@@ -65,11 +66,17 @@ const CreateProduct: React.FC = () => {
       Options: string[];
     }[],
     currentIndex = 0,
-    currentCombination = []
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    currentCombination: any[] = []
   ): any => {
     if (currentIndex === options.length) {
-      return [currentCombination];
+      return [
+        {
+          Price: Math.random() * 20, // Random price between 0 and 20
+          Sku: 'ABC', // Default SKU value
+          Inventory: Math.floor(Math.random() * 100) + 1, // Random inventory between 1 and 100
+          Options: currentCombination,
+        },
+      ];
     }
 
     const currentOption = options[currentIndex];
@@ -81,11 +88,7 @@ const CreateProduct: React.FC = () => {
         { OptionName: currentOption.Name, Value: value },
       ];
       combinations.push(
-        ...generateCombinations(
-          options,
-          currentIndex + 1,
-          nextCombination as never
-        )
+        ...generateCombinations(options, currentIndex + 1, nextCombination)
       );
     }
 

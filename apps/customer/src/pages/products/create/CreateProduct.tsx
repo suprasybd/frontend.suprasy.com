@@ -60,10 +60,14 @@ const CreateProduct: React.FC = () => {
   // };
 
   const generateCombinations = (
-    options,
+    options: {
+      Name: string;
+      Options: string[];
+    }[],
     currentIndex = 0,
     currentCombination = []
-  ) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): any => {
     if (currentIndex === options.length) {
       return [currentCombination];
     }
@@ -77,7 +81,11 @@ const CreateProduct: React.FC = () => {
         { OptionName: currentOption.Name, Value: value },
       ];
       combinations.push(
-        ...generateCombinations(options, currentIndex + 1, nextCombination)
+        ...generateCombinations(
+          options,
+          currentIndex + 1,
+          nextCombination as never
+        )
       );
     }
 

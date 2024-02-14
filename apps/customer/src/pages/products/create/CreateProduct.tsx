@@ -48,6 +48,46 @@ const CreateProduct: React.FC = () => {
     console.log(values);
   }
 
+  // const generateCombinations = (options) => {
+  //   if (!options.length) return [''];
+
+  //   const [currentOption, ...restOptions] = options;
+  //   const combinations = generateCombinations(restOptions);
+
+  //   return currentOption.Options.flatMap((value) =>
+  //     combinations.map((combination) => `${value}, ${combination}`)
+  //   );
+  // };
+
+  const generateCombinations = (
+    options,
+    currentIndex = 0,
+    currentCombination = []
+  ) => {
+    if (currentIndex === options.length) {
+      return [currentCombination];
+    }
+
+    const currentOption = options[currentIndex];
+    const combinations = [];
+
+    for (const value of currentOption.Options) {
+      const nextCombination = [
+        ...currentCombination,
+        { OptionName: currentOption.Name, Value: value },
+      ];
+      combinations.push(
+        ...generateCombinations(options, currentIndex + 1, nextCombination)
+      );
+    }
+
+    return combinations;
+  };
+
+  const allCombinations = generateCombinations(Variants);
+
+  console.log(allCombinations);
+
   return (
     <section className="w-full max-w-[54rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       <Form {...form}>

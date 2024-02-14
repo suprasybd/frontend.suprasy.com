@@ -21,6 +21,8 @@ import React from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { productSchema } from './zod/productSchema';
+import { Trash2 } from 'lucide-react';
+import NestedValues from './components/NestedValues';
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -36,9 +38,8 @@ const CreateProduct: React.FC = () => {
 
   const hasVariants = form.watch('HasVariants');
   const Variants = form.watch('VariantsOptions');
-  console.log(Variants);
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     name: 'VariantsOptions',
     control: form.control,
   });
@@ -46,20 +47,6 @@ const CreateProduct: React.FC = () => {
   function onSubmit(values: z.infer<typeof productSchema>) {
     console.log(values);
   }
-
-  const addMoreValue = (indexp: number) => {
-    const addedValueFieldVariants = Variants.map((variant, index) => {
-      if (indexp === index) {
-        return {
-          ...variant,
-          Options: [...variant.Options, ''],
-        };
-      } else {
-        return variant;
-      }
-    });
-    form.setValue('VariantsOptions', addedValueFieldVariants);
-  };
 
   return (
     <section className="w-full max-w-[54rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -159,6 +146,7 @@ const CreateProduct: React.FC = () => {
                             onCheckedChange={field.onChange}
                           />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -179,12 +167,19 @@ const CreateProduct: React.FC = () => {
                                       <FormLabel>Option Name</FormLabel>
                                       <FormDescription></FormDescription>
                                     </div>
-                                    <FormControl>
-                                      <Input
-                                        placeholder="Option Name"
-                                        {...field}
+                                    <div className="flex gap-[7px] items-center">
+                                      <FormControl>
+                                        <Input
+                                          placeholder="Option Name"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <Trash2
+                                        onClick={() => remove(index)}
+                                        className="hover:cursor-pointer"
                                       />
-                                    </FormControl>
+                                    </div>
+
                                     <FormMessage />
                                   </FormItem>
                                 )}
@@ -205,34 +200,10 @@ const CreateProduct: React.FC = () => {
                                     ))}
                                   </div>
 
-                                  {option.Options.map((value, vindex) => {
-                                    return (
-                                      <FormField
-                                        control={form.control}
-                                        name={`VariantsOptions.${index}.Options.${vindex}`}
-                                        render={({ field }) => (
-                                          <FormItem className=" rounded-lg pt-3">
-                                            <FormControl>
-                                              <Input
-                                                placeholder="Value"
-                                                {...field}
-                                              />
-                                            </FormControl>
-                                            <FormMessage />
-                                          </FormItem>
-                                        )}
-                                      />
-                                    );
-                                  })}
-                                  <Button
-                                    className="mt-3"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      addMoreValue(index);
-                                    }}
-                                  >
-                                    Add More
-                                  </Button>
+                                  <NestedValues
+                                    nestIndex={index}
+                                    control={form.control}
+                                  />
                                 </CardContent>
                               </Card>
                             </div>

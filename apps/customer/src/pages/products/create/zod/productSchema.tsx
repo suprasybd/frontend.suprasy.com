@@ -25,4 +25,17 @@ export const productSchema = z
       }
     },
     { message: 'No price found while there is no variants.', path: ['Price'] }
+  )
+  .refine(
+    (schema) => {
+      if (schema.HasVariants && !schema.VariantsOptions.length) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    {
+      message: 'Please add variants.',
+      path: ['HasVariants'],
+    }
   );

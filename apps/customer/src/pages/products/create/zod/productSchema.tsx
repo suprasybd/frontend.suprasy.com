@@ -5,13 +5,24 @@ const Options = z.object({
   Options: z.array(z.string().min(1)),
 });
 
-export const productSchema = z.object({
-  Type: z.string(),
-  CategoryId: z.number().optional(),
-  Slug: z.string().min(3),
-  Title: z.string().min(3),
-  Description: z.string().min(10),
-  Price: z.number().positive(),
-  HasVariants: z.boolean().default(false).optional(),
-  VariantsOptions: z.array(Options),
-});
+export const productSchema = z
+  .object({
+    Type: z.string(),
+    CategoryId: z.number().optional(),
+    Slug: z.string().min(3),
+    Title: z.string().min(3),
+    Description: z.string().min(10),
+    Price: z.string().optional(),
+    HasVariants: z.boolean().default(false).optional(),
+    VariantsOptions: z.array(Options),
+  })
+  .refine(
+    (schema) => {
+      if (!schema.HasVariants && !schema.Price) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    { message: 'No price found while there is no variants.', path: ['Price'] }
+  );

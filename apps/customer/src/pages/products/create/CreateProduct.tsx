@@ -26,7 +26,7 @@ const CreateProduct: React.FC = () => {
     resolver: zodResolver(productSchema),
     defaultValues: {
       Description: '',
-      Price: 0,
+      Price: '99',
       Slug: '',
       Title: '',
       Type: '',
@@ -257,6 +257,31 @@ const CreateProduct: React.FC = () => {
               </div>
             </CardContent>
           </Card>
+
+          {!hasVariants && (
+            <Card>
+              <CardHeader className="pb-0">
+                <CardTitle>Enter Single Product Price</CardTitle>
+                <CardDescription>e.g. 199 BDT</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={form.control}
+                  name="Price"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0 !mt-3">
+                      <FormLabel>Price</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Price" {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           <Button type="submit" className="w-full " variant={'defaultGradiant'}>
             Create

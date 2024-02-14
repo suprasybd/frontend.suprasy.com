@@ -17,7 +17,7 @@ import {
   Switch,
 } from '@frontend.suprasy.com/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { productSchema } from './zod/productSchema';
@@ -42,6 +42,11 @@ const CreateProduct: React.FC = () => {
 
   const { fields, append, remove } = useFieldArray({
     name: 'VariantsOptions',
+    control: form.control,
+  });
+
+  const { fields: sku, insert: insertSku } = useFieldArray({
+    name: 'Variants',
     control: form.control,
   });
 
@@ -85,7 +90,11 @@ const CreateProduct: React.FC = () => {
     for (const value of currentOption.Options) {
       const nextCombination = [
         ...currentCombination,
-        { OptionName: currentOption.Name, Value: value },
+
+        {
+          OptionName: currentOption.Name,
+          Value: value,
+        },
       ];
       combinations.push(
         ...generateCombinations(options, currentIndex + 1, nextCombination)
@@ -95,9 +104,22 @@ const CreateProduct: React.FC = () => {
     return combinations;
   };
 
-  const allCombinations = generateCombinations(Variants);
+  const allCombinations = useMemo(
+    () => generateCombinations(Variants),
+    [Variants]
+  );
 
-  console.log(allCombinations);
+  console.log('all', allCombinations);
+
+  useEffect(() => {
+    console.log('run');
+    allCombinations.map((item: any, index: number) => {
+      console.log(`printing ${index}`, item);
+      insertSku(index, item);
+    });
+  }, [allCombinations, insertSku]);
+
+  console.log('feilds', sku);
 
   return (
     <section className="w-full max-w-[54rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">

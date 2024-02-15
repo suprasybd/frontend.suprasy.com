@@ -18,9 +18,9 @@ import {
   Textarea,
   Label,
 } from '@frontend.suprasy.com/ui';
-import axios from 'axios';
+import cn from 'classnames';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Trash2 } from 'lucide-react';
+import { Grip, Plus, Trash, Trash2 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -40,6 +40,12 @@ const CreateProduct: React.FC = () => {
       Title: '',
       Type: '',
       VariantsOptions: [{ Name: 'Size', Options: ['xl', 'lg', 'sm'] }],
+      Images: [
+        {
+          ImageUrl:
+            'https://static.suprasy.com/08d12198-f35f-4966-acc4-96157183b92020240215154443',
+        },
+      ],
     },
   });
 
@@ -264,13 +270,30 @@ const CreateProduct: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="flex gap-4 flex-wrap">
-                {productImages?.map((image) => (
-                  <div className="h-[170px] w-[170px] bg-gray-200 rounded flex items-center justify-center">
-                    <img
-                      className="h-full w-full object-cover rounded"
-                      src={image.ImageUrl}
-                      alt="Product "
-                    />
+                {productImages?.map((image, index) => (
+                  <div className="relative group">
+                    <div
+                      className={cn(
+                        'h-[170px] w-[170px] bg-gray-200 rounded flex items-center justify-center',
+                        index === 0 && 'h-[270px] w-[350px]'
+                      )}
+                    >
+                      <img
+                        className="h-full w-full object-cover rounded"
+                        src={image.ImageUrl}
+                        alt="Product "
+                      />
+                    </div>
+                    <div className="rounded hidden opacity-80 top-0 right-0 group-hover:block w-full h-full group-hover:absolute group-hover:top-0 text-white group-hover:right-0 group-hover:bg-slate-500">
+                      <div className="p-4 cursor-pointer">
+                        <Grip />
+                      </div>
+                      <div className="w-full  h-[60%] flex justify-center items-center">
+                        <div className="flex items-center hover:bg-red-500 p-3 rounded cursor-pointer">
+                          <Trash className="mr-2" /> Remove
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
 

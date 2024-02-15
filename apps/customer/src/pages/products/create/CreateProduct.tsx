@@ -5,30 +5,30 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Checkbox,
   Form,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
-  Checkbox,
   FormLabel,
   FormMessage,
   Input,
+  Label,
   Switch,
   Textarea,
-  Label,
 } from '@frontend.suprasy.com/ui';
-import cn from 'classnames';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ReloadIcon } from '@radix-ui/react-icons';
+import cn from 'classnames';
 import { Grip, Plus, Trash, Trash2 } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { ApiClientCF } from '../../../libs/ApiClient';
 import NestedValues from './components/NestedValues';
 import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
-import { ApiClientCF } from '../../../libs/ApiClient';
-import { ReloadIcon } from '@radix-ui/react-icons';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -171,7 +171,7 @@ const CreateProduct: React.FC = () => {
     // });
   }, [allCombinations, updateSku]);
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async (e: any) => {
     e.preventDefault();
 
     try {

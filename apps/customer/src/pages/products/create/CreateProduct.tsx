@@ -16,15 +16,20 @@ import {
   Input,
   Switch,
   Textarea,
+  Label,
 } from '@frontend.suprasy.com/ui';
+import axios from 'axios';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Trash2 } from 'lucide-react';
-import React, { useEffect, useMemo } from 'react';
+import { Plus, Trash2 } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import NestedValues from './components/NestedValues';
 import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
+import { ApiClientCF } from '../../../libs/ApiClient';
+import { ReloadIcon } from '@radix-ui/react-icons';
+
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -45,6 +50,25 @@ const CreateProduct: React.FC = () => {
     name: 'VariantsOptions',
     control: form.control,
   });
+
+  const {
+    fields: uploadingList,
+    append: uploadingAppend,
+    remove: uploadingRemove,
+  } = useFieldArray({
+    name: 'UploadingList',
+    control: form.control,
+  });
+
+  const {
+    fields: productImages,
+    remove: removeImage,
+    append: appendImage,
+  } = useFieldArray({
+    name: 'Images',
+    control: form.control,
+  });
+
   const incrementChanges = useCreateCountStore((state) => state.increment);
   const updateChanges = useCreateCountStore((state) => state.count);
 
@@ -58,7 +82,13 @@ const CreateProduct: React.FC = () => {
   });
 
   function onSubmit(values: z.infer<typeof productSchema>) {
-    console.log(values);
+    const filteredActiveSku = values.Variants.filter((vari) => vari.IsActive);
+    const finalProduct = {
+      ...values,
+      Variants: filteredActiveSku,
+      Options: values.VariantsOptions,
+    };
+    console.log(finalProduct);
   }
 
   // const generateCombinations = (options) => {
@@ -135,12 +165,26 @@ const CreateProduct: React.FC = () => {
     // });
   }, [allCombinations, updateSku]);
 
-  // console.log('sku', variantSku);
-  // console.log('all raw', allRaw);
-  // console.log('all memo', allCombinations);
+  const handleImageUpload = async (e) => {
+    e.preventDefault();
 
-  console.log(variantSku);
-  // console.log('sku', variants);
+    try {
+      //       productImages
+      // removeImage
+
+      uploadingAppend({});
+
+      const selectedFile = e.target.files[0];
+
+      const formData = new FormData();
+      formData.append('ProductImage', selectedFile);
+      const resposne = await ApiClientCF.put('/image/upload', formData);
+      appendImage({ ImageUrl: resposne.data.ImageUrl });
+      uploadingRemove(0);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <section className="w-full max-w-[54rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -210,6 +254,53 @@ const CreateProduct: React.FC = () => {
                   </FormItem>
                 )}
               />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-0">
+              <CardTitle>Media</CardTitle>
+              <CardDescription>Enter images for your product.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-4 flex-wrap">
+                {productImages?.map((image) => (
+                  <div className="h-[170px] w-[170px] bg-gray-200 rounded flex items-center justify-center">
+                    <img
+                      className="h-full w-full object-cover rounded"
+                      src={image.ImageUrl}
+                      alt="Product "
+                    />
+                  </div>
+                ))}
+
+                {uploadingList?.map((item, index) => (
+                  <div className="h-[170px] w-[170px] flex justify-center bg-gray-100 rounded items-center">
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />{' '}
+                    Uploading
+                  </div>
+                ))}
+
+                <div className="grid hover:cursor-pointer h-[170px] w-[170px] border border-[gray] rounded max-w-sm items-center gap-1.5">
+                  <Label
+                    className="w-full hover:cursor-pointer rounded h-full bg-gray-100 flex justify-center items-center"
+                    htmlFor="picture"
+                  >
+                    <div className="flex items-center">
+                      <Plus />
+                      Add Image
+                    </div>
+                  </Label>
+                  <Input
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    id="picture"
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
 

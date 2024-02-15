@@ -18,6 +18,12 @@ const VariantSchema = z.object({
   Options: z.array(OptionSchema),
 });
 
+const ImageUrl = z.string().url();
+
+const ImageObject = z.object({
+  ImageUrl: ImageUrl,
+});
+
 export const productSchema = z
   .object({
     Type: z.string(),
@@ -29,6 +35,8 @@ export const productSchema = z
     HasVariants: z.boolean().default(false).optional(),
     VariantsOptions: z.array(Options),
     Variants: z.array(VariantSchema),
+    Images: z.array(ImageObject).optional(),
+    UploadingList: z.array(z.object({})).optional(),
   })
   .refine(
     (schema) => {

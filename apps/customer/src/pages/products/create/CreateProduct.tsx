@@ -10,6 +10,7 @@ import {
   FormDescription,
   FormField,
   FormItem,
+  Checkbox,
   FormLabel,
   FormMessage,
   Input,
@@ -113,6 +114,7 @@ const CreateProduct: React.FC = () => {
     const formatedCombinations = allCombinations.map(
       (item: any, index: number) => {
         return {
+          IsActive: false,
           Price: 3,
           Sku: `${item
             .map((i) => index + i.Value.replace(/\s/g, ''))
@@ -361,6 +363,25 @@ const CreateProduct: React.FC = () => {
                     key={combinations.id}
                     className="flex items-center gap-4"
                   >
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name={`Variants.${index}.IsActive`}
+                        render={({ field }) => (
+                          <FormItem className="space-y-0">
+                            <FormLabel>Use</FormLabel>
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     <div>
                       {combinations.Options.map((option) => option.Value).join(
                         '-'

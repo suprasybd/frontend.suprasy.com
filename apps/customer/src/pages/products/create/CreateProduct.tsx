@@ -7,23 +7,23 @@ import {
   CardTitle,
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
   Input,
-  Textarea,
-  FormDescription,
   Switch,
+  Textarea,
 } from '@frontend.suprasy.com/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { z } from 'zod';
-import { productSchema } from './zod/productSchema';
 import { Trash2 } from 'lucide-react';
+import React, { useEffect, useMemo } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { z } from 'zod';
 import NestedValues from './components/NestedValues';
 import { useCreateCountStore } from './store';
+import { productSchema } from './zod/productSchema';
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -104,26 +104,27 @@ const CreateProduct: React.FC = () => {
     return combinations;
   };
 
-  // Generate combinations whenever VariantsOptions change
-
   const allCombinations = useMemo(
     () => generateCombinations(Variants),
     [Variants, updateChanges]
   );
-  const allRaw = generateCombinations(Variants);
-  // console.log('all', allCombinations);
-  // console.log('all raw', allRaw);
+
   useEffect(() => {
-    console.log('length', allRaw.length);
-    allRaw.forEach((item, index) => {
-      updateSku(index, { Price: 3, Sku: '', Inventory: index }); // Insert empty values for each combination
+    allCombinations.forEach((item: any, index: number) => {
+      updateSku(index, {
+        Price: 3,
+        Sku: `${item.map((i) => index + i.Value.replace(/\s/g, '')).join('-')}`,
+        Inventory: index,
+        Options: item,
+      }); // Insert empty values for each combination
     });
   }, [allCombinations, updateSku]);
 
-  console.log('sku', variantSku);
-  console.log('all raw', allRaw);
-  console.log('all memo', allCombinations);
+  // console.log('sku', variantSku);
+  // console.log('all raw', allRaw);
+  // console.log('all memo', allCombinations);
 
+  console.log(variantSku);
   // console.log('sku', variants);
 
   return (
@@ -328,6 +329,77 @@ const CreateProduct: React.FC = () => {
                     </FormItem>
                   )}
                 />
+              </CardContent>
+            </Card>
+          )}
+
+          {hasVariants && (
+            <Card>
+              <CardHeader className="pb-0">
+                <CardTitle>Enter Sku / Price For Variants</CardTitle>
+                <CardDescription>e.g. 1 Inventory, 199 BDT</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {variantSku.map((combinations, index) => (
+                  <div
+                    key={combinations.id}
+                    className="flex items-center gap-4"
+                  >
+                    <div>
+                      {combinations.Options.map((option) => option.Value).join(
+                        '-'
+                      )}
+                    </div>
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name={`Variants.${index}.Price`}
+                        render={({ field }) => (
+                          <FormItem className="space-y-0">
+                            <FormLabel>Price</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Price" {...field} />
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name={`Variants.${index}.Inventory`}
+                        render={({ field }) => (
+                          <FormItem className="space-y-0">
+                            <FormLabel>Inventory</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Inventory" {...field} />
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name={`Variants.${index}.Sku`}
+                        render={({ field }) => (
+                          <FormItem className="space-y-0">
+                            <FormLabel>Sku</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Sku" {...field} />
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           )}

@@ -5,7 +5,7 @@ const Options = z.object({
   Options: z.array(z.string().min(1)),
 });
 
-const OptionSchema = z.object({
+export const OptionSchema = z.object({
   OptionName: z.string(),
   Value: z.string(),
 });
@@ -14,7 +14,7 @@ const VariantSchema = z.object({
   Price: z.number(),
   Sku: z.string(),
   Inventory: z.number(),
-  // Options: z.array(OptionSchema),
+  Options: z.array(OptionSchema),
 });
 
 export const productSchema = z

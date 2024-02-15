@@ -11,10 +11,10 @@ export const OptionSchema = z.object({
 });
 
 const VariantSchema = z.object({
-  Price: z.number(),
+  Price: z.coerce.number(),
   IsActive: z.boolean(),
   Sku: z.string().min(1),
-  Inventory: z.number().min(0),
+  Inventory: z.coerce.number().min(0),
   Options: z.array(OptionSchema),
 });
 
@@ -25,7 +25,7 @@ export const productSchema = z
     Slug: z.string().min(3),
     Title: z.string().min(3),
     Description: z.string().min(10),
-    Price: z.string().optional(),
+    Price: z.coerce.number().optional(),
     HasVariants: z.boolean().default(false).optional(),
     VariantsOptions: z.array(Options),
     Variants: z.array(VariantSchema),

@@ -117,7 +117,7 @@ const CreateProduct: React.FC = () => {
           IsActive: false,
           Price: 3,
           Sku: `${item
-            .map((i) => index + i.Value.replace(/\s/g, ''))
+            .map((i: any) => index + i.Value.replace(/\s/g, ''))
             .join('-')}`,
           Options: item,
           Inventory: index,
@@ -363,13 +363,13 @@ const CreateProduct: React.FC = () => {
                     key={combinations.id}
                     className="flex items-center gap-4"
                   >
-                    <div>
+                    <div className="whitespace-nowrap">
                       <FormField
                         control={form.control}
                         name={`Variants.${index}.IsActive`}
                         render={({ field }) => (
                           <FormItem className="space-y-0">
-                            <FormLabel>Use</FormLabel>
+                            <FormLabel className="mr-1"></FormLabel>
                             <FormControl>
                               <Checkbox
                                 checked={field.value}
@@ -382,7 +382,7 @@ const CreateProduct: React.FC = () => {
                         )}
                       />
                     </div>
-                    <div>
+                    <div className="whitespace-nowrap">
                       {combinations.Options.map((option) => option.Value).join(
                         '-'
                       )}

@@ -34,7 +34,11 @@ const NestedValues: React.FC<{ nestIndex: number; control: any }> = ({
                 <FormItem className=" rounded-lg pt-3">
                   <div className="flex gap-[7px] items-center">
                     <FormControl>
-                      <Input placeholder="Value" {...field} />
+                      <Input
+                        onChangeCapture={() => incrementChanges()}
+                        placeholder="Value"
+                        {...field}
+                      />
                     </FormControl>
                     <Trash2
                       onClick={() => {

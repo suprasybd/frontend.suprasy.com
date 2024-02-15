@@ -12,8 +12,8 @@ export const OptionSchema = z.object({
 
 const VariantSchema = z.object({
   Price: z.number(),
-  Sku: z.string(),
-  Inventory: z.number(),
+  Sku: z.string().min(1),
+  Inventory: z.number().min(0),
   Options: z.array(OptionSchema),
 });
 

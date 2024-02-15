@@ -44,7 +44,7 @@ const CreateProduct: React.FC = () => {
     name: 'VariantsOptions',
     control: form.control,
   });
-
+  const incrementChanges = useCreateCountStore((state) => state.increment);
   const updateChanges = useCreateCountStore((state) => state.count);
 
   const {
@@ -110,14 +110,27 @@ const CreateProduct: React.FC = () => {
   );
 
   useEffect(() => {
-    allCombinations.forEach((item: any, index: number) => {
-      updateSku(index, {
-        Price: 3,
-        Sku: `${item.map((i) => index + i.Value.replace(/\s/g, '')).join('-')}`,
-        Inventory: index,
-        Options: item,
-      }); // Insert empty values for each combination
-    });
+    const formatedCombinations = allCombinations.map(
+      (item: any, index: number) => {
+        return {
+          Price: 3,
+          Sku: `${item
+            .map((i) => index + i.Value.replace(/\s/g, ''))
+            .join('-')}`,
+          Options: item,
+          Inventory: index,
+        };
+      }
+    );
+    form.setValue('Variants', formatedCombinations);
+    // allCombinations.forEach((item: any, index: number) => {
+    //   updateSku(index, {
+    //     Price: 3,
+    //     Sku: `${item.map((i) => index + i.Value.replace(/\s/g, '')).join('-')}`,
+    //     Inventory: index,
+    //     Options: item,
+    //   }); // Insert empty values for each combination
+    // });
   }, [allCombinations, updateSku]);
 
   // console.log('sku', variantSku);
@@ -249,6 +262,9 @@ const CreateProduct: React.FC = () => {
                                     <div className="flex gap-[7px] items-center">
                                       <FormControl>
                                         <Input
+                                          onChangeCapture={() =>
+                                            incrementChanges()
+                                          }
                                           placeholder="Option Name"
                                           {...field}
                                         />
@@ -271,7 +287,7 @@ const CreateProduct: React.FC = () => {
                                     {Variants[index].Options.map((option) => (
                                       <span>
                                         {option && (
-                                          <span className="block bg-gradient-to-r from-violet-600 to-indigo-600 p-2 w-fit rounded text-sm text-white">
+                                          <span className="block bg-gradient-to-r from-violet-600 to-indigo-600 px-2 w-fit rounded text-sm text-white">
                                             {option}
                                           </span>
                                         )}

@@ -30,7 +30,7 @@ const CreateProduct: React.FC = () => {
     resolver: zodResolver(productSchema),
     defaultValues: {
       Description: '',
-      Price: '99',
+      Price: 99,
       Slug: '',
       Title: '',
       Type: '',

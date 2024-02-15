@@ -9,6 +9,7 @@ import {
 import { Trash2 } from 'lucide-react';
 import React from 'react';
 import { useFieldArray } from 'react-hook-form';
+import { useCreateCountStore } from '../store';
 
 const NestedValues: React.FC<{ nestIndex: number; control: any }> = ({
   nestIndex,
@@ -18,6 +19,8 @@ const NestedValues: React.FC<{ nestIndex: number; control: any }> = ({
     control,
     name: `VariantsOptions.${nestIndex}.Options`,
   });
+
+  const incrementChanges = useCreateCountStore((state) => state.increment);
 
   return (
     <div>
@@ -34,7 +37,10 @@ const NestedValues: React.FC<{ nestIndex: number; control: any }> = ({
                       <Input placeholder="Value" {...field} />
                     </FormControl>
                     <Trash2
-                      onClick={() => remove(k)}
+                      onClick={() => {
+                        incrementChanges();
+                        remove(k);
+                      }}
                       className="hover:cursor-pointer"
                     />
                   </div>
@@ -51,6 +57,7 @@ const NestedValues: React.FC<{ nestIndex: number; control: any }> = ({
         className="mt-3"
         onClick={(e) => {
           e.preventDefault();
+          incrementChanges();
           append('default_value');
         }}
       >

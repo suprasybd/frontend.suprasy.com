@@ -17,12 +17,13 @@ import {
   Switch,
 } from '@frontend.suprasy.com/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { productSchema } from './zod/productSchema';
 import { Trash2 } from 'lucide-react';
 import NestedValues from './components/NestedValues';
+import { useCreateCountStore } from './store';
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -33,7 +34,6 @@ const CreateProduct: React.FC = () => {
       Title: '',
       Type: '',
       VariantsOptions: [{ Name: 'Size', Options: ['xl', 'lg', 'sm'] }],
-      Variants: [{ Inventory: 33, Options: [{ OptionName: 'd', Value: '' }] }],
     },
   });
 
@@ -42,6 +42,17 @@ const CreateProduct: React.FC = () => {
 
   const { fields, append, remove } = useFieldArray({
     name: 'VariantsOptions',
+    control: form.control,
+  });
+
+  const updateChanges = useCreateCountStore((state) => state.count);
+
+  const {
+    fields: variantSku,
+    insert: insertSku,
+    update: updateSku,
+  } = useFieldArray({
+    name: 'Variants',
     control: form.control,
   });
 
@@ -93,9 +104,27 @@ const CreateProduct: React.FC = () => {
     return combinations;
   };
 
-  const allCombinations = generateCombinations(Variants);
+  // Generate combinations whenever VariantsOptions change
 
-  console.log(allCombinations);
+  const allCombinations = useMemo(
+    () => generateCombinations(Variants),
+    [Variants, updateChanges]
+  );
+  const allRaw = generateCombinations(Variants);
+  // console.log('all', allCombinations);
+  // console.log('all raw', allRaw);
+  useEffect(() => {
+    console.log('length', allRaw.length);
+    allRaw.forEach((item, index) => {
+      updateSku(index, { Price: 3, Sku: '', Inventory: index }); // Insert empty values for each combination
+    });
+  }, [allCombinations, updateSku]);
+
+  console.log('sku', variantSku);
+  console.log('all raw', allRaw);
+  console.log('all memo', allCombinations);
+
+  // console.log('sku', variants);
 
   return (
     <section className="w-full max-w-[54rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">

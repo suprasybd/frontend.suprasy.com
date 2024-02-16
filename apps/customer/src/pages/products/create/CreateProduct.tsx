@@ -42,7 +42,8 @@ const CreateProduct: React.FC = () => {
       Slug: '',
       Title: '',
       Type: '',
-      VariantsOptions: [{ Name: 'Size', Options: ['xl', 'lg', 'sm'] }],
+      HasVariants: false,
+      VariantsOptions: [{ Name: 'Size', Values: ['xl', 'lg', 'sm'] }],
       Images: [
         {
           ImageUrl:
@@ -115,7 +116,7 @@ const CreateProduct: React.FC = () => {
   const generateCombinations = (
     options: {
       Name: string;
-      Options: string[];
+      Values: string[];
     }[],
     currentIndex = 0,
     currentCombination = []
@@ -128,7 +129,7 @@ const CreateProduct: React.FC = () => {
     const currentOption = options[currentIndex];
     const combinations = [];
 
-    for (const value of currentOption.Options) {
+    for (const value of currentOption.Values) {
       const nextCombination = [
         ...currentCombination,
         { OptionName: currentOption.Name, Value: value },
@@ -439,7 +440,7 @@ const CreateProduct: React.FC = () => {
                                   <h3 className="mt-3">Values</h3>
 
                                   <div className="flex gap-1 items-center">
-                                    {Variants[index].Options.map((option) => (
+                                    {Variants[index].Values.map((option) => (
                                       <span>
                                         {option && (
                                           <span className="block bg-gradient-to-r from-violet-600 to-indigo-600 px-2 w-fit rounded text-sm text-white">
@@ -467,7 +468,7 @@ const CreateProduct: React.FC = () => {
                         e.preventDefault();
                         append({
                           Name: 'Default Name',
-                          Options: ['Value 1', 'Value 2'],
+                          Values: ['Value 1', 'Value 2'],
                         });
                       }}
                     >

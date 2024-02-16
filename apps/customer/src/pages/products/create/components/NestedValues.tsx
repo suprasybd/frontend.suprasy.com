@@ -17,7 +17,7 @@ const NestedValues: React.FC<{ nestIndex: number; control: any }> = ({
 }) => {
   const { fields, remove, append } = useFieldArray({
     control,
-    name: `VariantsOptions.${nestIndex}.Options`,
+    name: `VariantsOptions.${nestIndex}.Values`,
   });
 
   const incrementChanges = useCreateCountStore((state) => state.increment);
@@ -29,7 +29,7 @@ const NestedValues: React.FC<{ nestIndex: number; control: any }> = ({
           <div key={item.id} style={{ marginLeft: 20 }}>
             <FormField
               control={control}
-              name={`VariantsOptions.${nestIndex}.Options.${k}`}
+              name={`VariantsOptions.${nestIndex}.Values.${k}`}
               render={({ field }) => (
                 <FormItem className=" rounded-lg pt-3">
                   <div className="flex gap-[7px] items-center">

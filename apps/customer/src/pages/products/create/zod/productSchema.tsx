@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const Options = z.object({
   Name: z.string().min(1),
-  Options: z.array(z.string().min(1)),
+  Values: z.array(z.string().min(1)),
 });
 
 export const OptionSchema = z.object({

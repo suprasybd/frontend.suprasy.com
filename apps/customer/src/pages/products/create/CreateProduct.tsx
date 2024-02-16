@@ -263,7 +263,7 @@ const CreateProduct: React.FC = () => {
               <CardDescription>Enter images for your product.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex gap-4 flex-wrap">
+              <div className="flex gap-4 flex-wrap transition-all duration-200">
                 <DragDropContext onDragEnd={handleDrag}>
                   <Droppable droppableId="test-items">
                     {(provided, snapshot) => (
@@ -276,7 +276,7 @@ const CreateProduct: React.FC = () => {
                           >
                             {(provided, snapshot) => (
                               <div
-                                className="relative group w-fit m-3"
+                                className="relative group w-fit m-3 transition-all duration-200"
                                 key={image.id}
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
@@ -284,7 +284,8 @@ const CreateProduct: React.FC = () => {
                                 <div
                                   className={cn(
                                     'h-[230px] w-[260px] bg-gray-200 rounded flex items-center justify-center',
-                                    index === 0 && '!h-[270px] !w-[350px]'
+                                    index === 0 &&
+                                      '!h-[270px] !w-[350px] border-green-300 border-[3px]'
                                   )}
                                 >
                                   <img

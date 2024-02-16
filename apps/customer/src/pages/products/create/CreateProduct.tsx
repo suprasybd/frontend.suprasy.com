@@ -103,17 +103,6 @@ const CreateProduct: React.FC = () => {
     console.log(finalProduct);
   }
 
-  // const generateCombinations = (options) => {
-  //   if (!options.length) return [''];
-
-  //   const [currentOption, ...restOptions] = options;
-  //   const combinations = generateCombinations(restOptions);
-
-  //   return currentOption.Options.flatMap((value) =>
-  //     combinations.map((combination) => `${value}, ${combination}`)
-  //   );
-  // };
-
   const generateCombinations = (
     options: {
       Name: string;
@@ -167,14 +156,6 @@ const CreateProduct: React.FC = () => {
       }
     );
     form.setValue('Variants', formatedCombinations);
-    // allCombinations.forEach((item: any, index: number) => {
-    //   updateSku(index, {
-    //     Price: 3,
-    //     Sku: `${item.map((i) => index + i.Value.replace(/\s/g, '')).join('-')}`,
-    //     Inventory: index,
-    //     Options: item,
-    //   }); // Insert empty values for each combination
-    // });
   }, [allCombinations, updateSku]);
 
   const handleImageUpload = async (e: any) => {
@@ -201,6 +182,7 @@ const CreateProduct: React.FC = () => {
   const handleDrag = ({ source, destination }) => {
     if (destination) {
       moveImage(source.index, destination.index);
+      console.log(form.getValues('Images'));
     }
   };
 
@@ -283,79 +265,68 @@ const CreateProduct: React.FC = () => {
             <CardContent>
               <div className="flex gap-4 flex-wrap">
                 <DragDropContext onDragEnd={handleDrag}>
-                  <ul>
-                    <Droppable droppableId="test-items">
-                      {(provided, snapshot) => (
-                        <div
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                        >
-                          {productImages?.map((image, index) => (
-                            <Draggable
-                              key={`Images[${index}]`}
-                              draggableId={`item-${index}`}
-                              index={index}
-                            >
-                              {(provided, snapshot) => (
-                                <li
-                                  key={image.id}
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
+                  <Droppable droppableId="test-items">
+                    {(provided, snapshot) => (
+                      <div {...provided.droppableProps} ref={provided.innerRef}>
+                        {productImages?.map((image, index) => (
+                          <Draggable
+                            key={`Images[${index}]`}
+                            draggableId={`item-${index}`}
+                            index={index}
+                          >
+                            {(provided, snapshot) => (
+                              <div
+                                className="relative group w-fit m-3"
+                                key={image.id}
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                              >
+                                <div
+                                  className={cn(
+                                    'h-[230px] w-[260px] bg-gray-200 rounded flex items-center justify-center',
+                                    index === 0 && '!h-[270px] !w-[350px]'
+                                  )}
                                 >
-                                  <div className="relative group">
-                                    <div
-                                      className={cn(
-                                        'h-[170px] w-[170px] bg-gray-200 rounded flex items-center justify-center',
-                                        index === 0 && 'h-[270px] w-[350px]'
-                                      )}
-                                    >
-                                      <img
-                                        className="h-full w-full object-cover rounded"
-                                        src={image.ImageUrl}
-                                        alt="Product "
-                                      />
-                                    </div>
-                                    <div className="rounded hidden opacity-80 top-0 right-0 group-hover:block w-full h-full group-hover:absolute group-hover:top-0 text-white group-hover:right-0 group-hover:bg-slate-500">
-                                      <div className="p-4 cursor-pointer">
-                                        <Grip />
-                                      </div>
-                                      <div className="w-full  h-[60%] flex justify-center items-center">
-                                        <div className="flex items-center hover:bg-red-500 p-3 rounded cursor-pointer">
-                                          <Trash className="mr-2" /> Remove
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
+                                  <img
+                                    className="h-full w-full object-cover rounded"
+                                    src={image.ImageUrl}
+                                    alt="Product "
+                                  />
+                                </div>
+                                <div className="rounded hidden top-0 right-0 group-hover:block w-full h-full group-hover:absolute group-hover:top-0 text-white group-hover:right-0 group-hover:bg-[#7c64c370]">
                                   <div
-                                    style={{
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      background: 'skyblue',
-                                      width: '35%',
-                                    }}
+                                    className="p-4 cursor-pointer"
                                     {...provided.dragHandleProps}
                                   >
-                                    Drag Me
+                                    <Grip />
                                   </div>
-                                </li>
-                              )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </ul>
+                                  <div className="w-full  h-[60%] flex justify-center items-center">
+                                    <div
+                                      onClick={() => removeImage(index)}
+                                      className="flex items-center hover:bg-red-500 p-3 rounded cursor-pointer"
+                                    >
+                                      <Trash className="mr-2" /> Remove
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
                 </DragDropContext>
 
                 {uploadingList?.map((item, index) => (
-                  <div className="h-[170px] w-[170px] flex justify-center bg-gray-100 rounded items-center">
+                  <div className="h-[170px] w-[170px] flex justify-center m-3 bg-gray-100 rounded items-center">
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />{' '}
                     Uploading
                   </div>
                 ))}
 
-                <div className="grid hover:cursor-pointer h-[170px] w-[170px] border border-[gray] rounded max-w-sm items-center gap-1.5">
+                <div className="grid hover:cursor-pointer m-3 h-[170px] w-[170px] border border-[gray] rounded max-w-sm items-center gap-1.5">
                   <Label
                     className="w-full hover:cursor-pointer rounded h-full bg-gray-100 flex justify-center items-center"
                     htmlFor="picture"

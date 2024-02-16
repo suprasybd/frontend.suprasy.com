@@ -30,6 +30,8 @@ import { ApiClientCF } from '../../../libs/ApiClient';
 import NestedValues from './components/NestedValues';
 import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
+import { useMutation } from '@tanstack/react-query';
+import { createStoresPoroduct } from '../api';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -56,6 +58,10 @@ const CreateProduct: React.FC = () => {
 
   const hasVariants = form.watch('HasVariants');
   const Variants = form.watch('VariantsOptions');
+
+  const { mutate: createProduct } = useMutation({
+    mutationFn: createStoresPoroduct,
+  });
 
   const { fields, append, remove } = useFieldArray({
     name: 'VariantsOptions',
@@ -100,6 +106,7 @@ const CreateProduct: React.FC = () => {
       Variants: filteredActiveSku,
       Options: values.VariantsOptions,
     };
+    createProduct(finalProduct);
     console.log(finalProduct);
   }
 

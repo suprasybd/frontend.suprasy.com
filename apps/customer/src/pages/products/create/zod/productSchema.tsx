@@ -35,7 +35,7 @@ export const productSchema = z
     HasVariants: z.boolean().default(false).optional(),
     VariantsOptions: z.array(Options),
     Variants: z.array(VariantSchema),
-    Images: z.array(ImageObject).optional(),
+    Images: z.array(ImageObject).min(1),
     UploadingList: z.array(z.object({})).optional(),
   })
   .refine(

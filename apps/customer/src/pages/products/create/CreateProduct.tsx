@@ -18,12 +18,12 @@ import {
   Switch,
   Textarea,
 } from '@frontend.suprasy.com/ui';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import cn from 'classnames';
 import { Grip, Plus, Trash, Trash2 } from 'lucide-react';
 import React, { useEffect, useMemo } from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { ApiClientCF } from '../../../libs/ApiClient';
@@ -44,11 +44,11 @@ const CreateProduct: React.FC = () => {
       Images: [
         {
           ImageUrl:
-            'https://static.suprasy.com/08d12198-f35f-4966-acc4-96157183b92020240215154443',
+            'https://static.suprasy.com/2470df57-b2e3-46e3-a7d3-2ee62ecb976d20240216012436',
         },
         {
           ImageUrl:
-            'https://static.suprasy.com/188796c2-b17c-4279-a1c7-b52f62c63ce720240215151236',
+            'https://static.suprasy.com/130c440e-a52c-4383-bb45-f8b22486488720240216012427',
         },
       ],
     },
@@ -102,6 +102,8 @@ const CreateProduct: React.FC = () => {
     };
     console.log(finalProduct);
   }
+
+  const { errors } = form.formState;
 
   const generateCombinations = (
     options: {
@@ -165,10 +167,10 @@ const CreateProduct: React.FC = () => {
       //       productImages
       // removeImage
 
-      uploadingAppend({});
-
       const selectedFile = e.target.files[0];
-
+      if (selectedFile) {
+        uploadingAppend({});
+      }
       const formData = new FormData();
       formData.append('ProductImage', selectedFile);
       const resposne = await ApiClientCF.put('/image/upload', formData);
@@ -179,7 +181,13 @@ const CreateProduct: React.FC = () => {
     }
   };
 
-  const handleDrag = ({ source, destination }) => {
+  const handleDrag = ({
+    source,
+    destination,
+  }: {
+    source: any;
+    destination: any;
+  }) => {
     if (destination) {
       moveImage(source.index, destination.index);
       console.log(form.getValues('Images'));
@@ -263,6 +271,7 @@ const CreateProduct: React.FC = () => {
               <CardDescription>Enter images for your product.</CardDescription>
             </CardHeader>
             <CardContent>
+              <h3 className="text-red-600">{errors.Images?.message}</h3>
               <div className="flex gap-4 flex-wrap transition-all duration-200">
                 <DragDropContext onDragEnd={handleDrag}>
                   <Droppable droppableId="test-items">

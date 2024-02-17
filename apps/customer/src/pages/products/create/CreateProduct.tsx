@@ -42,6 +42,7 @@ const CreateProduct: React.FC = () => {
       Slug: '',
       Title: '',
       Type: '',
+      Inventory: 2,
       HasVariants: false,
       VariantsOptions: [{ Name: 'Size', Values: ['xl', 'lg', 'sm'] }],
       Images: [
@@ -104,10 +105,12 @@ const CreateProduct: React.FC = () => {
     const filteredActiveSku = values.Variants.filter((vari) => vari.IsActive);
     const finalProduct = {
       ...values,
-      Variants: filteredActiveSku,
+      Variants: hasVariants
+        ? filteredActiveSku
+        : [{ Price: values.Price, Inventory: values.Inventory }],
       Options: values.VariantsOptions,
     };
-    createProduct(finalProduct);
+    createProduct(finalProduct as any);
     console.log(finalProduct);
   }
 
@@ -495,6 +498,21 @@ const CreateProduct: React.FC = () => {
                       <FormLabel>Price</FormLabel>
                       <FormControl>
                         <Input placeholder="Price" {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="Inventory"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0 !mt-3">
+                      <FormLabel>Inventory / Quantity</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Inventory/Qty" {...field} />
                       </FormControl>
 
                       <FormMessage />

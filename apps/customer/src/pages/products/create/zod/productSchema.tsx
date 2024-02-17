@@ -32,6 +32,7 @@ export const productSchema = z
     Title: z.string().min(3),
     Description: z.string().min(10),
     Price: z.coerce.number().optional(),
+    Inventory: z.coerce.number().optional(),
     HasVariants: z.boolean().default(false).optional(),
     VariantsOptions: z.array(Options),
     Variants: z.array(VariantSchema),
@@ -59,5 +60,18 @@ export const productSchema = z
     {
       message: 'Please add variants.',
       path: ['HasVariants'],
+    }
+  )
+  .refine(
+    (schema) => {
+      if (!schema.HasVariants && !schema.Inventory) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    {
+      message: 'Enter single product inventory',
+      path: ['Inventory'],
     }
   );

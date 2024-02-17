@@ -5,6 +5,7 @@ import {
   Folders,
   Globe,
   HandCoins,
+  Layers3,
   Mails,
   Microwave,
   ShoppingBasket,
@@ -68,6 +69,21 @@ const StoreSidebar = () => {
                 <ShoppingBasket />
               </span>
               <span className="text-sm font-medium">Products</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/store/$storeKey/inventory"
+              params={{ storeKey: storeKey }}
+              className={cn(
+                styles['link'],
+                'flex flex-row items-center h-12 transform  transition-transform [&.active]:!bg-gray-100  ease-in duration-200  text-gray-500 hover:text-gray-800 [&.active]:border-l-2 [&.active]:border-blue-600'
+              )}
+            >
+              <span className="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400">
+                <Layers3 />
+              </span>
+              <span className="text-sm font-medium">Inventory</span>
             </Link>
           </li>
           <li>

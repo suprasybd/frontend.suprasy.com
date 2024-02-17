@@ -80,6 +80,13 @@ const CreateProduct: React.FC = () => {
         },
       });
     },
+    onError: () => {
+      toast({
+        title: 'Product Create',
+        description: 'Product Create Failed Due To Server Error.',
+        variant: 'destructive',
+      });
+    },
   });
 
   const { fields, append, remove } = useFieldArray({

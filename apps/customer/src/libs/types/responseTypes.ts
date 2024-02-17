@@ -5,7 +5,7 @@ export interface SingleResposeType {
 }
 
 export interface ResponseType<T> {
-  Mesasge: string;
+  Message: string;
   Success: boolean;
   Data: T;
 }

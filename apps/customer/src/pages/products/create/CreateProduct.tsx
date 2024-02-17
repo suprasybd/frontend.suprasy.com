@@ -17,6 +17,7 @@ import {
   Label,
   Switch,
   Textarea,
+  useToast,
 } from '@frontend.suprasy.com/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReloadIcon } from '@radix-ui/react-icons';
@@ -32,6 +33,7 @@ import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
 import { useMutation } from '@tanstack/react-query';
 import { createStoresPoroduct } from '../api';
+import { useNavigate, useParams } from '@tanstack/react-router';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -58,11 +60,26 @@ const CreateProduct: React.FC = () => {
     },
   });
 
+  const { toast } = useToast();
+  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+
   const hasVariants = form.watch('HasVariants');
   const Variants = form.watch('VariantsOptions');
-
-  const { mutate: createProduct } = useMutation({
+  const navigate = useNavigate();
+  const { mutate: createProduct, isPending } = useMutation({
     mutationFn: createStoresPoroduct,
+    onSuccess: (response) => {
+      toast({
+        title: 'Product Create',
+        description: response.Message,
+      });
+      navigate({
+        to: '/store/$storeKey/products',
+        params: {
+          storeKey,
+        },
+      });
+    },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -614,7 +631,13 @@ const CreateProduct: React.FC = () => {
           )}
 
           <Button type="submit" className="w-full " variant={'defaultGradiant'}>
-            Create
+            {isPending && (
+              <>
+                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                Processing
+              </>
+            )}
+            {!isPending && <>Create</>}
           </Button>
         </form>
       </Form>

@@ -5,6 +5,7 @@ import { routeTree } from './routeTree.gen';
 import { useAuthStore } from './store/authStore';
 import loadCurrentUser from './config/profile/loadUser';
 import { hasCookie } from './config/profile/hasCookie';
+import { Toaster } from '@frontend.suprasy.com/ui';
 
 export const router = createRouter({
   routeTree,
@@ -34,7 +35,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <div></div>
+      <Toaster />
       <QueryClientProvider client={queryClient}>
         <RouterProvider
           router={router}

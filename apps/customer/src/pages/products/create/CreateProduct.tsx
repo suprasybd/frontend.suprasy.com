@@ -325,9 +325,9 @@ const CreateProduct: React.FC = () => {
                               >
                                 <div
                                   className={cn(
-                                    'h-[230px] w-[260px] bg-gray-200 rounded flex items-center justify-center',
+                                    'h-[170px] w-[200px] bg-gray-200 rounded flex items-center justify-center',
                                     index === 0 &&
-                                      '!h-[270px] !w-[350px] border-green-300 border-[3px]'
+                                      '!h-[200px] !w-[250px] border-green-300 border-[3px]'
                                   )}
                                 >
                                   <img

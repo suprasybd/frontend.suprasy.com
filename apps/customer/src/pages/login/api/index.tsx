@@ -10,7 +10,7 @@ export const login = async (
   data: z.infer<typeof loginSchema>
 ): Promise<SingleResposeType> => {
   const response = await ApiClient.post('/auth/login', data);
-  console.log(response);
+
   const accessToken = response.data?.Token;
   const userDetails = JSON.stringify(response.data?.Data);
   const user = response.data?.Data;

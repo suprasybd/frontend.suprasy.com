@@ -30,8 +30,6 @@ const Login: React.FC = () => {
   const { mutate: loginMutation, isPending } = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      console.log('run', data);
-
       navigate({
         to: '/',
       });

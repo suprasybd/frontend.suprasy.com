@@ -135,7 +135,6 @@ const CreateProduct: React.FC = () => {
       Options: values.VariantsOptions,
     };
     createProduct(finalProduct as any);
-    console.log(finalProduct);
   }
 
   const { errors } = form.formState;
@@ -225,7 +224,6 @@ const CreateProduct: React.FC = () => {
   }) => {
     if (destination) {
       moveImage(source.index, destination.index);
-      console.log(form.getValues('Images'));
     }
   };
 

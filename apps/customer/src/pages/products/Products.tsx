@@ -14,7 +14,7 @@ const Products: React.FC = () => {
     queryKey: ['getUserStoresProductsList', storeKey],
     queryFn: getUserStoresProductsList,
   });
-  console.log(products);
+
   return (
     <section className="w-full max-w-[94rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       {isLoading && <LoaderMain />}

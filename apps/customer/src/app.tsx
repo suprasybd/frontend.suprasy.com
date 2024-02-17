@@ -25,7 +25,6 @@ const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   const auth = useAuthStore((state) => state);
-  console.log('auth state root', auth);
 
   useEffect(() => {
     loadCurrentUser();

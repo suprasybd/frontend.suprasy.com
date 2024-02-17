@@ -11,17 +11,29 @@ import {
   ShoppingBasket,
   Truck,
   UsersRound,
+  X,
 } from 'lucide-react';
 import styles from './StoreSidebar.module.scss';
+import { useSidebarStore } from '../../store/sidebarStore';
+import { Button } from '@frontend.suprasy.com/ui';
 
 const StoreSidebar = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
-
+  const isSidebarOpen = useSidebarStore((state) => state.isSideBarOpen);
+  const toggleSideBar = useSidebarStore((state) => state.toggleSideBar);
   return (
-    <div className="min-h-screen flex flex-row bg-gray-100 border border-r-2">
+    <div
+      className={cn(
+        'min-h-screen fixed top-0 transition-all duration-200 -translate-x-60 z-10 overflow-scroll flex flex-row bg-gray-100 border border-r-2',
+        isSidebarOpen && '!translate-x-0',
+        'sm:translate-x-0 sm:relative sm:overflow-hidden'
+      )}
+    >
       <div className="flex flex-col w-56 bg-white  overflow-hidden">
-        <div className="flex items-center justify-center h-20 ">
-          <h1 className="text-3xl uppercase text-indigo-500">Suprasy</h1>
+        <div className="flex items-center justify-center mt-2 sm:hidden">
+          <Button onClick={() => toggleSideBar()} variant={'destructive'}>
+            Close <X />
+          </Button>
         </div>
         <ul className="flex flex-col py-4">
           <li>

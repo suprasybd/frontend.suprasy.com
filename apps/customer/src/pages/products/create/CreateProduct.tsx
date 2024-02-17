@@ -550,7 +550,9 @@ const CreateProduct: React.FC = () => {
           {hasVariants && (
             <Card>
               <CardHeader className="pb-0">
-                <CardTitle>Enter Sku / Price For Variants</CardTitle>
+                <CardTitle>
+                  Enter Inventory(Quantity) / Price For Variants
+                </CardTitle>
                 <CardDescription>e.g. 1 Inventory, 199 BDT</CardDescription>
               </CardHeader>
               <CardContent>
@@ -608,22 +610,6 @@ const CreateProduct: React.FC = () => {
                             <FormLabel>Inventory</FormLabel>
                             <FormControl>
                               <Input placeholder="Inventory" {...field} />
-                            </FormControl>
-
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <FormField
-                        control={form.control}
-                        name={`Variants.${index}.Sku`}
-                        render={({ field }) => (
-                          <FormItem className="space-y-0">
-                            <FormLabel>Sku</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Sku" {...field} />
                             </FormControl>
 
                             <FormMessage />

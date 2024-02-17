@@ -24,7 +24,7 @@ const Home: React.FC = () => {
       <h1 className="text-xl my-4">Stores</h1>
 
       {isLoading && <LoaderMain />}
-      <div className="flex gap-4 flex-wrap">
+      <div className="grid grid-cols-1">
         {storeList?.Data?.map((store) => (
           <Card key={store.Id}>
             <CardHeader>
@@ -43,7 +43,7 @@ const Home: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div>
-                <p>Store Key: {store.StoreKey}</p>
+                <p className="break-words">Store Key: {store.StoreKey}</p>
                 <p>
                   <span className="mr-2">Active Subdomain:</span>
                   <a

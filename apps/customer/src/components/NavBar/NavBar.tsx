@@ -10,9 +10,12 @@ import { Link } from '@tanstack/react-router';
 import { Power, UserRound } from 'lucide-react';
 import { logoutUser } from '../../config/profile/logout';
 import { useAuthStore } from '../../store/authStore';
+import { useSidebarStore } from '../../store/sidebarStore';
 
 const NavBar = () => {
   const user = useAuthStore((state) => state.user);
+
+  const toggleSidebar = useSidebarStore((state) => state.toggleSideBar);
 
   return (
     <nav className="bg-gradient-to-r from-violet-600 to-indigo-600">
@@ -20,6 +23,9 @@ const NavBar = () => {
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
             <button
+              onClick={() => {
+                toggleSidebar();
+              }}
               type="button"
               className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               aria-controls="mobile-menu"
@@ -42,7 +48,6 @@ const NavBar = () => {
                   d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
                 />
               </svg>
-
               <svg
                 className="hidden h-6 w-6"
                 fill="none"

@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@frontend.suprasy.com/ui';
+import { Link, useParams } from '@tanstack/react-router';
 
 export const productsColumn: ColumnDef<ProductType>[] = [
   {
@@ -33,7 +34,7 @@ export const productsColumn: ColumnDef<ProductType>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const payment = row.original;
+      const product = row.original;
 
       return (
         <DropdownMenu>
@@ -52,7 +53,17 @@ export const productsColumn: ColumnDef<ProductType>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link
+                to="/store/$storeKey/products/$productId/details"
+                params={{
+                  productId: product.Id?.toString(),
+                  storeKey: product.StoreKey,
+                }}
+              >
+                View product details
+              </Link>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

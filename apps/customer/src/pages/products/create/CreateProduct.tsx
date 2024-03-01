@@ -32,7 +32,11 @@ import NestedValues from './components/NestedValues';
 import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { createStoresProduct, getProductsDetails } from '../api';
+import {
+  createStoresProduct,
+  getProductsDetails,
+  getProductsVariantsDetails,
+} from '../api';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 
@@ -70,6 +74,8 @@ const CreateProduct: React.FC = () => {
     from: ProductsCreateRoute.fullPath,
   });
 
+  // @Api - @Data Fetching
+
   const { data: productDetailsResponse } = useQuery({
     queryKey: ['getProductDetails', productId],
     queryFn: () => getProductsDetails(productId || 0),
@@ -77,19 +83,33 @@ const CreateProduct: React.FC = () => {
     enabled: !!productId && update,
   });
 
+  const { data: productVariantsResponse } = useQuery({
+    queryKey: ['getProductVariantsDetails', productId],
+    queryFn: () => getProductsVariantsDetails(productId || 0),
+    enabled: !!productId && update,
+  });
+
   const productDetails = productDetailsResponse?.Data;
+  const productVariantDetails = productVariantsResponse?.Data;
 
   useEffect(() => {
     if (productDetails) {
       form.setValue('Title', productDetails.Title);
       form.setValue('Description', productDetails.Description);
       form.setValue('Slug', productDetails.Slug);
+      form.setValue('HasVariants', productDetails.HasVariant);
     }
-  }, [productDetails, form]);
+
+    if (productVariantDetails) {
+      form.setValue('Price', productVariantDetails.Price);
+      form.setValue('Inventory', productVariantDetails.Inventory);
+    }
+  }, [productDetails, form, productVariantDetails]);
 
   const hasVariants = form.watch('HasVariants');
   const Variants = form.watch('VariantsOptions');
   const navigate = useNavigate();
+
   const { mutate: createProduct, isPending } = useMutation({
     mutationFn: createStoresProduct,
     onSuccess: (response) => {

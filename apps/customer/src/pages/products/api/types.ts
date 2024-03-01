@@ -1,13 +1,22 @@
 export interface ProductType {
   Id: number;
   StoreKey: string;
-  Type: string;
+  HasVariant: boolean;
   CategoryId: number;
   Slug: string;
   Title: string;
   Description: string;
-  Price: number;
   IsActive: boolean;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface ProductsVairantsTypes {
+  Id: number;
+  StoreKey: string;
+  ProductId: number;
+  Price: number;
+  Inventory: number;
   CreatedAt: string;
   UpdatedAt: string;
 }

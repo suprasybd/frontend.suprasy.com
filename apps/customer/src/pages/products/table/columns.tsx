@@ -49,10 +49,23 @@ export const productsColumn: ColumnDef<ProductType>[] = [
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText('asd')}
             >
-              Copy payment ID
+              Copy Slug
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link
+                to="/store/$storeKey/products/create"
+                params={{
+                  storeKey: product.StoreKey,
+                }}
+                search={{
+                  productId: product.Id,
+                  update: true,
+                }}
+              >
+                Update Product
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>
               <Link
                 to="/store/$storeKey/products/$productId/details"

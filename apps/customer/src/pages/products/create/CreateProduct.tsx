@@ -31,14 +31,9 @@ import { ApiClientCF } from '../../../libs/ApiClient';
 import NestedValues from './components/NestedValues';
 import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
-import { useMutation } from '@tanstack/react-query';
-import { createStoresPoroduct } from '../api';
-import {
-  getRouteApi,
-  useNavigate,
-  useParams,
-  useSearch,
-} from '@tanstack/react-router';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { createStoresProduct, getProductsDetails } from '../api';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 
 const CreateProduct: React.FC = () => {
@@ -71,17 +66,32 @@ const CreateProduct: React.FC = () => {
     storeKey: string;
   };
 
-  const { update } = useSearch({
+  const { update, productId } = useSearch({
     from: ProductsCreateRoute.fullPath,
   });
 
-  console.log(update);
+  const { data: productDetailsResponse } = useQuery({
+    queryKey: ['getProductDetails', productId],
+    queryFn: () => getProductsDetails(productId || 0),
+
+    enabled: !!productId && update,
+  });
+
+  const productDetails = productDetailsResponse?.Data;
+
+  useEffect(() => {
+    if (productDetails) {
+      form.setValue('Title', productDetails.Title);
+      form.setValue('Description', productDetails.Description);
+      form.setValue('Slug', productDetails.Slug);
+    }
+  }, [productDetails, form]);
 
   const hasVariants = form.watch('HasVariants');
   const Variants = form.watch('VariantsOptions');
   const navigate = useNavigate();
   const { mutate: createProduct, isPending } = useMutation({
-    mutationFn: createStoresPoroduct,
+    mutationFn: createStoresProduct,
     onSuccess: (response) => {
       toast({
         title: 'Product Create',

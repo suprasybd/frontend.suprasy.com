@@ -33,7 +33,13 @@ import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
 import { useMutation } from '@tanstack/react-query';
 import { createStoresPoroduct } from '../api';
-import { useNavigate, useParams } from '@tanstack/react-router';
+import {
+  getRouteApi,
+  useNavigate,
+  useParams,
+  useSearch,
+} from '@tanstack/react-router';
+import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -61,7 +67,15 @@ const CreateProduct: React.FC = () => {
   });
 
   const { toast } = useToast();
-  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+  const { storeKey } = useParams({ strict: false }) as {
+    storeKey: string;
+  };
+
+  const { update } = useSearch({
+    from: ProductsCreateRoute.fullPath,
+  });
+
+  console.log(update);
 
   const hasVariants = form.watch('HasVariants');
   const Variants = form.watch('VariantsOptions');

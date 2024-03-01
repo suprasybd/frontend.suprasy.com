@@ -17,6 +17,7 @@ import { Route as StoreImport } from './routes/store'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as StoreStoreKeyShippingImport } from './routes/store/$storeKey/shipping'
+import { Route as StoreStoreKeyProductsCreateImport } from './routes/store/$storeKey/products_/create'
 
 // Create Virtual Routes
 
@@ -47,9 +48,6 @@ const StoreStoreKeyCustomersLazyImport = createFileRoute(
 )()
 const StoreStoreKeyBillingLazyImport = createFileRoute(
   '/store/$storeKey/billing',
-)()
-const StoreStoreKeyProductsCreateLazyImport = createFileRoute(
-  '/store/$storeKey/products/create',
 )()
 const StoreStoreKeyProductsProductIdDetailsLazyImport = createFileRoute(
   '/store/$storeKey/products/$productId/details',
@@ -163,15 +161,11 @@ const StoreStoreKeyShippingRoute = StoreStoreKeyShippingImport.update({
   getParentRoute: () => StoreRoute,
 } as any)
 
-const StoreStoreKeyProductsCreateLazyRoute =
-  StoreStoreKeyProductsCreateLazyImport.update({
+const StoreStoreKeyProductsCreateRoute =
+  StoreStoreKeyProductsCreateImport.update({
     path: '/$storeKey/products/create',
     getParentRoute: () => StoreRoute,
-  } as any).lazy(() =>
-    import('./routes/store/$storeKey/products_/create.lazy').then(
-      (d) => d.Route,
-    ),
-  )
+  } as any)
 
 const StoreStoreKeyProductsProductIdDetailsLazyRoute =
   StoreStoreKeyProductsProductIdDetailsLazyImport.update({
@@ -252,7 +246,7 @@ declare module '@tanstack/react-router' {
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/products/create': {
-      preLoaderRoute: typeof StoreStoreKeyProductsCreateLazyImport
+      preLoaderRoute: typeof StoreStoreKeyProductsCreateImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/products/$productId/details': {
@@ -278,7 +272,7 @@ export const routeTree = rootRoute.addChildren([
     StoreStoreKeyOrdersLazyRoute,
     StoreStoreKeyPaymentsLazyRoute,
     StoreStoreKeyProductsLazyRoute,
-    StoreStoreKeyProductsCreateLazyRoute,
+    StoreStoreKeyProductsCreateRoute,
     StoreStoreKeyProductsProductIdDetailsLazyRoute,
   ]),
   AboutLazyRoute,

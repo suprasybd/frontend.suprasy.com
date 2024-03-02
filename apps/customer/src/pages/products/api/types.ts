@@ -20,3 +20,13 @@ export interface ProductsVairantsTypes {
   CreatedAt: string;
   UpdatedAt: string;
 }
+
+export interface ProductImagesTypes {
+  Id: number;
+  StoreKey: string;
+  ProductId: number;
+  Order: number;
+  ImageUrl: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}

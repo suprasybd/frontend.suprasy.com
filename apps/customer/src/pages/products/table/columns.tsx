@@ -29,6 +29,11 @@ export const productsColumn: ColumnDef<ProductType>[] = [
   {
     accessorKey: 'Description',
     header: 'Description',
+    cell: ({ row }) => {
+      const product = row.original;
+
+      return product.Description.slice(0, 50) + '...';
+    },
   },
 
   {
@@ -46,11 +51,7 @@ export const productsColumn: ColumnDef<ProductType>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText('asd')}
-            >
-              Copy Slug
-            </DropdownMenuItem>
+
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <Link

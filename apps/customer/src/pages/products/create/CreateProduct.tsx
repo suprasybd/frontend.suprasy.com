@@ -35,10 +35,12 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   createStoresProduct,
   getProductsDetails,
+  getProductsImages,
   getProductsVariantsDetails,
 } from '../api';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
+import RichTextExample from '../../../components/SlateEditor/RichText';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -74,6 +76,8 @@ const CreateProduct: React.FC = () => {
     from: ProductsCreateRoute.fullPath,
   });
 
+  const isUpdating = !!productId && update;
+
   // @Api - @Data Fetching
 
   const { data: productDetailsResponse } = useQuery({
@@ -89,8 +93,15 @@ const CreateProduct: React.FC = () => {
     enabled: !!productId && update,
   });
 
+  const { data: productImagesResponse } = useQuery({
+    queryKey: ['getProductImages', productId],
+    queryFn: () => getProductsImages(productId || 0),
+    enabled: !!productId && update,
+  });
+
   const productDetails = productDetailsResponse?.Data;
   const productVariantDetails = productVariantsResponse?.Data;
+  const productImagesData = productImagesResponse?.Data;
 
   useEffect(() => {
     if (productDetails) {
@@ -104,7 +115,14 @@ const CreateProduct: React.FC = () => {
       form.setValue('Price', productVariantDetails.Price);
       form.setValue('Inventory', productVariantDetails.Inventory);
     }
-  }, [productDetails, form, productVariantDetails]);
+
+    if (productImagesData) {
+      const productImagesFormatted = productImagesData.map((image) => ({
+        ImageUrl: image.ImageUrl,
+      }));
+      form.setValue('Images', productImagesFormatted);
+    }
+  }, [productDetails, form, productVariantDetails, productImagesData]);
 
   const hasVariants = form.watch('HasVariants');
   const Variants = form.watch('VariantsOptions');
@@ -277,7 +295,9 @@ const CreateProduct: React.FC = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <Card>
             <CardHeader>
-              <CardTitle>Create Product</CardTitle>
+              <CardTitle>
+                {isUpdating ? 'Update Product' : 'Create Product'}
+              </CardTitle>
               <CardDescription>Enter Product Info Carefully!</CardDescription>
             </CardHeader>
             <CardContent>
@@ -295,6 +315,9 @@ const CreateProduct: React.FC = () => {
                   </FormItem>
                 )}
               />
+              {/* test - here */}
+              <RichTextExample />
+
               <FormField
                 control={form.control}
                 name="Description"
@@ -672,7 +695,7 @@ const CreateProduct: React.FC = () => {
                 Processing
               </>
             )}
-            {!isPending && <>Create</>}
+            {!isPending && isUpdating ? 'Update' : 'Create'}
           </Button>
         </form>
       </Form>

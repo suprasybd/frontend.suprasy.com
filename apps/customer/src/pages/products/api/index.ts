@@ -3,7 +3,11 @@ import {
   ListResponseType,
   ResponseType,
 } from '../../../libs/types/responseTypes';
-import { ProductType, ProductsVairantsTypes } from './types';
+import {
+  ProductImagesTypes,
+  ProductType,
+  ProductsVairantsTypes,
+} from './types';
 import { productSchema } from '../create/zod/productSchema';
 export const getUserStoresProductsList = async (): Promise<
   ListResponseType<ProductType>
@@ -32,6 +36,14 @@ export const getProductsVariantsDetails = async (
   productId: number
 ): Promise<ResponseType<ProductsVairantsTypes>> => {
   const response = await ApiClient.get(`/products/variants/${productId}`);
+
+  return response.data;
+};
+
+export const getProductsImages = async (
+  productId: number
+): Promise<ListResponseType<ProductImagesTypes>> => {
+  const response = await ApiClient.get(`/products/images/${productId}`);
 
   return response.data;
 };

@@ -180,7 +180,7 @@ const Element = ({ attributes, children, element }) => {
       );
     case 'heading-one':
       return (
-        <h1 style={style} {...attributes}>
+        <h1 className="text-xl" style={style} {...attributes}>
           {children}
         </h1>
       );

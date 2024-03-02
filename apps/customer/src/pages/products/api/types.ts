@@ -30,3 +30,26 @@ export interface ProductImagesTypes {
   CreatedAt: string;
   UpdatedAt: string;
 }
+
+export interface Options {
+  storefront_options: StorefrontOptions;
+  storefront_options_value: StorefrontOptionsValue;
+}
+
+export interface StorefrontOptions {
+  Id: number;
+  StoreKey: string;
+  ProductId: number;
+  Name: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface StorefrontOptionsValue {
+  Id: number;
+  StoreKey: string;
+  OptionId: number;
+  Value: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}

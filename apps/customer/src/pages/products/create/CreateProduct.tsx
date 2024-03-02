@@ -37,6 +37,7 @@ import {
   getProductsDetails,
   getProductsImages,
   getProductsVariantsDetails,
+  getProudcctsOptions,
 } from '../api';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
@@ -99,9 +100,40 @@ const CreateProduct: React.FC = () => {
     enabled: !!productId && update,
   });
 
+  const { data: productOptionsResponse } = useQuery({
+    queryKey: ['getProductOptions', productId],
+    queryFn: () => getProudcctsOptions(productId || 0),
+    enabled: !!productId && update,
+  });
+
   const productDetails = productDetailsResponse?.Data;
   const productVariantDetails = productVariantsResponse?.Data;
   const productImagesData = productImagesResponse?.Data;
+  const productOptions = productOptionsResponse?.Data;
+
+  const formattedOptions = useMemo(() => {
+    const optionsMap: { [key: string]: Set<string> } = {};
+
+    productOptions?.forEach((option) => {
+      const { Name } = option.storefront_options;
+      const { Value } = option.storefront_options_value;
+
+      if (optionsMap[Name]) {
+        optionsMap[Name].add(Value);
+      } else {
+        optionsMap[Name] = new Set([Value]);
+      }
+    });
+
+    const formattedOptionsArray = Object.entries(optionsMap).map(
+      ([Name, Values]) => ({
+        Name,
+        Values: Array.from(Values),
+      })
+    );
+
+    return formattedOptionsArray;
+  }, [productOptions]);
 
   useEffect(() => {
     if (productDetails) {
@@ -122,7 +154,17 @@ const CreateProduct: React.FC = () => {
       }));
       form.setValue('Images', productImagesFormatted);
     }
-  }, [productDetails, form, productVariantDetails, productImagesData]);
+
+    if (formattedOptions) {
+      form.setValue('VariantsOptions', formattedOptions);
+    }
+  }, [
+    productDetails,
+    form,
+    productVariantDetails,
+    productImagesData,
+    formattedOptions,
+  ]);
 
   const hasVariants = form.watch('HasVariants');
   const Variants = form.watch('VariantsOptions');
@@ -260,9 +302,6 @@ const CreateProduct: React.FC = () => {
     e.preventDefault();
 
     try {
-      //       productImages
-      // removeImage
-
       const selectedFile = e.target.files[0];
       if (selectedFile) {
         uploadingAppend({});

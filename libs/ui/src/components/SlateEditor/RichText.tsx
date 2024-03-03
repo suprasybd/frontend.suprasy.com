@@ -64,7 +64,7 @@ const RichTextEditor: React.FC<{
       editor={editor}
       initialValue={initVal || initialValue}
     >
-      <Card className="my-5 mt-0">
+      <Card className="mt-0 rounded-b-none">
         <CardContent className="p-3">
           <Toolbar>
             <MarkButton format="bold" icon={<Bold size={'17px'} />} />
@@ -99,7 +99,7 @@ const RichTextEditor: React.FC<{
       </Card>
 
       <Editable
-        className="p-4  rounded-md border border-input shadow-sm
+        className="p-4  rounded-md rounded-t-none border border-input shadow-sm
         focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[200px]"
         renderElement={renderElement}
         renderLeaf={renderLeaf}
@@ -237,7 +237,11 @@ const Element = (props) => {
         </ol>
       );
     case 'table':
-      return <Table {...props} />;
+      return (
+        <table className="border-spacing-1 border-gray-700 border-[1px]">
+          <tbody {...attributes}>{children}</tbody>
+        </table>
+      );
     case 'table-row':
       return (
         <tr

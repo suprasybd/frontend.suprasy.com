@@ -472,9 +472,33 @@ const CreateProduct: React.FC = () => {
               />
 
               {/* test - here */}
-              <RichTextEditor />
 
-              <FormField
+              <div className="mt-2">
+                <p className="text-sm text-red-600">
+                  {errors.Description?.message}
+                </p>
+
+                <FormLabel>Description</FormLabel>
+
+                {productDetails?.Description && isUpdating && (
+                  <RichTextEditor
+                    initialVal={productDetails?.Description}
+                    onValChange={(data) =>
+                      form.setValue('Description', JSON.stringify(data))
+                    }
+                  />
+                )}
+
+                {!isUpdating && (
+                  <RichTextEditor
+                    onValChange={(data) =>
+                      form.setValue('Description', JSON.stringify(data))
+                    }
+                  />
+                )}
+              </div>
+
+              {/* <FormField
                 control={form.control}
                 name="Description"
                 render={({ field }) => (
@@ -492,7 +516,7 @@ const CreateProduct: React.FC = () => {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
             </CardContent>
           </Card>
 

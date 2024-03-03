@@ -45,7 +45,10 @@ const HOTKEYS = {
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'];
 
-const RichTextEditor = () => {
+const RichTextEditor: React.FC<{
+  initialVal?: string;
+  onValChange: (data: Descendant[]) => void;
+}> = ({ onValChange, initialVal }) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(
@@ -53,13 +56,15 @@ const RichTextEditor = () => {
     []
   );
 
+  const initVal = initialVal && JSON.parse(initialVal);
+
   return (
     <Slate
-      onValueChange={(value) => console.log(value)}
+      onValueChange={onValChange}
       editor={editor}
-      initialValue={initialValue}
+      initialValue={initVal || initialValue}
     >
-      <Card className="my-5">
+      <Card className="my-5 mt-0">
         <CardContent className="p-3">
           <Toolbar>
             <MarkButton format="bold" icon={<Bold size={'17px'} />} />
@@ -94,7 +99,7 @@ const RichTextEditor = () => {
       </Card>
 
       <Editable
-        className="p-4 rounded-md border border-input shadow-sm
+        className="p-4  rounded-md border border-input shadow-sm
         focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[200px]"
         renderElement={renderElement}
         renderLeaf={renderLeaf}

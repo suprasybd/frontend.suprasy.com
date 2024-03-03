@@ -158,23 +158,26 @@ const CreateProduct: React.FC = () => {
         }
       > = {};
 
-      productsMultipleVariants.reverse().forEach((variantDetails) => {
-        if (!uniqueVariants[variantDetails.storefront_variants.Id]) {
-          uniqueVariants[variantDetails.storefront_variants.Id] = {
-            variant: null,
-            options: [],
-          };
-        }
+      productsMultipleVariants
+        .slice()
+        .reverse()
+        .forEach((variantDetails) => {
+          if (!uniqueVariants[variantDetails.storefront_variants.Id]) {
+            uniqueVariants[variantDetails.storefront_variants.Id] = {
+              variant: null,
+              options: [],
+            };
+          }
 
-        if (!uniqueVariants[variantDetails.storefront_variants.Id].variant) {
-          uniqueVariants[variantDetails.storefront_variants.Id].variant =
-            variantDetails.storefront_variants;
-        }
+          if (!uniqueVariants[variantDetails.storefront_variants.Id].variant) {
+            uniqueVariants[variantDetails.storefront_variants.Id].variant =
+              variantDetails.storefront_variants;
+          }
 
-        uniqueVariants[variantDetails.storefront_variants.Id].options.push(
-          variantDetails.storefront_options_value.Value
-        );
-      });
+          uniqueVariants[variantDetails.storefront_variants.Id].options.push(
+            variantDetails.storefront_options_value.Value
+          );
+        });
 
       const formattedData = Object.values(uniqueVariants).map((data) => ({
         Value: data.options.join('-'),
@@ -250,6 +253,7 @@ const CreateProduct: React.FC = () => {
         const currentValue = variant.Options.map((option) => option.Value).join(
           '-'
         );
+
         const foundValue = formattedMultipleVariantsOptionsValue.find(
           (value) => value.Value === currentValue
         );

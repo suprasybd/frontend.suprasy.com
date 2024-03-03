@@ -1,24 +1,16 @@
-import React, { useCallback, useMemo } from 'react';
+import { Card, CardContent } from '@frontend.suprasy.com/ui';
 import isHotkey from 'is-hotkey';
-import { Editable, withReact, useSlate, Slate } from 'slate-react';
+import { useCallback, useMemo } from 'react';
 import {
+  Descendant,
   Editor,
+  Element as SlateElement,
   Transforms,
   createEditor,
-  Descendant,
-  Element as SlateElement,
 } from 'slate';
 import { withHistory } from 'slate-history';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@frontend.suprasy.com/ui';
+import { Editable, Slate, useSlate, withReact } from 'slate-react';
 
-import { Button, Icon, Toolbar } from './RichTextComponents/Components';
 import {
   Bold,
   Code,
@@ -29,6 +21,7 @@ import {
   Quote,
   Underline,
 } from 'lucide-react';
+import { Button, Toolbar } from './RichTextComponents/Components';
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -78,6 +71,8 @@ const RichTextExample = () => {
       </Card>
 
       <Editable
+        className="p-2 rounded-md border border-input shadow-sm
+        focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Enter some rich text…"

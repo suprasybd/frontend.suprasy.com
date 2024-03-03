@@ -21,17 +21,17 @@ import {
 } from '@frontend.suprasy.com/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReloadIcon } from '@radix-ui/react-icons';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import cn from 'classnames';
 import { Grip, Plus, Trash, Trash2 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import RichTextExample from '../../../components/SlateEditor/RichText';
 import { ApiClientCF } from '../../../libs/ApiClient';
-import NestedValues from './components/NestedValues';
-import { useCreateCountStore } from './store';
-import { productSchema } from './zod/productSchema';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 import {
   createStoresProduct,
   getProductsDetails,
@@ -40,14 +40,10 @@ import {
   getProductsVariantsDetails,
   getProudcctsOptions,
 } from '../api';
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
-import RichTextExample from '../../../components/SlateEditor/RichText';
-import {
-  StorefrontOptions,
-  StorefrontOptionsValue,
-  StorefrontVariants,
-} from '../api/types';
+import { StorefrontVariants } from '../api/types';
+import NestedValues from './components/NestedValues';
+import { useCreateCountStore } from './store';
+import { productSchema } from './zod/productSchema';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -113,7 +109,10 @@ const CreateProduct: React.FC = () => {
     enabled: !!productId && update,
   });
 
-  const { data: productMultipleVariantsResponse } = useQuery({
+  const {
+    data: productMultipleVariantsResponse,
+    isSuccess: getMultipleVariantsSuccess,
+  } = useQuery({
     queryKey: ['getProductsMultipleVariantsOptionsValue', productId],
     queryFn: () => getProductsMultipleVariants(productId || 0),
     enabled: !!productId && update,
@@ -150,7 +149,7 @@ const CreateProduct: React.FC = () => {
   }, [productOptions]);
 
   const formattedMultipleVariantsOptionsValue = useMemo(() => {
-    if (productsMultipleVariants) {
+    if (productsMultipleVariants && productDetails?.HasVariant) {
       const uniqueVariants: Record<
         number | string,
         {
@@ -185,9 +184,7 @@ const CreateProduct: React.FC = () => {
 
       return formattedData;
     }
-  }, [productsMultipleVariants]);
-
-  console.log('data', formattedMultipleVariantsOptionsValue);
+  }, [productsMultipleVariants, productDetails]);
 
   const hasVariants = form.watch('HasVariants');
   const Variants = form.watch('VariantsOptions');
@@ -220,7 +217,7 @@ const CreateProduct: React.FC = () => {
       setImageUpdated((prev) => prev + 1);
     }
 
-    if (formattedOptions && isUpdating) {
+    if (formattedOptions && isUpdating && productDetails?.HasVariant) {
       form.setValue('VariantsOptions', formattedOptions);
     }
   }, [
@@ -232,13 +229,23 @@ const CreateProduct: React.FC = () => {
     formattedOptions,
   ]);
 
+  const [multipleVariantsPulled, setMultipleVariantsPulled] =
+    useState<number>(0);
+
+  // pull previous variants combinations and fill form
+
   useEffect(() => {
-    if (formattedMultipleVariantsOptionsValue) {
-      console.log(
-        'current - ',
-        formattedMultipleVariantsOptionsValue,
-        MultipleVariants
-      );
+    const totalCombinations = VariantsOptions.map(
+      (data) => data.Values.length
+    ).reduce((sum, current) => sum * current, 1);
+
+    if (
+      formattedMultipleVariantsOptionsValue &&
+      MultipleVariants?.length === totalCombinations &&
+      multipleVariantsPulled < 4 &&
+      getMultipleVariantsSuccess &&
+      productDetails?.HasVariant
+    ) {
       const updatedVariants = MultipleVariants.map((variant) => {
         const currentValue = variant.Options.map((option) => option.Value).join(
           '-'
@@ -259,9 +266,18 @@ const CreateProduct: React.FC = () => {
       });
 
       form.setValue('Variants', updatedVariants);
-      console.log('updated variants', updatedVariants);
+      setMultipleVariantsPulled((prev) => prev + 1);
     }
-  }, [formattedMultipleVariantsOptionsValue]);
+  }, [
+    formattedMultipleVariantsOptionsValue,
+    VariantsOptions,
+    MultipleVariants,
+    form,
+    multipleVariantsPulled,
+    formattedOptions,
+    getMultipleVariantsSuccess,
+    productDetails,
+  ]);
 
   const navigate = useNavigate();
 
@@ -328,7 +344,12 @@ const CreateProduct: React.FC = () => {
         : [{ Price: values.Price, Inventory: values.Inventory }],
       Options: values.VariantsOptions,
     };
-    createProduct(finalProduct as any);
+
+    if (!isUpdating) {
+      createProduct(finalProduct as any);
+    } else {
+      // hit update product endpoint
+    }
   }
 
   const { errors } = form.formState;
@@ -376,12 +397,12 @@ const CreateProduct: React.FC = () => {
       (item: any, index: number) => {
         return {
           IsActive: false,
-          Price: 3,
+          Price: 500,
           Sku: `${item
             .map((i: any) => index + i.Value.replace(/\s/g, ''))
             .join('-')}`,
           Options: item,
-          Inventory: index,
+          Inventory: 99,
         };
       }
     );
@@ -559,7 +580,10 @@ const CreateProduct: React.FC = () => {
                 </DragDropContext>
 
                 {uploadingList?.map((item, index) => (
-                  <div className="h-[170px] w-[170px] flex justify-center m-3 bg-gray-100 rounded items-center">
+                  <div
+                    key={item.id}
+                    className="h-[170px] w-[170px] flex justify-center m-3 bg-gray-100 rounded items-center"
+                  >
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />{' '}
                     Uploading
                   </div>
@@ -624,7 +648,7 @@ const CreateProduct: React.FC = () => {
                   <div className="mt-3">
                     {VariantsOptions.map((option, index) => {
                       return (
-                        <Card className="mb-3">
+                        <Card className="mb-3" key={index}>
                           <CardContent>
                             <div>
                               <FormField
@@ -661,15 +685,17 @@ const CreateProduct: React.FC = () => {
                                   <h3 className="mt-3">Values</h3>
 
                                   <div className="flex gap-1 items-center">
-                                    {Variants[index]?.Values.map((option) => (
-                                      <span>
-                                        {option && (
-                                          <span className="block bg-gradient-to-r from-violet-600 to-indigo-600 px-2 w-fit rounded text-sm text-white">
-                                            {option}
-                                          </span>
-                                        )}
-                                      </span>
-                                    ))}
+                                    {Variants[index]?.Values.map(
+                                      (option, index) => (
+                                        <span key={index}>
+                                          {option && (
+                                            <span className="block bg-gradient-to-r from-violet-600 to-indigo-600 px-2 w-fit rounded text-sm text-white">
+                                              {option}
+                                            </span>
+                                          )}
+                                        </span>
+                                      )
+                                    )}
                                   </div>
 
                                   <NestedValues

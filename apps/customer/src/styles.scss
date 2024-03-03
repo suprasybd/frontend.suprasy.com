@@ -8,6 +8,10 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+.disable-tailwind {
+  all: initial;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

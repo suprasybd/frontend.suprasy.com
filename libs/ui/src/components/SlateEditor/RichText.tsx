@@ -1,4 +1,7 @@
-import { Card, CardContent } from '@frontend.suprasy.com/ui';
+/* eslint-disable2 */
+// @ts-nocheck2
+
+import { Card, CardContent } from '../../index';
 import isHotkey from 'is-hotkey';
 import { useCallback, useMemo } from 'react';
 import {
@@ -12,16 +15,25 @@ import { withHistory } from 'slate-history';
 import { Editable, Slate, useSlate, withReact } from 'slate-react';
 
 import {
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
   Bold,
   Code,
   Heading1,
   Heading2,
+  Heading3,
   Italic,
   List,
+  ListOrdered,
   Quote,
   Underline,
 } from 'lucide-react';
 import { Button, Toolbar } from './RichTextComponents/Components';
+import Table from './Elements/Table/Table';
+import TableSelector from './Elements/Table/TableSelector';
+import withTable from './Plugins/withTable';
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -33,10 +45,13 @@ const HOTKEYS = {
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'];
 
-const RichTextExample = () => {
+const RichTextEditor = () => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
-  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+  const editor = useMemo(
+    () => withTable(withHistory(withReact(createEditor()))),
+    []
+  );
 
   return (
     <Slate
@@ -59,20 +74,28 @@ const RichTextExample = () => {
               format="heading-two"
               icon={<Heading2 size={'17px'} />}
             />
+            <BlockButton
+              format={'heading-three'}
+              icon={<Heading3 size="17px" />}
+            />
             <BlockButton format="block-quote" icon={<Quote size={'17px'} />} />
-            <BlockButton format="numbered-list" icon="format_list_numbered" />
+            <BlockButton
+              format="numbered-list"
+              icon={<ListOrdered size="17px" />}
+            />
             <BlockButton format="bulleted-list" icon={<List size={'17px'} />} />
-            <BlockButton format="left" icon="format_align_left" />
-            <BlockButton format="center" icon="format_align_center" />
-            <BlockButton format="right" icon="format_align_right" />
-            <BlockButton format="justify" icon="format_align_justify" />
+            <BlockButton format="left" icon={<AlignLeft size="17px" />} />
+            <BlockButton format="center" icon={<AlignCenter size="17px" />} />
+            <BlockButton format="right" icon={<AlignRight size="17px" />} />
+            <BlockButton format="justify" icon={<AlignJustify size="17px" />} />
+            <TableSelector key={'element.id'} editor={editor} />
           </Toolbar>
         </CardContent>
       </Card>
 
       <Editable
-        className="p-2 rounded-md border border-input shadow-sm
-        focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+        className="p-4 rounded-md border border-input shadow-sm
+        focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[200px]"
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Enter some rich text…"
@@ -158,30 +181,41 @@ const isMarkActive = (editor, format) => {
   return marks ? marks[format] === true : false;
 };
 
-const Element = ({ attributes, children, element }) => {
+const Element = (props) => {
+  const { attributes, children, element } = props;
   const style = { textAlign: element.align };
   switch (element.type) {
     case 'block-quote':
       return (
-        <blockquote style={style} {...attributes}>
+        <blockquote
+          className="border-l-4 border-gray-500 italic my-4 pl-4"
+          style={style}
+          {...attributes}
+        >
           {children}
         </blockquote>
       );
     case 'bulleted-list':
       return (
-        <ul style={style} {...attributes}>
+        <ul className="list-disc ml-10" style={style} {...attributes}>
           {children}
         </ul>
       );
     case 'heading-one':
       return (
-        <h1 className="text-xl" style={style} {...attributes}>
+        <h1 className="text-4xl" style={style} {...attributes}>
           {children}
         </h1>
       );
     case 'heading-two':
       return (
-        <h2 style={style} {...attributes}>
+        <h2 className="text-3xl " style={style} {...attributes}>
+          {children}
+        </h2>
+      );
+    case 'heading-three':
+      return (
+        <h2 className="text-xl " style={style} {...attributes}>
           {children}
         </h2>
       );
@@ -193,9 +227,30 @@ const Element = ({ attributes, children, element }) => {
       );
     case 'numbered-list':
       return (
-        <ol style={style} {...attributes}>
+        <ol className="list-decimal ml-10" style={style} {...attributes}>
           {children}
         </ol>
+      );
+    case 'table':
+      return <Table {...props} />;
+    case 'table-row':
+      return (
+        <tr
+          className="min-w-[30px] min-h-2 border-spacing-1  border-gray-700 border-[1px] p-3"
+          {...attributes}
+        >
+          {children}
+        </tr>
+      );
+    case 'table-cell':
+      return (
+        <td
+          className="min-w-[30px] min-h-2 border-spacing-1  border-gray-700 border-[1px] p-3"
+          {...element.attr}
+          {...attributes}
+        >
+          {children}
+        </td>
       );
     default:
       return (
@@ -291,9 +346,8 @@ const initialValue: Descendant[] = [
   },
   {
     type: 'paragraph',
-    align: 'center',
     children: [{ text: 'Try it out for yourself!' }],
   },
 ];
 
-export default RichTextExample;
+export { RichTextEditor };

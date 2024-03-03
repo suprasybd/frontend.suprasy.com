@@ -17,6 +17,7 @@ import {
   Label,
   Switch,
   Textarea,
+  RichTextEditor,
   useToast,
 } from '@frontend.suprasy.com/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,7 +30,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import RichTextExample from '../../../components/SlateEditor/RichText';
+
 import { ApiClientCF } from '../../../libs/ApiClient';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 import {
@@ -469,8 +470,9 @@ const CreateProduct: React.FC = () => {
                   </FormItem>
                 )}
               />
+
               {/* test - here */}
-              <RichTextExample />
+              <RichTextEditor />
 
               <FormField
                 control={form.control}

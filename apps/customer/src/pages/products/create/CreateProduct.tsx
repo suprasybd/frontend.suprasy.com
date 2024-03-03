@@ -125,8 +125,6 @@ const CreateProduct: React.FC = () => {
   const productOptions = productOptionsResponse?.Data;
   const productsMultipleVariants = productMultipleVariantsResponse?.Data;
 
-  console.log(JSON.stringify(form.getValues('Variants')));
-
   const formattedOptions = useMemo(() => {
     const optionsMap: { [key: string]: Set<string> } = {};
 
@@ -153,20 +151,15 @@ const CreateProduct: React.FC = () => {
 
   const formattedMultipleVariantsOptionsValue = useMemo(() => {
     if (productsMultipleVariants) {
-      const formattedResult = [];
-
       const uniqueVariants: Record<
         number | string,
         {
           variant: StorefrontVariants | null;
-          options: Array<{
-            storefront_options: StorefrontOptions;
-            storefront_options_value: StorefrontOptionsValue;
-          }>;
+          options: Array<string>;
         }
       > = {};
 
-      productsMultipleVariants.forEach((variantDetails) => {
+      productsMultipleVariants.reverse().forEach((variantDetails) => {
         if (!uniqueVariants[variantDetails.storefront_variants.Id]) {
           uniqueVariants[variantDetails.storefront_variants.Id] = {
             variant: null,
@@ -179,17 +172,30 @@ const CreateProduct: React.FC = () => {
             variantDetails.storefront_variants;
         }
 
-        uniqueVariants[variantDetails.storefront_variants.Id].options.push({
-          storefront_options: variantDetails.storefront_options,
-          storefront_options_value: variantDetails.storefront_options_value,
-        });
+        uniqueVariants[variantDetails.storefront_variants.Id].options.push(
+          variantDetails.storefront_options_value.Value
+        );
       });
 
-      return uniqueVariants;
+      const formattedData = Object.values(uniqueVariants).map((data) => ({
+        Value: data.options.join('-'),
+        Price: data.variant?.Price,
+        Inventory: data.variant?.Inventory,
+      }));
+
+      return formattedData;
     }
   }, [productsMultipleVariants]);
 
   console.log('data', formattedMultipleVariantsOptionsValue);
+
+  const hasVariants = form.watch('HasVariants');
+  const Variants = form.watch('VariantsOptions');
+  const productImages = form.watch('Images');
+  const VariantsOptions = form.watch('VariantsOptions');
+  const MultipleVariants = form.watch('Variants');
+
+  // Pre fill previous values for update
 
   useEffect(() => {
     if (productDetails) {
@@ -226,10 +232,36 @@ const CreateProduct: React.FC = () => {
     formattedOptions,
   ]);
 
-  const hasVariants = form.watch('HasVariants');
-  const Variants = form.watch('VariantsOptions');
-  const productImages = form.watch('Images');
-  const VariantsOptions = form.watch('VariantsOptions');
+  useEffect(() => {
+    if (formattedMultipleVariantsOptionsValue) {
+      console.log(
+        'current - ',
+        formattedMultipleVariantsOptionsValue,
+        MultipleVariants
+      );
+      const updatedVariants = MultipleVariants.map((variant) => {
+        const currentValue = variant.Options.map((option) => option.Value).join(
+          '-'
+        );
+        const foundValue = formattedMultipleVariantsOptionsValue.find(
+          (value) => value.Value === currentValue
+        );
+        if (foundValue) {
+          return {
+            ...variant,
+            IsActive: true,
+            Inventory: foundValue.Inventory || 0,
+            Price: foundValue.Price || 0,
+          };
+        } else {
+          return variant;
+        }
+      });
+
+      form.setValue('Variants', updatedVariants);
+      console.log('updated variants', updatedVariants);
+    }
+  }, [formattedMultipleVariantsOptionsValue]);
 
   const navigate = useNavigate();
 
@@ -256,7 +288,7 @@ const CreateProduct: React.FC = () => {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { append, remove } = useFieldArray({
     name: 'VariantsOptions',
     control: form.control,
   });
@@ -282,11 +314,7 @@ const CreateProduct: React.FC = () => {
   const incrementChanges = useCreateCountStore((state) => state.increment);
   const updateChanges = useCreateCountStore((state) => state.count);
 
-  const {
-    fields: variantSku,
-    insert: insertSku,
-    update: updateSku,
-  } = useFieldArray({
+  const { fields: variantSku, update: updateSku } = useFieldArray({
     name: 'Variants',
     control: form.control,
   });

@@ -4,6 +4,7 @@ import {
   ResponseType,
 } from '../../../libs/types/responseTypes';
 import {
+  MultipleVariantsTypes,
   Options,
   ProductImagesTypes,
   ProductType,
@@ -53,6 +54,16 @@ export const getProudcctsOptions = async (
   productId: number
 ): Promise<ListResponseType<Options>> => {
   const response = await ApiClient.get(`/products/options/${productId}`);
+
+  return response.data;
+};
+
+export const getProductsMultipleVariants = async (
+  productId: number
+): Promise<ListResponseType<MultipleVariantsTypes>> => {
+  const response = await ApiClient.get(
+    `/products/multiplevairants/${productId}`
+  );
 
   return response.data;
 };

@@ -23,7 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import cn from 'classnames';
 import { Grip, Plus, Trash, Trash2 } from 'lucide-react';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -36,12 +36,18 @@ import {
   createStoresProduct,
   getProductsDetails,
   getProductsImages,
+  getProductsMultipleVariants,
   getProductsVariantsDetails,
   getProudcctsOptions,
 } from '../api';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 import RichTextExample from '../../../components/SlateEditor/RichText';
+import {
+  StorefrontOptions,
+  StorefrontOptionsValue,
+  StorefrontVariants,
+} from '../api/types';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -67,6 +73,7 @@ const CreateProduct: React.FC = () => {
       ],
     },
   });
+  const [imageUpdated, setImageUpdated] = useState<number>(0);
 
   const { toast } = useToast();
   const { storeKey } = useParams({ strict: false }) as {
@@ -106,10 +113,19 @@ const CreateProduct: React.FC = () => {
     enabled: !!productId && update,
   });
 
+  const { data: productMultipleVariantsResponse } = useQuery({
+    queryKey: ['getProductsMultipleVariantsOptionsValue', productId],
+    queryFn: () => getProductsMultipleVariants(productId || 0),
+    enabled: !!productId && update,
+  });
+
   const productDetails = productDetailsResponse?.Data;
   const productVariantDetails = productVariantsResponse?.Data;
   const productImagesData = productImagesResponse?.Data;
   const productOptions = productOptionsResponse?.Data;
+  const productsMultipleVariants = productMultipleVariantsResponse?.Data;
+
+  console.log(JSON.stringify(form.getValues('Variants')));
 
   const formattedOptions = useMemo(() => {
     const optionsMap: { [key: string]: Set<string> } = {};
@@ -135,6 +151,46 @@ const CreateProduct: React.FC = () => {
     return formattedOptionsArray;
   }, [productOptions]);
 
+  const formattedMultipleVariantsOptionsValue = useMemo(() => {
+    if (productsMultipleVariants) {
+      const formattedResult = [];
+
+      const uniqueVariants: Record<
+        number | string,
+        {
+          variant: StorefrontVariants | null;
+          options: Array<{
+            storefront_options: StorefrontOptions;
+            storefront_options_value: StorefrontOptionsValue;
+          }>;
+        }
+      > = {};
+
+      productsMultipleVariants.forEach((variantDetails) => {
+        if (!uniqueVariants[variantDetails.storefront_variants.Id]) {
+          uniqueVariants[variantDetails.storefront_variants.Id] = {
+            variant: null,
+            options: [],
+          };
+        }
+
+        if (!uniqueVariants[variantDetails.storefront_variants.Id].variant) {
+          uniqueVariants[variantDetails.storefront_variants.Id].variant =
+            variantDetails.storefront_variants;
+        }
+
+        uniqueVariants[variantDetails.storefront_variants.Id].options.push({
+          storefront_options: variantDetails.storefront_options,
+          storefront_options_value: variantDetails.storefront_options_value,
+        });
+      });
+
+      return uniqueVariants;
+    }
+  }, [productsMultipleVariants]);
+
+  console.log('data', formattedMultipleVariantsOptionsValue);
+
   useEffect(() => {
     if (productDetails) {
       form.setValue('Title', productDetails.Title);
@@ -152,10 +208,13 @@ const CreateProduct: React.FC = () => {
       const productImagesFormatted = productImagesData.map((image) => ({
         ImageUrl: image.ImageUrl,
       }));
+
       form.setValue('Images', productImagesFormatted);
+
+      setImageUpdated((prev) => prev + 1);
     }
 
-    if (formattedOptions) {
+    if (formattedOptions && isUpdating) {
       form.setValue('VariantsOptions', formattedOptions);
     }
   }, [
@@ -163,11 +222,15 @@ const CreateProduct: React.FC = () => {
     form,
     productVariantDetails,
     productImagesData,
+    isUpdating,
     formattedOptions,
   ]);
 
   const hasVariants = form.watch('HasVariants');
   const Variants = form.watch('VariantsOptions');
+  const productImages = form.watch('Images');
+  const VariantsOptions = form.watch('VariantsOptions');
+
   const navigate = useNavigate();
 
   const { mutate: createProduct, isPending } = useMutation({
@@ -208,7 +271,6 @@ const CreateProduct: React.FC = () => {
   });
 
   const {
-    fields: productImages,
     remove: removeImage,
     append: appendImage,
     move: moveImage,
@@ -412,8 +474,8 @@ const CreateProduct: React.FC = () => {
             <CardContent>
               <h3 className="text-red-600">{errors.Images?.message}</h3>
               <div className="flex gap-4 flex-wrap transition-all duration-200">
-                <DragDropContext onDragEnd={handleDrag}>
-                  <Droppable droppableId="test-items">
+                <DragDropContext onDragEnd={handleDrag} key={imageUpdated}>
+                  <Droppable droppableId="test-items" key={imageUpdated}>
                     {(provided, snapshot) => (
                       <div {...provided.droppableProps} ref={provided.innerRef}>
                         {productImages?.map((image, index) => (
@@ -425,7 +487,7 @@ const CreateProduct: React.FC = () => {
                             {(provided, snapshot) => (
                               <div
                                 className="relative group w-fit m-3 transition-all duration-200"
-                                key={image.id}
+                                key={image.ImageUrl}
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                               >
@@ -532,7 +594,7 @@ const CreateProduct: React.FC = () => {
                 </div>
                 {hasVariants && (
                   <div className="mt-3">
-                    {fields.map((option, index) => {
+                    {VariantsOptions.map((option, index) => {
                       return (
                         <Card className="mb-3">
                           <CardContent>
@@ -571,7 +633,7 @@ const CreateProduct: React.FC = () => {
                                   <h3 className="mt-3">Values</h3>
 
                                   <div className="flex gap-1 items-center">
-                                    {Variants[index].Values.map((option) => (
+                                    {Variants[index]?.Values.map((option) => (
                                       <span>
                                         {option && (
                                           <span className="block bg-gradient-to-r from-violet-600 to-indigo-600 px-2 w-fit rounded text-sm text-white">
@@ -663,33 +725,33 @@ const CreateProduct: React.FC = () => {
                 {variantSku.map((combinations, index) => (
                   <div
                     key={combinations.id}
-                    className="flex items-center gap-4"
+                    className="flex items-center justify-between gap-4"
                   >
-                    <div className="whitespace-nowrap">
-                      <FormField
-                        control={form.control}
-                        name={`Variants.${index}.IsActive`}
-                        render={({ field }) => (
-                          <FormItem className="space-y-0">
-                            <FormLabel className="mr-1"></FormLabel>
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                    <div className="flex-1 flex gap-[8px]">
+                      <div className="whitespace-nowrap">
+                        <FormField
+                          control={form.control}
+                          name={`Variants.${index}.IsActive`}
+                          render={({ field }) => (
+                            <FormItem className="space-y-0 flex items-center">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormLabel className="whitespace-nowrap ml-[8px]">
+                                {combinations.Options.map(
+                                  (option) => option.Value
+                                ).join('-')}
+                              </FormLabel>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     </div>
-                    <div className="whitespace-nowrap">
-                      {combinations.Options.map((option) => option.Value).join(
-                        '-'
-                      )}
-                    </div>
-                    <div>
+                    <div className="flex-1 w-full">
                       <FormField
                         control={form.control}
                         name={`Variants.${index}.Price`}
@@ -705,7 +767,7 @@ const CreateProduct: React.FC = () => {
                         )}
                       />
                     </div>
-                    <div>
+                    <div className="flex-1 w-full">
                       <FormField
                         control={form.control}
                         name={`Variants.${index}.Inventory`}

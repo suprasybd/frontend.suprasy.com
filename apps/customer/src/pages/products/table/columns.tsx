@@ -11,7 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@frontend.suprasy.com/ui';
-import { Link, useParams } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
+import { v4 as uuidv4 } from 'uuid';
 
 export const productsColumn: ColumnDef<ProductType>[] = [
   {
@@ -62,6 +63,7 @@ export const productsColumn: ColumnDef<ProductType>[] = [
                 search={{
                   productId: product.Id,
                   update: true,
+                  uuid: uuidv4(),
                 }}
               >
                 Update Product

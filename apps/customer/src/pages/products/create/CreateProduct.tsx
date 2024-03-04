@@ -30,6 +30,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ApiClientCF } from '../../../libs/ApiClient';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
@@ -40,6 +41,7 @@ import {
   getProductsMultipleVariants,
   getProductsVariantsDetails,
   getProudcctsOptions,
+  updateStoresProduct,
 } from '../api';
 import { StorefrontVariants } from '../api/types';
 import NestedValues from './components/NestedValues';
@@ -77,7 +79,7 @@ const CreateProduct: React.FC = () => {
     storeKey: string;
   };
 
-  const { update, productId } = useSearch({
+  const { update, productId, uuid } = useSearch({
     from: ProductsCreateRoute.fullPath,
   });
 
@@ -86,7 +88,7 @@ const CreateProduct: React.FC = () => {
   // @Api - @Data Fetching
 
   const { data: productDetailsResponse } = useQuery({
-    queryKey: ['getProductDetails', productId],
+    queryKey: ['getProductDetails', productId, uuid],
     queryFn: () => getProductsDetails(productId || 0),
 
     enabled: !!productId && update,
@@ -286,6 +288,30 @@ const CreateProduct: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const { mutate: updateProduct, isPending: updateProductLoading } =
+    useMutation({
+      mutationFn: updateStoresProduct,
+      onSuccess: (response) => {
+        toast({
+          title: 'Product update',
+          description: response.Message,
+        });
+        navigate({
+          to: '/store/$storeKey/products',
+          params: {
+            storeKey,
+          },
+        });
+      },
+      onError: () => {
+        toast({
+          title: 'Product update',
+          description: 'Product update Failed Due To Server Error.',
+          variant: 'destructive',
+        });
+      },
+    });
+
   const { mutate: createProduct, isPending } = useMutation({
     mutationFn: createStoresProduct,
     onSuccess: (response) => {
@@ -354,6 +380,7 @@ const CreateProduct: React.FC = () => {
       createProduct(finalProduct as any);
     } else {
       // hit update product endpoint
+      updateProduct({ data: finalProduct as any, productId: productId });
     }
   }
 
@@ -444,6 +471,10 @@ const CreateProduct: React.FC = () => {
     }
   };
 
+  const productDescription = useMemo(() => {
+    return productDetails?.Description;
+  }, [productDetails]);
+
   return (
     <section className="w-full max-w-[54rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       <Form {...form}>
@@ -480,9 +511,9 @@ const CreateProduct: React.FC = () => {
 
                 <FormLabel>Description</FormLabel>
 
-                {productDetails?.Description && isUpdating && (
+                {productDescription && isUpdating && (
                   <RichTextEditor
-                    initialVal={productDetails?.Description}
+                    initialVal={productDescription}
                     onValChange={(data) =>
                       form.setValue('Description', JSON.stringify(data))
                     }
@@ -873,8 +904,13 @@ const CreateProduct: React.FC = () => {
             </Card>
           )}
 
-          <Button type="submit" className="w-full " variant={'defaultGradiant'}>
-            {isPending && (
+          <Button
+            disabled={updateProductLoading || isPending}
+            type="submit"
+            className="w-full "
+            variant={'defaultGradiant'}
+          >
+            {(isPending || updateProductLoading) && (
               <>
                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                 Processing

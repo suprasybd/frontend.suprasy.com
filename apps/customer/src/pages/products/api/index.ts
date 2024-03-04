@@ -26,6 +26,17 @@ export const createStoresProduct = async (
   return response.data;
 };
 
+export const updateStoresProduct = async (data: {
+  data: typeof productSchema;
+  productId: number;
+}): Promise<ResponseType<string>> => {
+  const response = await ApiClient.put(
+    `/products/${data.productId}`,
+    data.data
+  );
+  return response.data;
+};
+
 export const getProductsDetails = async (
   productId: number
 ): Promise<ResponseType<ProductType>> => {

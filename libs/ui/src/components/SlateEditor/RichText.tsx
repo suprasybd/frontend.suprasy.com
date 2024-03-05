@@ -31,7 +31,6 @@ import {
   Underline,
 } from 'lucide-react';
 import { Button, Toolbar } from './RichTextComponents/Components';
-import Table from './Elements/Table/Table';
 import TableSelector from './Elements/Table/TableSelector';
 import withTable from './Plugins/withTable';
 
@@ -47,7 +46,7 @@ const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'];
 
 const RichTextEditor: React.FC<{
   initialVal?: string;
-  onValChange: (data: Descendant[]) => void;
+  onValChange?: (data: Descendant[]) => void;
 }> = ({ onValChange, initialVal }) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
@@ -102,6 +101,42 @@ const RichTextEditor: React.FC<{
         // readOnly
         className="p-4  rounded-md rounded-t-none border border-input shadow-sm
         focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[200px]"
+        renderElement={renderElement}
+        renderLeaf={renderLeaf}
+        placeholder="Enter some rich text…"
+        spellCheck
+        autoFocus
+        onKeyDown={(event) => {
+          for (const hotkey in HOTKEYS) {
+            if (isHotkey(hotkey, event as any)) {
+              event.preventDefault();
+              const mark = HOTKEYS[hotkey];
+              toggleMark(editor, mark);
+            }
+          }
+        }}
+      />
+    </Slate>
+  );
+};
+
+export const RichTextRender: React.FC<{
+  initialVal?: string;
+}> = ({ initialVal }) => {
+  const renderElement = useCallback((props) => <Element {...props} />, []);
+  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
+  const editor = useMemo(
+    () => withTable(withHistory(withReact(createEditor()))),
+    []
+  );
+
+  const initVal = initialVal && JSON.parse(initialVal);
+
+  return (
+    <Slate editor={editor} initialValue={initVal || initialValue}>
+      <Editable
+        readOnly
+        className="min-h-[200px]"
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Enter some rich text…"

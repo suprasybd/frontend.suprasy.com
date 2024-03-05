@@ -107,7 +107,7 @@ const CreateProduct: React.FC = () => {
   });
 
   const { data: productOptionsResponse } = useQuery({
-    queryKey: ['getProductOptions', productId],
+    queryKey: ['getProductOptions', productId, uuid],
     queryFn: () => getProudcctsOptions(productId || 0),
     enabled: !!productId && update,
   });
@@ -116,7 +116,7 @@ const CreateProduct: React.FC = () => {
     data: productMultipleVariantsResponse,
     isSuccess: getMultipleVariantsSuccess,
   } = useQuery({
-    queryKey: ['getProductsMultipleVariantsOptionsValue', productId],
+    queryKey: ['getProductsMultipleVariantsOptionsValue', productId, uuid],
     queryFn: () => getProductsMultipleVariants(productId || 0),
     enabled: !!productId && update,
   });
@@ -501,8 +501,6 @@ const CreateProduct: React.FC = () => {
                   </FormItem>
                 )}
               />
-
-              {/* test - here */}
 
               <div className="mt-2">
                 <p className="text-sm text-red-600">

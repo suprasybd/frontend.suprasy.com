@@ -45,7 +45,8 @@ const TableSelector = ({ editor }) => {
   }, [showOptions]);
   const table = new TableUtil(editor);
 
-  const handleButtonClick = () => {
+  const handleButtonClick = (e) => {
+    e.preventDefault();
     setSelection(editor.selection);
     setShowOptions((prev) => !prev);
   };

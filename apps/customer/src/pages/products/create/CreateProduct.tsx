@@ -790,7 +790,7 @@ const CreateProduct: React.FC = () => {
             <Card id="inventory">
               <CardHeader className="pb-0">
                 <CardTitle>Enter Single Product Price</CardTitle>
-                <CardDescription>e.g. 199 BDT</CardDescription>
+                <CardDescription>e.g. 199 Price (BDT/৳)</CardDescription>
               </CardHeader>
               <CardContent>
                 <FormField
@@ -798,7 +798,7 @@ const CreateProduct: React.FC = () => {
                   name="Price"
                   render={({ field }) => (
                     <FormItem className="space-y-0 !mt-3">
-                      <FormLabel>Price</FormLabel>
+                      <FormLabel>Price (BDT/৳) </FormLabel>
                       <FormControl>
                         <Input placeholder="Price" {...field} />
                       </FormControl>
@@ -832,7 +832,9 @@ const CreateProduct: React.FC = () => {
                 <CardTitle>
                   Enter Inventory(Quantity) / Price For Variants
                 </CardTitle>
-                <CardDescription>e.g. 1 Inventory, 199 BDT</CardDescription>
+                <CardDescription>
+                  e.g. 1 Inventory, 199 Price (BDT/৳)
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {variantSku.map((combinations, index) => (
@@ -870,7 +872,7 @@ const CreateProduct: React.FC = () => {
                         name={`Variants.${index}.Price`}
                         render={({ field }) => (
                           <FormItem className="space-y-0">
-                            <FormLabel>Price</FormLabel>
+                            <FormLabel>Price (BDT/৳) </FormLabel>
                             <FormControl>
                               <Input placeholder="Price" {...field} />
                             </FormControl>

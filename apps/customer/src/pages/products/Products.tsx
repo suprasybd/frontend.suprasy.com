@@ -6,7 +6,7 @@ import React from 'react';
 import { LoaderMain } from '../../components/Loader/Loader';
 import { getUserStoresProductsList } from './api';
 import { productsColumn } from './table/columns';
-import { DataTable } from './table/table';
+import { DataTable } from '../../components/Table/table';
 
 const Products: React.FC = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };

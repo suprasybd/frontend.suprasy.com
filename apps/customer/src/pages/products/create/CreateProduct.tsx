@@ -787,7 +787,7 @@ const CreateProduct: React.FC = () => {
           </Card>
 
           {!hasVariants && (
-            <Card>
+            <Card id="inventory">
               <CardHeader className="pb-0">
                 <CardTitle>Enter Single Product Price</CardTitle>
                 <CardDescription>e.g. 199 BDT</CardDescription>
@@ -827,7 +827,7 @@ const CreateProduct: React.FC = () => {
           )}
 
           {hasVariants && (
-            <Card>
+            <Card id="inventory">
               <CardHeader className="pb-0">
                 <CardTitle>
                   Enter Inventory(Quantity) / Price For Variants

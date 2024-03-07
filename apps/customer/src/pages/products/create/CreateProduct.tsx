@@ -159,23 +159,26 @@ const CreateProduct: React.FC = () => {
         }
       > = {};
 
-      productsMultipleVariants.slice().forEach((variantDetails) => {
-        if (!uniqueVariants[variantDetails.storefront_variants.Id]) {
-          uniqueVariants[variantDetails.storefront_variants.Id] = {
-            variant: null,
-            options: [],
-          };
-        }
+      productsMultipleVariants
+        .slice()
 
-        if (!uniqueVariants[variantDetails.storefront_variants.Id].variant) {
-          uniqueVariants[variantDetails.storefront_variants.Id].variant =
-            variantDetails.storefront_variants;
-        }
+        .forEach((variantDetails) => {
+          if (!uniqueVariants[variantDetails.storefront_variants.Id]) {
+            uniqueVariants[variantDetails.storefront_variants.Id] = {
+              variant: null,
+              options: [],
+            };
+          }
 
-        uniqueVariants[variantDetails.storefront_variants.Id].options.push(
-          variantDetails.storefront_options_value.Value
-        );
-      });
+          if (!uniqueVariants[variantDetails.storefront_variants.Id].variant) {
+            uniqueVariants[variantDetails.storefront_variants.Id].variant =
+              variantDetails.storefront_variants;
+          }
+
+          uniqueVariants[variantDetails.storefront_variants.Id].options.push(
+            variantDetails.storefront_options_value.Value
+          );
+        });
 
       const formattedData = Object.values(uniqueVariants).map((data) => ({
         Value: data.options.join('-'),

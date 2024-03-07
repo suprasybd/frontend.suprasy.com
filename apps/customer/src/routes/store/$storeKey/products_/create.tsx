@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import CreateProduct from '../../../../pages/products/create/CreateProduct';
 interface ProductSearchTypes {
   update?: boolean;
-  productId?: number;
+  productId?: string;
   uuid?: string;
   updateInventory?: boolean;
 }
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/store/$storeKey/products/create')({
     return {
       update: Boolean(search?.update ?? false),
       updateInventory: Boolean(search?.updateInventory ?? false),
-      productId: Number(search?.productId),
+      productId: String(search?.productId),
       uuid: String(search?.uuid || ''),
     };
   },

@@ -89,26 +89,26 @@ const CreateProduct: React.FC = () => {
 
   const { data: productDetailsResponse } = useQuery({
     queryKey: ['getProductDetails', productId, uuid],
-    queryFn: () => getProductsDetails(productId || 0),
+    queryFn: () => getProductsDetails(productId || '0'),
 
     enabled: !!productId && update,
   });
 
   const { data: productVariantsResponse } = useQuery({
     queryKey: ['getProductVariantsDetails', productId],
-    queryFn: () => getProductsVariantsDetails(productId || 0),
+    queryFn: () => getProductsVariantsDetails(productId || '0'),
     enabled: !!productId && update,
   });
 
   const { data: productImagesResponse } = useQuery({
     queryKey: ['getProductImages', productId],
-    queryFn: () => getProductsImages(productId || 0),
+    queryFn: () => getProductsImages(productId || '0'),
     enabled: !!productId && update,
   });
 
   const { data: productOptionsResponse } = useQuery({
     queryKey: ['getProductOptions', productId, uuid],
-    queryFn: () => getProudcctsOptions(productId || 0),
+    queryFn: () => getProudcctsOptions(productId || '0'),
     enabled: !!productId && update,
   });
 
@@ -117,7 +117,7 @@ const CreateProduct: React.FC = () => {
     isSuccess: getMultipleVariantsSuccess,
   } = useQuery({
     queryKey: ['getProductsMultipleVariantsOptionsValue', productId, uuid],
-    queryFn: () => getProductsMultipleVariants(productId || 0),
+    queryFn: () => getProductsMultipleVariants(productId || '0'),
     enabled: !!productId && update,
   });
 

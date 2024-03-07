@@ -1,8 +1,8 @@
 export interface ProductType {
-  Id: number;
+  Id: string;
   StoreKey: string;
   HasVariant: boolean;
-  CategoryId: number;
+  CategoryId: string;
   Slug: string;
   Title: string;
   Description: string;
@@ -12,9 +12,9 @@ export interface ProductType {
 }
 
 export interface ProductsVairantsTypes {
-  Id: number;
+  Id: string;
   StoreKey: string;
-  ProductId: number;
+  ProductId: string;
   Price: number;
   Inventory: number;
   CreatedAt: string;
@@ -22,9 +22,9 @@ export interface ProductsVairantsTypes {
 }
 
 export interface ProductImagesTypes {
-  Id: number;
+  Id: string;
   StoreKey: string;
-  ProductId: number;
+  ProductId: string;
   Order: number;
   ImageUrl: string;
   CreatedAt: string;
@@ -38,18 +38,18 @@ export interface Options {
 }
 
 export interface StorefrontOptions {
-  Id: number;
+  Id: string;
   StoreKey: string;
-  ProductId: number;
+  ProductId: string;
   Name: string;
   CreatedAt: string;
   UpdatedAt: string;
 }
 
 export interface StorefrontOptionsValue {
-  Id: number;
+  Id: string;
   StoreKey: string;
-  OptionId: number;
+  OptionId: string;
   Value: string;
   CreatedAt: string;
   UpdatedAt: string;
@@ -65,9 +65,9 @@ export interface MultipleVariantsTypes {
 }
 
 export interface StorefrontVariants {
-  Id: number;
+  Id: string;
   StoreKey: string;
-  ProductId: number;
+  ProductId: string;
   Price: number;
   Inventory: number;
   CreatedAt: string;
@@ -75,28 +75,28 @@ export interface StorefrontVariants {
 }
 
 export interface StorefrontVariantsOptions {
-  Id: number;
+  Id: string;
   StoreKey: string;
-  VariantId: number;
-  OptionId: number;
-  ValueId: number;
+  VariantId: string;
+  OptionId: string;
+  ValueId: string;
   CreatedAt: string;
   UpdatedAt: string;
 }
 
 export interface StorefrontOptions {
-  Id: number;
+  Id: string;
   StoreKey: string;
-  ProductId: number;
+  ProductId: string;
   Name: string;
   CreatedAt: string;
   UpdatedAt: string;
 }
 
 export interface StorefrontOptionsValue {
-  Id: number;
+  Id: string;
   StoreKey: string;
-  OptionId: number;
+  OptionId: string;
   Value: string;
   CreatedAt: string;
   UpdatedAt: string;

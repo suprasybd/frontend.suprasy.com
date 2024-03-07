@@ -48,7 +48,7 @@ const ProductDetails: React.FC = () => {
 
   const { data: productDetailsResponse } = useQuery({
     queryKey: ['getProductDetails', productId],
-    queryFn: () => getProductsDetails(parseInt(productId, 10) || 0),
+    queryFn: () => getProductsDetails(productId || '0'),
 
     enabled: !!productId,
   });

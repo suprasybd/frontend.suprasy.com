@@ -21,7 +21,7 @@ const InventoryDetails: React.FC = () => {
 
   const { data: productDetailsResponse } = useQuery({
     queryKey: ['getProductDetails', productId],
-    queryFn: () => getProductsDetails(parseInt(productId, 10) || 0),
+    queryFn: () => getProductsDetails(productId || '0'),
 
     enabled: !!productId,
   });
@@ -33,7 +33,7 @@ const InventoryDetails: React.FC = () => {
     isLoading: inventoryLoadingHasVariant,
   } = useQuery({
     queryKey: ['getProductsMultipleVariantsOptionsValueInventory', productId],
-    queryFn: () => getProductsMultipleVariants(parseInt(productId, 10) || 0),
+    queryFn: () => getProductsMultipleVariants(productId || '0'),
     enabled: !!productId && productDetails?.HasVariant,
   });
 
@@ -42,7 +42,7 @@ const InventoryDetails: React.FC = () => {
     isLoading: inventoryLoadingNoVariants,
   } = useQuery({
     queryKey: ['getProductVariantsDetails', productId],
-    queryFn: () => getProductsVariantsDetails(parseInt(productId, 10) || 0),
+    queryFn: () => getProductsVariantsDetails(productId || '0'),
     enabled: !!productId && !productDetails?.HasVariant,
   });
 
@@ -85,7 +85,7 @@ const InventoryDetails: React.FC = () => {
         Value: data.options.join('-'),
         Price: data.variant?.Price as number,
         Inventory: data.variant?.Inventory as number,
-        ProductId: data.variant?.ProductId as number,
+        ProductId: data.variant?.ProductId as string,
         StoreKey: data.variant?.StoreKey as string,
       }));
 
@@ -96,7 +96,7 @@ const InventoryDetails: React.FC = () => {
           Value: productDetails?.Title.slice(0, 30) + ' ...',
           Price: productVariantDetails?.Price as number,
           Inventory: productVariantDetails?.Inventory as number,
-          ProductId: productVariantDetails?.ProductId as number,
+          ProductId: productVariantDetails?.ProductId as string,
           StoreKey: productVariantDetails?.StoreKey as string,
         },
       ];

@@ -28,7 +28,7 @@ export const createStoresProduct = async (
 
 export const updateStoresProduct = async (data: {
   data: typeof productSchema;
-  productId: number;
+  productId: string;
 }): Promise<ResponseType<string>> => {
   const response = await ApiClient.put(
     `/products/${data.productId}`,
@@ -38,7 +38,7 @@ export const updateStoresProduct = async (data: {
 };
 
 export const getProductsDetails = async (
-  productId: number
+  productId: string
 ): Promise<ResponseType<ProductType>> => {
   const response = await ApiClient.get(`/products/${productId}`);
 
@@ -46,7 +46,7 @@ export const getProductsDetails = async (
 };
 
 export const getProductsVariantsDetails = async (
-  productId: number
+  productId: string
 ): Promise<ResponseType<ProductsVairantsTypes>> => {
   const response = await ApiClient.get(`/products/variants/${productId}`);
 
@@ -54,7 +54,7 @@ export const getProductsVariantsDetails = async (
 };
 
 export const getProductsImages = async (
-  productId: number
+  productId: string
 ): Promise<ListResponseType<ProductImagesTypes>> => {
   const response = await ApiClient.get(`/products/images/${productId}`);
 
@@ -62,7 +62,7 @@ export const getProductsImages = async (
 };
 
 export const getProudcctsOptions = async (
-  productId: number
+  productId: string
 ): Promise<ListResponseType<Options>> => {
   const response = await ApiClient.get(`/products/options/${productId}`);
 
@@ -70,7 +70,7 @@ export const getProudcctsOptions = async (
 };
 
 export const getProductsMultipleVariants = async (
-  productId: number
+  productId: string
 ): Promise<ListResponseType<MultipleVariantsTypes>> => {
   const response = await ApiClient.get(
     `/products/multiplevairants/${productId}`

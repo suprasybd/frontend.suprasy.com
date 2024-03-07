@@ -30,7 +30,7 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { ApiClientCF } from '../../../libs/ApiClient';
+import ApiClient, { ApiClientCF } from '../../../libs/ApiClient';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 import {
   createStoresProduct,
@@ -451,7 +451,7 @@ const CreateProduct: React.FC = () => {
       }
       const formData = new FormData();
       formData.append('ProductImage', selectedFile);
-      const resposne = await ApiClientCF.put('/image/upload', formData);
+      const resposne = await ApiClient.post('/images/upload', formData);
       appendImage({ ImageUrl: resposne.data.ImageUrl });
       uploadingRemove(0);
     } catch (error) {

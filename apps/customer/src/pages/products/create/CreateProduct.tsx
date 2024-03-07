@@ -79,7 +79,7 @@ const CreateProduct: React.FC = () => {
     storeKey: string;
   };
 
-  const { update, productId, uuid } = useSearch({
+  const { update, productId, uuid, updateInventory } = useSearch({
     from: ProductsCreateRoute.fullPath,
   });
 
@@ -479,7 +479,7 @@ const CreateProduct: React.FC = () => {
     <section className="w-full max-w-[54rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <Card>
+          <Card className={updateInventory ? 'hidden' : ''}>
             <CardHeader>
               <CardTitle>
                 {isUpdating ? 'Update Product' : 'Create Product'}
@@ -549,7 +549,7 @@ const CreateProduct: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className={updateInventory ? 'hidden' : ''}>
             <CardHeader className="pb-0">
               <CardTitle>Enter Product Slug / Url</CardTitle>
               <CardDescription>
@@ -574,7 +574,7 @@ const CreateProduct: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className={updateInventory ? 'hidden' : ''}>
             <CardHeader className="pb-0">
               <CardTitle>Media</CardTitle>
               <CardDescription>Enter images for your product.</CardDescription>
@@ -670,6 +670,12 @@ const CreateProduct: React.FC = () => {
               </div>
             </CardContent>
           </Card>
+
+          {updateInventory && (
+            <h1 className="text-xl font-bold my-3">
+              Update Variants & Inventory (Stock)
+            </h1>
+          )}
 
           <Card>
             <CardHeader>

@@ -83,7 +83,7 @@ const StoreSidebar = () => {
               <span className="text-sm font-medium">Products</span>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               to="/store/$storeKey/inventory"
               params={{ storeKey: storeKey }}
@@ -97,7 +97,7 @@ const StoreSidebar = () => {
               </span>
               <span className="text-sm font-medium">Inventory</span>
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link
               to="/store/$storeKey/customers"

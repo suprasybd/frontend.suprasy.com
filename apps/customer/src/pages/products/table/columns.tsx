@@ -56,6 +56,17 @@ export const productsColumn: ColumnDef<ProductType>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <Link
+                to="/store/$storeKey/products/$productId/details"
+                params={{
+                  productId: product.Id?.toString(),
+                  storeKey: product.StoreKey,
+                }}
+              >
+                View product details
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link
                 to="/store/$storeKey/products/create"
                 params={{
                   storeKey: product.StoreKey,
@@ -69,15 +80,22 @@ export const productsColumn: ColumnDef<ProductType>[] = [
                 Update Product
               </Link>
             </DropdownMenuItem>
+
             <DropdownMenuItem>
               <Link
-                to="/store/$storeKey/products/$productId/details"
+                to="/store/$storeKey/products/create"
                 params={{
-                  productId: product.Id?.toString(),
                   storeKey: product.StoreKey,
                 }}
+                search={{
+                  updateInventory: true,
+                  productId: product.Id,
+                  update: true,
+                  uuid: uuidv4(),
+                }}
+                hash="inventory"
               >
-                View product details
+                Update Inventory
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

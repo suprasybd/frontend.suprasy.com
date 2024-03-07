@@ -45,10 +45,12 @@ export const inventoryDetailsColumn: ColumnDef<{
               storeKey: inventory.StoreKey,
             }}
             search={{
+              updateInventory: true,
               productId: inventory.ProductId,
               update: true,
               uuid: uuidv4(),
             }}
+            hash="inventory"
           >
             Update Inventory
           </Link>

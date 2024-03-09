@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@frontend.suprasy.com/ui';
+import DeleteProductModal from './components/deleteProductModal';
 import { Link } from '@tanstack/react-router';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -97,6 +98,12 @@ export const productsColumn: ColumnDef<ProductType>[] = [
               >
                 Update Inventory
               </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={(e) => e.preventDefault()}
+              className="hover:!bg-red-500 hover:!text-white"
+            >
+              <DeleteProductModal productId={product.Id} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

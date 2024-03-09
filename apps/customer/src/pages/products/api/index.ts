@@ -78,3 +78,11 @@ export const getProductsMultipleVariants = async (
 
   return response.data;
 };
+
+export const deleteProduct = async (
+  productId: string
+): Promise<ResponseType<ProductType>> => {
+  const response = await ApiClient.delete(`/products/${productId}`);
+
+  return response.data;
+};

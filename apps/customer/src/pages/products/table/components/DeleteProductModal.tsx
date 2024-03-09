@@ -1,4 +1,3 @@
-import React, { useRef, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,9 +10,10 @@ import {
   AlertDialogTrigger,
   useToast,
 } from '@frontend.suprasy.com/ui';
-import { deleteProduct } from '../../api';
-import { useMutation } from '@tanstack/react-query';
 import { ReloadIcon } from '@radix-ui/react-icons';
+import { useMutation } from '@tanstack/react-query';
+import React from 'react';
+import { deleteProduct } from '../../api';
 
 const DeleteProductModal: React.FC<{ productId: string }> = ({ productId }) => {
   const { toast } = useToast();
@@ -51,6 +51,7 @@ const DeleteProductModal: React.FC<{ productId: string }> = ({ productId }) => {
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
             <AlertDialogAction
+              className="bg-red-500 text-white hover:bg-red-800 hover:text-white"
               disabled={isPending}
               onClick={() => {
                 deleteProductHandler(productId);

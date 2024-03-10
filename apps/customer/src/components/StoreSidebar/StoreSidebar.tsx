@@ -6,6 +6,7 @@ import {
   Folders,
   Globe,
   HandCoins,
+  Layers3,
   Mails,
   Microwave,
   ShoppingBasket,
@@ -82,7 +83,7 @@ const StoreSidebar = () => {
               <span className="text-sm font-medium">Products</span>
             </Link>
           </li>
-          {/* <li>
+          <li>
             <Link
               to="/store/$storeKey/inventory"
               params={{ storeKey: storeKey }}
@@ -94,9 +95,9 @@ const StoreSidebar = () => {
               <span className="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400">
                 <Layers3 />
               </span>
-              <span className="text-sm font-medium">Inventory</span>
+              <span className="text-sm font-medium">Category</span>
             </Link>
-          </li> */}
+          </li>
           <li>
             <Link
               to="/store/$storeKey/customers"

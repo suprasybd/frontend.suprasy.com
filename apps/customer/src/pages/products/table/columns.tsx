@@ -11,9 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@frontend.suprasy.com/ui';
-import DeleteProductModal from './components/deleteProductModal';
+import DeleteProductModal from './components/DeleteProductModal';
 import { Link } from '@tanstack/react-router';
 import { v4 as uuidv4 } from 'uuid';
+import { formatDate } from '../../../../src/libs/helpers/formatdate';
 
 export const productsColumn: ColumnDef<ProductType>[] = [
   {
@@ -37,7 +38,15 @@ export const productsColumn: ColumnDef<ProductType>[] = [
       return product.Description.slice(0, 50) + '...';
     },
   },
+  {
+    accessorKey: 'CreatedAt',
+    header: 'Created At',
+    cell: ({ row }) => {
+      const product = row.original;
 
+      return formatDate(product.CreatedAt);
+    },
+  },
   {
     id: 'actions',
     cell: ({ row }) => {

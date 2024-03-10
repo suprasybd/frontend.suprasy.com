@@ -1,3 +1,4 @@
+import { Button } from '@frontend.suprasy.com/ui';
 import { Link, useParams } from '@tanstack/react-router';
 import cn from 'classnames';
 import {
@@ -5,7 +6,6 @@ import {
   Folders,
   Globe,
   HandCoins,
-  Layers3,
   Mails,
   Microwave,
   ShoppingBasket,
@@ -13,9 +13,8 @@ import {
   UsersRound,
   X,
 } from 'lucide-react';
-import styles from './StoreSidebar.module.scss';
 import { useSidebarStore } from '../../store/sidebarStore';
-import { Button } from '@frontend.suprasy.com/ui';
+import styles from './StoreSidebar.module.scss';
 
 const StoreSidebar = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
@@ -24,7 +23,7 @@ const StoreSidebar = () => {
   return (
     <div
       className={cn(
-        'min-h-screen fixed top-0 transition-all duration-200 -translate-x-60 z-10 overflow-scroll flex flex-row bg-gray-100 border border-r-2',
+        'min-h-[93vh] fixed top-0 transition-all duration-200 -translate-x-60 z-10 overflow-scroll flex flex-row bg-gray-100 border border-r-2',
         isSidebarOpen && '!translate-x-0',
         'sm:translate-x-0 sm:relative sm:overflow-hidden'
       )}

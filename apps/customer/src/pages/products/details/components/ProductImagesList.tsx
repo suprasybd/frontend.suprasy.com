@@ -12,7 +12,7 @@ const ProductImagesList: React.FC = () => {
 
   const { data: productImagesResponse, isLoading } = useQuery({
     queryKey: ['getProductImages', productId],
-    queryFn: () => getProductsImages(productId || '0'),
+    queryFn: () => getProductsImages(parseInt(productId) || 0),
     enabled: !!productId,
   });
   const productImages = productImagesResponse?.Data;

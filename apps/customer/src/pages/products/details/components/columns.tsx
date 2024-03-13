@@ -7,7 +7,7 @@ export const inventoryDetailsColumn: ColumnDef<{
   Value: string;
   Inventory: number;
   Price: number;
-  ProductId: string;
+  ProductId: number;
   StoreKey: string;
 }>[] = [
   {

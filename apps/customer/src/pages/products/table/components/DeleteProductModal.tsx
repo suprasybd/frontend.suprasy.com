@@ -15,7 +15,7 @@ import { useMutation } from '@tanstack/react-query';
 import React from 'react';
 import { deleteProduct } from '../../api';
 
-const DeleteProductModal: React.FC<{ productId: string }> = ({ productId }) => {
+const DeleteProductModal: React.FC<{ productId: number }> = ({ productId }) => {
   const { toast } = useToast();
 
   const { mutate: deleteProductHandler, isPending } = useMutation({

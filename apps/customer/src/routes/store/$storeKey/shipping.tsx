@@ -1,5 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
+import Shipping from '../../../pages/shipping/Shipping';
 
 export const Route = createFileRoute('/store/$storeKey/shipping')({
-  component: () => <div>Hello /store/$storeKey/shipping!</div>
-})
+  component: () => <Shipping />,
+});

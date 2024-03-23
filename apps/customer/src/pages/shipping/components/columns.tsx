@@ -14,6 +14,9 @@ import {
 } from '@frontend.suprasy.com/ui';
 import { MoreHorizontal } from 'lucide-react';
 import DeleteProductModal from '../../products/table/components/DeleteProductModal';
+import AddArea from './AddArea';
+import { useShippingStore } from './shippingStore';
+import React from 'react';
 export const areasColumns: ColumnDef<AreaType>[] = [
   {
     accessorKey: 'Id',
@@ -38,7 +41,7 @@ export const areasColumns: ColumnDef<AreaType>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const product = row.original;
+      const area = row.original;
 
       return (
         <div className="flex justify-center">
@@ -53,56 +56,7 @@ export const areasColumns: ColumnDef<AreaType>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link
-                  to="/store/$storeKey/products/$productId/details"
-                  params={{
-                    productId: product.Id?.toString(),
-                    storeKey: product.StoreKey,
-                  }}
-                >
-                  View product details
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link
-                  to="/store/$storeKey/products/create"
-                  params={{
-                    storeKey: product.StoreKey,
-                  }}
-                  search={{
-                    productId: product.Id,
-                    update: true,
-                    uuid: uuidv4(),
-                  }}
-                >
-                  Update Product
-                </Link>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem>
-                <Link
-                  to="/store/$storeKey/products/create"
-                  params={{
-                    storeKey: product.StoreKey,
-                  }}
-                  search={{
-                    updateInventory: true,
-                    productId: product.Id,
-                    update: true,
-                    uuid: uuidv4(),
-                  }}
-                  hash="inventory"
-                >
-                  Update Inventory
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={(e) => e.preventDefault()}
-                className="hover:!bg-red-500 hover:!text-white"
-              >
-                <DeleteProductModal productId={product.Id} />
-              </DropdownMenuItem>
+              <UpdateWrapper areaId={area.Id} />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -110,3 +64,21 @@ export const areasColumns: ColumnDef<AreaType>[] = [
     },
   },
 ];
+
+const UpdateWrapper: React.FC<{ areaId: number }> = ({ areaId }) => {
+  const { setShippingModalParams, toggleModal } = useShippingStore(
+    (state) => state
+  );
+  return (
+    <DropdownMenuItem
+      onClick={(e) => {
+        e.preventDefault();
+        setShippingModalParams({ update: true, areaId: areaId });
+        toggleModal();
+      }}
+      className="  hover:cursor-pointer"
+    >
+      Update Area
+    </DropdownMenuItem>
+  );
+};

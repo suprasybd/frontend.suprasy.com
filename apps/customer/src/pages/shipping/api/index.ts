@@ -19,11 +19,32 @@ export const getAreasList = async (): Promise<ListResponseType<AreaType>> => {
   return response.data;
 };
 
+export const getAreasById = async (
+  areaId: number
+): Promise<ResponseType<AreaType>> => {
+  const response = await ApiClient.get(`/shipping/get-area/${areaId}`);
+
+  return response.data;
+};
+
 export const addArea = async (data: {
   Area: string;
   Cost: number;
 }): Promise<ResponseType<AreaType>> => {
   const response = await ApiClient.post(`/shipping/add-area`, data);
+
+  return response.data;
+};
+
+export const updateArea = async (data: {
+  Id: number;
+  Area: string;
+  Cost: number;
+}): Promise<ResponseType<AreaType>> => {
+  const response = await ApiClient.put(
+    `/shipping/update-area/${data.Id}`,
+    data
+  );
 
   return response.data;
 };

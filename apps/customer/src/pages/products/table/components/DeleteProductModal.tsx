@@ -11,16 +11,19 @@ import {
   useToast,
 } from '@frontend.suprasy.com/ui';
 import { ReloadIcon } from '@radix-ui/react-icons';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 import { deleteProduct } from '../../api';
 
 const DeleteProductModal: React.FC<{ productId: number }> = ({ productId }) => {
   const { toast } = useToast();
 
+  const queryClient = useQueryClient();
+
   const { mutate: deleteProductHandler, isPending } = useMutation({
     mutationFn: deleteProduct,
     onSuccess: (response) => {
+      queryClient.refetchQueries({ queryKey: ['getUserStoresProductsList'] });
       toast({
         title: 'Product Delete',
         description: response.Message,

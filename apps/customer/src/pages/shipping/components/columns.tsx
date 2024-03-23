@@ -1,10 +1,5 @@
-import { Button } from '@frontend.suprasy.com/ui';
-import { Link } from '@tanstack/react-router';
-import { ColumnDef } from '@tanstack/react-table';
-import { v4 as uuidv4 } from 'uuid';
-import { AreaType } from '../api';
-import { formatDate } from '../../../libs/helpers/formatdate';
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -12,11 +7,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@frontend.suprasy.com/ui';
+import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
-import DeleteProductModal from '../../products/table/components/DeleteProductModal';
-import AddArea from './AddArea';
-import { useShippingStore } from './shippingStore';
 import React from 'react';
+import { formatDate } from '../../../libs/helpers/formatdate';
+import { AreaType } from '../api';
+import DeleteAreaModal from './DeleteAreaModal';
+import { useShippingStore } from './shippingStore';
+
 export const areasColumns: ColumnDef<AreaType>[] = [
   {
     accessorKey: 'Id',
@@ -57,6 +55,12 @@ export const areasColumns: ColumnDef<AreaType>[] = [
 
               <DropdownMenuSeparator />
               <UpdateWrapper areaId={area.Id} />
+              <DropdownMenuItem
+                onClick={(e) => e.preventDefault()}
+                className="hover:!bg-red-500 hover:!text-white"
+              >
+                <DeleteAreaModal areaId={area.Id} />
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

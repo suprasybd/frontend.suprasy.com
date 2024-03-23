@@ -48,3 +48,11 @@ export const updateArea = async (data: {
 
   return response.data;
 };
+
+export const deleteArea = async (
+  Id: number
+): Promise<ResponseType<AreaType>> => {
+  const response = await ApiClient.delete(`/shipping/delete-area/${Id}`);
+
+  return response.data;
+};

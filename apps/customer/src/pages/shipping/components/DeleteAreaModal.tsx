@@ -25,15 +25,15 @@ const DeleteAreaModal: React.FC<{ areaId: number }> = ({ areaId }) => {
     onSuccess: (response) => {
       queryClient.refetchQueries({ queryKey: ['getStoreAreasZones'] });
       toast({
-        title: 'Product Delete',
+        title: 'Area Delete',
         description: response.Message,
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Product Delete',
-        description: 'Product delete failed!',
+        title: 'Area Delete',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

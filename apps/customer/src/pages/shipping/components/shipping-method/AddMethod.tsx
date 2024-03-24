@@ -94,7 +94,7 @@ const AddMethod: React.FC = () => {
       }
 
       void queryClient.refetchQueries({
-        queryKey: ['getStoreShippingMethods'],
+        queryKey: ['getStoreShipingMethodsList'],
       });
 
       toast({

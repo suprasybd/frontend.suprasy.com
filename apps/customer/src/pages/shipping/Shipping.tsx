@@ -6,6 +6,7 @@ import {
   TabsTrigger,
 } from '@frontend.suprasy.com/ui';
 import Area from './components/Area';
+import ShippingMethod from './components/shipping-method/Method';
 
 const Shipping: React.FC = () => {
   return (
@@ -18,7 +19,9 @@ const Shipping: React.FC = () => {
         <TabsContent value="zones" className="w-full">
           <Area />
         </TabsContent>
-        <TabsContent value="dmethod">Delivary Method</TabsContent>
+        <TabsContent value="dmethod">
+          <ShippingMethod />
+        </TabsContent>
       </Tabs>
     </section>
   );

@@ -16,7 +16,7 @@ const RootComponent: React.FC = () => {
       <div className="flex gap-2 ">
         <Outlet />
       </div>
-      {isAuthenticated && <BottomNav />}
+      {/* {isAuthenticated && <BottomNav />} */}
 
       {/* <TanStackRouterDevtools /> */}
     </>

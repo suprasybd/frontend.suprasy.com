@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
 import StoreSidebar from '../components/StoreSidebar/StoreSidebar';
+import StoreHeader from '../components/StoreHeader/StoreHeader';
 import Cookies from 'js-cookie';
 
 export const Route = createFileRoute('/store')({
@@ -12,11 +13,19 @@ export const Route = createFileRoute('/store')({
     Cookies.set('storeKey', (params as { storeKey: string }).storeKey);
   },
   component: () => (
-    <div className="flex gap-2 w-full max-h-[93vh] overflow-hidden">
+    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <StoreSidebar />
-      <div className="overflow-auto w-full">
+      <div className="flex flex-col">
+        <StoreHeader />
+
         <Outlet />
       </div>
     </div>
+    // <div className="flex gap-2 w-full max-h-[93vh] overflow-hidden">
+    //   <StoreSidebar />
+    //   <div className="overflow-auto w-full">
+    //     <Outlet />
+    //   </div>
+    // </div>
   ),
 });

@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TestImport } from './routes/test'
 import { Route as StoreImport } from './routes/store'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
@@ -71,6 +72,11 @@ const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
+
+const TestRoute = TestImport.update({
+  path: '/test',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const StoreRoute = StoreImport.update({
   path: '/store',
@@ -193,6 +199,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreImport
       parentRoute: typeof rootRoute
     }
+    '/test': {
+      preLoaderRoute: typeof TestImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
@@ -275,6 +285,7 @@ export const routeTree = rootRoute.addChildren([
     StoreStoreKeyProductsCreateRoute,
     StoreStoreKeyProductsProductIdDetailsLazyRoute,
   ]),
+  TestRoute,
   AboutLazyRoute,
   ForgotpasswordLazyRoute,
   RegisterLazyRoute,

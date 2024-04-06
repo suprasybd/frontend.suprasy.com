@@ -57,16 +57,14 @@ const CreateProduct: React.FC = () => {
       Type: '',
       Inventory: 2,
       HasVariants: false,
-      VariantsOptions: [{ Name: 'Size', Values: ['xl', 'lg', 'sm'] }],
+      AttributeName: 'Size',
+      AttributeValue: [
+        { Inventory: 99, Price: 190, Sku: 'SF-34526KP', Value: 'xl' },
+      ],
       Images: [
-        {
-          ImageUrl:
-            'https://static.suprasy.com/2470df57-b2e3-46e3-a7d3-2ee62ecb976d20240216012436',
-        },
-        {
-          ImageUrl:
-            'https://static.suprasy.com/130c440e-a52c-4383-bb45-f8b22486488720240216012427',
-        },
+        'https://static.suprasy.com/2470df57-b2e3-46e3-a7d3-2ee62ecb976d20240216012436',
+
+        'https://static.suprasy.com/130c440e-a52c-4383-bb45-f8b22486488720240216012427',
       ],
     },
   });
@@ -193,10 +191,8 @@ const CreateProduct: React.FC = () => {
   console.log(formattedMultipleVariantsOptionsValue);
 
   const hasVariants = form.watch('HasVariants');
-  const Variants = form.watch('VariantsOptions');
+
   const productImages = form.watch('Images');
-  const VariantsOptions = form.watch('VariantsOptions');
-  const MultipleVariants = form.watch('Variants');
 
   // Pre fill previous values for update
 
@@ -218,13 +214,7 @@ const CreateProduct: React.FC = () => {
         ImageUrl: image.ImageUrl,
       }));
 
-      form.setValue('Images', productImagesFormatted);
-
       setImageUpdated((prev) => prev + 1);
-    }
-
-    if (formattedOptions && isUpdating && productDetails?.HasVariant) {
-      form.setValue('VariantsOptions', formattedOptions);
     }
   }, [
     productDetails,
@@ -239,52 +229,6 @@ const CreateProduct: React.FC = () => {
     useState<number>(0);
 
   // pull previous variants combinations and fill form
-
-  useEffect(() => {
-    const totalCombinations = VariantsOptions.map(
-      (data) => data.Values.length
-    ).reduce((sum, current) => sum * current, 1);
-
-    if (
-      formattedMultipleVariantsOptionsValue &&
-      MultipleVariants?.length === totalCombinations &&
-      multipleVariantsPulled < 4 &&
-      getMultipleVariantsSuccess &&
-      productDetails?.HasVariant
-    ) {
-      const updatedVariants = MultipleVariants.map((variant) => {
-        const currentValue = variant.Options.map((option) => option.Value).join(
-          '-'
-        );
-
-        const foundValue = formattedMultipleVariantsOptionsValue.find(
-          (value) => value.Value === currentValue
-        );
-        if (foundValue) {
-          return {
-            ...variant,
-            IsActive: true,
-            Inventory: foundValue.Inventory || 0,
-            Price: foundValue.Price || 0,
-          };
-        } else {
-          return variant;
-        }
-      });
-
-      form.setValue('Variants', updatedVariants);
-      setMultipleVariantsPulled((prev) => prev + 1);
-    }
-  }, [
-    formattedMultipleVariantsOptionsValue,
-    VariantsOptions,
-    MultipleVariants,
-    form,
-    multipleVariantsPulled,
-    formattedOptions,
-    getMultipleVariantsSuccess,
-    productDetails,
-  ]);
 
   const navigate = useNavigate();
 
@@ -335,53 +279,24 @@ const CreateProduct: React.FC = () => {
     },
   });
 
-  const { append, remove } = useFieldArray({
-    name: 'VariantsOptions',
-    control: form.control,
-  });
-
-  const {
-    fields: uploadingList,
-    append: uploadingAppend,
-    remove: uploadingRemove,
-  } = useFieldArray({
-    name: 'UploadingList',
-    control: form.control,
-  });
-
-  const {
-    remove: removeImage,
-    append: appendImage,
-    move: moveImage,
-  } = useFieldArray({
-    name: 'Images',
-    control: form.control,
-  });
-
   const incrementChanges = useCreateCountStore((state) => state.increment);
   const updateChanges = useCreateCountStore((state) => state.count);
 
-  const { fields: variantSku, update: updateSku } = useFieldArray({
-    name: 'Variants',
-    control: form.control,
-  });
-
   function onSubmit(values: z.infer<typeof productSchema>) {
-    const filteredActiveSku = values.Variants.filter((vari) => vari.IsActive);
-    const finalProduct = {
-      ...values,
-      Variants: hasVariants
-        ? filteredActiveSku
-        : [{ Price: values.Price, Inventory: values.Inventory }],
-      Options: values.VariantsOptions,
-    };
-
-    if (!isUpdating) {
-      createProduct(finalProduct as any);
-    } else {
-      // hit update product endpoint
-      updateProduct({ data: finalProduct as any, productId: productId });
-    }
+    // const filteredActiveSku = values.Variants.filter((vari) => vari.IsActive);
+    // const finalProduct = {
+    //   ...values,
+    //   Variants: hasVariants
+    //     ? filteredActiveSku
+    //     : [{ Price: values.Price, Inventory: values.Inventory }],
+    //   Options: values.VariantsOptions,
+    // };
+    // if (!isUpdating) {
+    //   createProduct(finalProduct as any);
+    // } else {
+    //   // hit update product endpoint
+    //   updateProduct({ data: finalProduct as any, productId: productId });
+    // }
   }
 
   const { errors } = form.formState;
@@ -419,41 +334,15 @@ const CreateProduct: React.FC = () => {
     return combinations;
   };
 
-  const allCombinations = useMemo(
-    () => generateCombinations(Variants),
-    [Variants, updateChanges]
-  );
-
-  useEffect(() => {
-    const formatedCombinations = allCombinations.map(
-      (item: any, index: number) => {
-        return {
-          IsActive: false,
-          Price: 500,
-          Sku: `${item
-            .map((i: any) => index + i.Value.replace(/\s/g, ''))
-            .join('-')}`,
-          Options: item,
-          Inventory: 99,
-        };
-      }
-    );
-    form.setValue('Variants', formatedCombinations);
-  }, [allCombinations, updateSku]);
-
   const handleImageUpload = async (e: any) => {
     e.preventDefault();
 
     try {
       const selectedFile = e.target.files[0];
-      if (selectedFile) {
-        uploadingAppend({});
-      }
+
       const formData = new FormData();
       formData.append('ProductImage', selectedFile);
       const resposne = await ApiClient.post('/images/upload', formData);
-      appendImage({ ImageUrl: resposne.data.ImageUrl });
-      uploadingRemove(0);
     } catch (error) {
       console.log(error);
     }
@@ -467,7 +356,7 @@ const CreateProduct: React.FC = () => {
     destination: any;
   }) => {
     if (destination) {
-      moveImage(source.index, destination.index);
+      // moveImage(source.index, destination.index);
     }
   };
 
@@ -582,7 +471,7 @@ const CreateProduct: React.FC = () => {
             <CardContent>
               <h3 className="text-red-600">{errors.Images?.message}</h3>
               <div className="flex gap-4 flex-wrap transition-all duration-200">
-                <DragDropContext onDragEnd={handleDrag} key={imageUpdated}>
+                {/* <DragDropContext onDragEnd={handleDrag} key={imageUpdated}>
                   <Droppable droppableId="test-items" key={imageUpdated}>
                     {(provided, snapshot) => (
                       <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -646,7 +535,7 @@ const CreateProduct: React.FC = () => {
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />{' '}
                     Uploading
                   </div>
-                ))}
+                ))} */}
 
                 <div className="grid hover:cursor-pointer m-3 h-[170px] w-[170px] border border-[gray] rounded max-w-sm items-center gap-1.5">
                   <Label
@@ -711,7 +600,7 @@ const CreateProduct: React.FC = () => {
                 </div>
                 {hasVariants && (
                   <div className="mt-3">
-                    {VariantsOptions.map((option, index) => {
+                    {/* {VariantsOptions.map((option, index) => {
                       return (
                         <Card className="mb-3" key={index}>
                           <CardContent>
@@ -773,9 +662,9 @@ const CreateProduct: React.FC = () => {
                           </CardContent>
                         </Card>
                       );
-                    })}
+                    })} */}
 
-                    <Button
+                    {/* <Button
                       onClick={(e) => {
                         e.preventDefault();
                         append({
@@ -785,7 +674,7 @@ const CreateProduct: React.FC = () => {
                       }}
                     >
                       Add More Option
-                    </Button>
+                    </Button> */}
                   </div>
                 )}
               </div>
@@ -832,7 +721,7 @@ const CreateProduct: React.FC = () => {
             </Card>
           )}
 
-          {hasVariants && (
+          {/* {hasVariants && (
             <Card id="inventory">
               <CardHeader className="pb-0">
                 <CardTitle>
@@ -908,7 +797,7 @@ const CreateProduct: React.FC = () => {
                 ))}
               </CardContent>
             </Card>
-          )}
+          )} */}
 
           <Button
             disabled={updateProductLoading || isPending}

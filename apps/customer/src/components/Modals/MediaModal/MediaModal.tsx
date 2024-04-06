@@ -12,6 +12,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@frontend.suprasy.com/ui';
+import { Upload } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 const MediaModal: React.FC = () => {
@@ -45,7 +46,7 @@ const MediaModal: React.FC = () => {
             <DialogTitle>Media Managment</DialogTitle>
           </DialogHeader>
 
-          <Tabs defaultValue="browse" className="w-[400px]">
+          <Tabs defaultValue="browse" className="w-full">
             <TabsList>
               <TabsTrigger value="browse">browse</TabsTrigger>
               <TabsTrigger value="upload">upload</TabsTrigger>
@@ -53,7 +54,14 @@ const MediaModal: React.FC = () => {
             <TabsContent value="browse">
               Make changes to your browse here.
             </TabsContent>
-            <TabsContent value="upload">Change your upload here.</TabsContent>
+            <TabsContent value="upload">
+              <div className="w-full flex justify-center my-10">
+                <button className="flex aspect-square w-[170px] h-[170px] items-center justify-center rounded-md border border-dashed">
+                  <Upload className="h-4 w-4 text-muted-foreground" />
+                  <span className="sr-only">Upload</span>
+                </button>
+              </div>
+            </TabsContent>
           </Tabs>
 
           <Button onClick={() => closeModal()}>Close</Button>

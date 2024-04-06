@@ -57,6 +57,7 @@ import {
 import { StorefrontVariants } from '../api/types';
 import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
+import { useModalStore } from '@customer/store/modalStore';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -82,6 +83,7 @@ const CreateProduct: React.FC = () => {
   });
   const [imageUpdated, setImageUpdated] = useState<number>(0);
 
+  const { setModalPath } = useModalStore((state) => state);
   const { toast } = useToast();
   const { storeKey } = useParams({ strict: false }) as {
     storeKey: string;
@@ -423,7 +425,12 @@ const CreateProduct: React.FC = () => {
                     Lipsum dolor sit amet, consectetur adipiscing elit
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent
+                  onClick={() => {
+                    // set modal here
+                    setModalPath({ modal: 'media' });
+                  }}
+                >
                   <div className="grid gap-2">
                     <div className="grid grid-cols-3 gap-2">
                       <button className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed">

@@ -34,6 +34,7 @@ export const productSchema = z
     Title: z.string().min(3),
     Description: z.string().min(10),
     Price: z.coerce.number().optional(),
+    Status: z.string().min(1),
     Inventory: z.coerce.number().optional(),
     HasVariants: z.boolean().default(false).optional(),
     AttributeName: z.string().min(1),

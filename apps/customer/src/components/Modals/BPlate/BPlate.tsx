@@ -1,4 +1,3 @@
-import { useFunctionStore } from '@customer/store/functionStore';
 import { useModalStore } from '@customer/store/modalStore';
 import {
   Button,
@@ -7,10 +6,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
 } from '@frontend.suprasy.com/ui';
 import React, { useEffect, useState } from 'react';
 
@@ -40,21 +35,14 @@ const MediaModal: React.FC = () => {
           }
         }}
       >
-        <DialogContent className="sm:min-w-[700px]">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Media Managment</DialogTitle>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </DialogDescription>
           </DialogHeader>
-
-          <Tabs defaultValue="browse" className="w-[400px]">
-            <TabsList>
-              <TabsTrigger value="browse">browse</TabsTrigger>
-              <TabsTrigger value="upload">upload</TabsTrigger>
-            </TabsList>
-            <TabsContent value="browse">
-              Make changes to your browse here.
-            </TabsContent>
-            <TabsContent value="upload">Change your upload here.</TabsContent>
-          </Tabs>
 
           <Button onClick={() => closeModal()}>Close</Button>
         </DialogContent>

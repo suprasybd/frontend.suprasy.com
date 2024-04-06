@@ -59,11 +59,12 @@ import { StorefrontVariants } from '../api/types';
 import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
 import { useModalStore } from '@customer/store/modalStore';
+import { useFunctionStore } from '@customer/store/functionStore';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
-
+    mode: 'onChange',
     defaultValues: {
       Description: '',
       Price: 99,
@@ -416,7 +417,11 @@ const CreateProduct: React.FC = () => {
                       <FormItem className="space-y-0 !mt-3">
                         <FormLabel>Slug</FormLabel>
                         <FormControl>
-                          <Input placeholder="Slug" {...field} />
+                          <Input
+                            FormError={!!formErrors.Slug}
+                            placeholder="Slug"
+                            {...field}
+                          />
                         </FormControl>
 
                         <FormMessage />
@@ -729,7 +734,11 @@ const CreateProduct: React.FC = () => {
                         <FormItem className="space-y-0 !mt-3">
                           <FormLabel>Price (BDT/৳) </FormLabel>
                           <FormControl>
-                            <Input placeholder="Price" {...field} />
+                            <Input
+                              FormError={!!formErrors.Price}
+                              placeholder="Price"
+                              {...field}
+                            />
                           </FormControl>
 
                           <FormMessage />
@@ -744,7 +753,11 @@ const CreateProduct: React.FC = () => {
                         <FormItem className="space-y-0 !mt-3">
                           <FormLabel>Inventory / Quantity</FormLabel>
                           <FormControl>
-                            <Input placeholder="Inventory/Qty" {...field} />
+                            <Input
+                              FormError={!!formErrors.Inventory}
+                              placeholder="Inventory/Qty"
+                              {...field}
+                            />
                           </FormControl>
 
                           <FormMessage />
@@ -859,13 +872,18 @@ const CreateProduct: React.FC = () => {
                   <div className="grid gap-6">
                     <div className="grid gap-3">
                       <Label htmlFor="status">Status</Label>
-                      <Select>
+                      <Select
+                        onValueChange={(value) => {
+                          form.setValue('Status', value);
+                        }}
+                        defaultValue="draft"
+                      >
                         <SelectTrigger id="status" aria-label="Select status">
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="draft">Draft</SelectItem>
-                          <SelectItem value="published">Active</SelectItem>
+                          <SelectItem value="active">Active</SelectItem>
                           <SelectItem value="archived">Archived</SelectItem>
                         </SelectContent>
                       </Select>

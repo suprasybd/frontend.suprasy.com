@@ -538,6 +538,11 @@ const CreateProduct: React.FC = () => {
                                         <div className="flex gap-[7px] items-center">
                                           <FormControl>
                                             <Input
+                                              FormError={
+                                                !!formErrors?.AttributeValue?.[
+                                                  index
+                                                ]?.Value
+                                              }
                                               placeholder="Value"
                                               {...field}
                                             />
@@ -560,6 +565,11 @@ const CreateProduct: React.FC = () => {
                                         <div className="flex gap-[7px] items-center">
                                           <FormControl>
                                             <Input
+                                              FormError={
+                                                !!formErrors?.AttributeValue?.[
+                                                  index
+                                                ]?.Sku
+                                              }
                                               placeholder="Sku"
                                               {...field}
                                             />
@@ -582,6 +592,11 @@ const CreateProduct: React.FC = () => {
                                         <div className="flex gap-[7px] items-center">
                                           <FormControl>
                                             <Input
+                                              FormError={
+                                                !!formErrors?.AttributeValue?.[
+                                                  index
+                                                ]?.Inventory
+                                              }
                                               placeholder="Inventory"
                                               {...field}
                                             />
@@ -604,6 +619,11 @@ const CreateProduct: React.FC = () => {
                                         <div className="flex gap-[7px] items-center">
                                           <FormControl>
                                             <Input
+                                              FormError={
+                                                !!formErrors?.AttributeValue?.[
+                                                  index
+                                                ]?.Price
+                                              }
                                               placeholder="Price BDT"
                                               {...field}
                                             />

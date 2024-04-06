@@ -96,7 +96,7 @@ const StoreSidebar = () => {
               Customers
             </Link>
             <Link
-              to="/store/$storeKey/customers"
+              to="/store/$storeKey/analytics"
               params={{
                 storeKey: storeKey,
               }}

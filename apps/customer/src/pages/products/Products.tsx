@@ -1,19 +1,18 @@
-import { Button } from '@frontend.suprasy.com/ui';
-import { useQuery } from '@tanstack/react-query';
-import { Link, useParams } from '@tanstack/react-router';
-import { Plus, ShoppingCart } from 'lucide-react';
-import React from 'react';
-import { LoaderMain } from '../../components/Loader/Loader';
-import { getUserStoresProductsList } from './api';
-import { productsColumn } from './table/columns';
-import { DataTable } from '../../components/Table/table';
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
+  Button,
 } from '@frontend.suprasy.com/ui';
+import { useQuery } from '@tanstack/react-query';
+import { Link, useParams } from '@tanstack/react-router';
+import { Plus } from 'lucide-react';
+import React from 'react';
+import { LoaderMain } from '../../components/Loader/Loader';
+import { DataTable } from '../../components/Table/table';
+import { getUserStoresProductsList } from './api';
+import { productsColumn } from './table/columns';
 
 const Products: React.FC = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };

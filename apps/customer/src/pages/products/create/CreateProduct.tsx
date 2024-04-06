@@ -1,11 +1,15 @@
 import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
   Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  Checkbox,
   Form,
   FormControl,
   FormDescription,
@@ -16,25 +20,15 @@ import {
   Input,
   Label,
   RichTextEditor,
-  Switch,
-  useToast,
-} from '@frontend.suprasy.com/ui';
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Switch,
+  useToast,
 } from '@frontend.suprasy.com/ui';
-import { Upload } from 'lucide-react';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@frontend.suprasy.com/ui';
+import { Trash2, Upload } from 'lucide-react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReloadIcon } from '@radix-ui/react-icons';
@@ -45,14 +39,11 @@ import {
   useParams,
   useSearch,
 } from '@tanstack/react-router';
-import cn from 'classnames';
-import { Grip, Plus, Trash, Trash2 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import ApiClient, { ApiClientCF } from '../../../libs/ApiClient';
+import ApiClient from '../../../libs/ApiClient';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 import {
   createStoresProduct,
@@ -64,7 +55,6 @@ import {
   updateStoresProduct,
 } from '../api';
 import { StorefrontVariants } from '../api/types';
-import NestedValues from './components/NestedValues';
 import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
 
@@ -145,73 +135,6 @@ const CreateProduct: React.FC = () => {
   const productOptions = productOptionsResponse?.Data;
   const productsMultipleVariants = productMultipleVariantsResponse?.Data;
 
-  const formattedOptions = useMemo(() => {
-    const optionsMap: { [key: string]: Set<string> } = {};
-
-    productOptions?.forEach((option) => {
-      const { Name } = option.storefront_options;
-      const { Value } = option.storefront_options_value;
-
-      if (optionsMap[Name]) {
-        optionsMap[Name].add(Value);
-      } else {
-        optionsMap[Name] = new Set([Value]);
-      }
-    });
-
-    const formattedOptionsArray = Object.entries(optionsMap).map(
-      ([Name, Values]) => ({
-        Name,
-        Values: Array.from(Values),
-      })
-    );
-
-    return formattedOptionsArray;
-  }, [productOptions]);
-
-  const formattedMultipleVariantsOptionsValue = useMemo(() => {
-    if (productsMultipleVariants && productDetails?.HasVariant) {
-      const uniqueVariants: Record<
-        number | string,
-        {
-          variant: StorefrontVariants | null;
-          options: Array<string>;
-        }
-      > = {};
-
-      productsMultipleVariants
-        .slice()
-
-        .forEach((variantDetails) => {
-          if (!uniqueVariants[variantDetails.storefront_variants.Id]) {
-            uniqueVariants[variantDetails.storefront_variants.Id] = {
-              variant: null,
-              options: [],
-            };
-          }
-
-          if (!uniqueVariants[variantDetails.storefront_variants.Id].variant) {
-            uniqueVariants[variantDetails.storefront_variants.Id].variant =
-              variantDetails.storefront_variants;
-          }
-
-          uniqueVariants[variantDetails.storefront_variants.Id].options.push(
-            variantDetails.storefront_options_value.Value
-          );
-        });
-
-      const formattedData = Object.values(uniqueVariants).map((data) => ({
-        Value: data.options.join('-'),
-        Price: data.variant?.Price,
-        Inventory: data.variant?.Inventory,
-      }));
-
-      return formattedData;
-    }
-  }, [productsMultipleVariants, productDetails]);
-
-  console.log(formattedMultipleVariantsOptionsValue);
-
   const hasVariants = form.watch('HasVariants');
 
   const productImages = form.watch('Images');
@@ -244,13 +167,7 @@ const CreateProduct: React.FC = () => {
     productVariantDetails,
     productImagesData,
     isUpdating,
-    formattedOptions,
   ]);
-
-  const [multipleVariantsPulled, setMultipleVariantsPulled] =
-    useState<number>(0);
-
-  // pull previous variants combinations and fill form
 
   const navigate = useNavigate();
 
@@ -300,9 +217,6 @@ const CreateProduct: React.FC = () => {
       });
     },
   });
-
-  const incrementChanges = useCreateCountStore((state) => state.increment);
-  const updateChanges = useCreateCountStore((state) => state.count);
 
   function onSubmit(values: z.infer<typeof productSchema>) {
     // const filteredActiveSku = values.Variants.filter((vari) => vari.IsActive);
@@ -356,32 +270,16 @@ const CreateProduct: React.FC = () => {
   //   return combinations;
   // };
 
-  const handleImageUpload = async (e: any) => {
-    e.preventDefault();
-
-    try {
-      const selectedFile = e.target.files[0];
-
-      const formData = new FormData();
-      formData.append('ProductImage', selectedFile);
-      const resposne = await ApiClient.post('/images/upload', formData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleDrag = ({
-    source,
-    destination,
-  }: {
-    source: any;
-    destination: any;
-  }) => {
-    if (destination) {
-      // moveImage(source.index, destination.index);
-    }
-  };
-
+  // const attributeValues = form.watch('AttributeValue');
+  const {
+    fields: attributeValues,
+    append: appendAttributeValue,
+    remove,
+  } = useFieldArray({
+    control: form.control,
+    name: 'AttributeValue',
+  });
+  console.log('attribute values', attributeValues);
   const productDescription = useMemo(() => {
     return productDetails?.Description;
   }, [productDetails]);
@@ -578,6 +476,150 @@ const CreateProduct: React.FC = () => {
                     </div>
                     {hasVariants && (
                       <div className="mt-3">
+                        <FormField
+                          control={form.control}
+                          name={`AttributeName`}
+                          render={({ field }) => (
+                            <FormItem className=" rounded-lg pt-3">
+                              <div className="space-y-0.5">
+                                <FormLabel>Attribute Name</FormLabel>
+                                <FormDescription></FormDescription>
+                              </div>
+                              <div className="flex gap-[7px] items-center">
+                                <FormControl>
+                                  <Input
+                                    placeholder="Attribute Name"
+                                    {...field}
+                                  />
+                                </FormControl>
+                              </div>
+
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Card className="mt-3">
+                          <CardHeader>
+                            <CardTitle>Attribute Values List</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            {attributeValues.map((option, index) => {
+                              return (
+                                <div key={option.id} className="flex gap-[3px]">
+                                  <FormField
+                                    control={form.control}
+                                    name={`AttributeValue.${index}.Value`}
+                                    render={({ field }) => (
+                                      <FormItem className=" rounded-lg pt-3">
+                                        <div className="space-y-0.5">
+                                          <FormLabel>Value</FormLabel>
+                                          <FormDescription></FormDescription>
+                                        </div>
+                                        <div className="flex gap-[7px] items-center">
+                                          <FormControl>
+                                            <Input
+                                              placeholder="Value"
+                                              {...field}
+                                            />
+                                          </FormControl>
+                                        </div>
+
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={form.control}
+                                    name={`AttributeValue.${index}.Sku`}
+                                    render={({ field }) => (
+                                      <FormItem className=" rounded-lg pt-3">
+                                        <div className="space-y-0.5">
+                                          <FormLabel>Sku</FormLabel>
+                                          <FormDescription></FormDescription>
+                                        </div>
+                                        <div className="flex gap-[7px] items-center">
+                                          <FormControl>
+                                            <Input
+                                              placeholder="Sku"
+                                              {...field}
+                                            />
+                                          </FormControl>
+                                        </div>
+
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={form.control}
+                                    name={`AttributeValue.${index}.Inventory`}
+                                    render={({ field }) => (
+                                      <FormItem className=" rounded-lg pt-3">
+                                        <div className="space-y-0.5">
+                                          <FormLabel>Inventory</FormLabel>
+                                          <FormDescription></FormDescription>
+                                        </div>
+                                        <div className="flex gap-[7px] items-center">
+                                          <FormControl>
+                                            <Input
+                                              placeholder="Inventory"
+                                              {...field}
+                                            />
+                                          </FormControl>
+                                        </div>
+
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={form.control}
+                                    name={`AttributeValue.${index}.Price`}
+                                    render={({ field }) => (
+                                      <FormItem className=" rounded-lg pt-3 ">
+                                        <div className="space-y-0.5">
+                                          <FormLabel>Price BDT</FormLabel>
+                                          <FormDescription></FormDescription>
+                                        </div>
+                                        <div className="flex gap-[7px] items-center">
+                                          <FormControl>
+                                            <Input
+                                              placeholder="Price BDT"
+                                              {...field}
+                                            />
+                                          </FormControl>
+
+                                          <Trash2
+                                            onClick={() => remove(index)}
+                                            className="hover:cursor-pointer"
+                                          />
+                                        </div>
+
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                </div>
+                              );
+                            })}
+
+                            <Button
+                              className="mt-3"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                appendAttributeValue({
+                                  Inventory: 0,
+                                  Price: 10,
+                                  Sku: 'DEFAULT_SKU_35234',
+                                  Value: 'xl',
+                                });
+                              }}
+                            >
+                              Add More Value
+                            </Button>
+                          </CardContent>
+                        </Card>
+
                         {/* {VariantsOptions.map((option, index) => {
                       return (
                         <Card className="mb-3" key={index}>
@@ -603,7 +645,7 @@ const CreateProduct: React.FC = () => {
                                         />
                                       </FormControl>
                                       <Trash2
-                                        onClick={() => remove(index)}
+                                        onClick={() => remove(removeindex
                                         className="hover:cursor-pointer"
                                       />
                                     </div>
@@ -641,7 +683,6 @@ const CreateProduct: React.FC = () => {
                         </Card>
                       );
                     })} */}
-
                         {/* <Button
                       onClick={(e) => {
                         e.preventDefault();

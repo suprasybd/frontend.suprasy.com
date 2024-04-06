@@ -172,14 +172,14 @@ const AddArea: React.FC = () => {
                       (closeBtn.current as { click: () => void }).click();
                     }
                   }}
-                  variant={'destructive'}
+                  variant={'outline'}
                   className="w-full"
                 >
                   Cancel
                 </Button>
               </DialogClose>
               <Button
-                variant={'gradiantT'}
+                variant={'defaultGradiant'}
                 className="w-full"
                 type="submit"
                 disabled={isPending || isUpdating}

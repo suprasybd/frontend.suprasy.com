@@ -19,10 +19,32 @@ import {
   Switch,
   useToast,
 } from '@frontend.suprasy.com/ui';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@frontend.suprasy.com/ui';
+import { Upload } from 'lucide-react';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@frontend.suprasy.com/ui';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearch,
+} from '@tanstack/react-router';
 import cn from 'classnames';
 import { Grip, Plus, Trash, Trash2 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -301,38 +323,38 @@ const CreateProduct: React.FC = () => {
 
   const { errors } = form.formState;
 
-  const generateCombinations = (
-    options: {
-      Name: string;
-      Values: string[];
-    }[],
-    currentIndex = 0,
-    currentCombination = []
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): any => {
-    if (currentIndex === options.length) {
-      return [currentCombination];
-    }
+  // const generateCombinations = (
+  //   options: {
+  //     Name: string;
+  //     Values: string[];
+  //   }[],
+  //   currentIndex = 0,
+  //   currentCombination = []
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // ): any => {
+  //   if (currentIndex === options.length) {
+  //     return [currentCombination];
+  //   }
 
-    const currentOption = options[currentIndex];
-    const combinations = [];
+  //   const currentOption = options[currentIndex];
+  //   const combinations = [];
 
-    for (const value of currentOption.Values) {
-      const nextCombination = [
-        ...currentCombination,
-        { OptionName: currentOption.Name, Value: value },
-      ];
-      combinations.push(
-        ...generateCombinations(
-          options,
-          currentIndex + 1,
-          nextCombination as never
-        )
-      );
-    }
+  //   for (const value of currentOption.Values) {
+  //     const nextCombination = [
+  //       ...currentCombination,
+  //       { OptionName: currentOption.Name, Value: value },
+  //     ];
+  //     combinations.push(
+  //       ...generateCombinations(
+  //         options,
+  //         currentIndex + 1,
+  //         nextCombination as never
+  //       )
+  //     );
+  //   }
 
-    return combinations;
-  };
+  //   return combinations;
+  // };
 
   const handleImageUpload = async (e: any) => {
     e.preventDefault();
@@ -365,58 +387,91 @@ const CreateProduct: React.FC = () => {
   }, [productDetails]);
 
   return (
-    <section className="w-full max-w-[54rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+    <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+      {/* breadcrumbs */}
+
+      <Breadcrumb className="pb-5">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <Link
+              to="/store/$storeKey/dashboard"
+              params={{ storeKey: storeKey }}
+            >
+              Home
+            </Link>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <Link
+              to="/store/$storeKey/products"
+              params={{ storeKey: storeKey }}
+            >
+              Products
+            </Link>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Create Product</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <Card className={updateInventory ? 'hidden' : ''}>
-            <CardHeader>
-              <CardTitle>
-                {isUpdating ? 'Update Product' : 'Create Product'}
-              </CardTitle>
-              <CardDescription>Enter Product Info Carefully!</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <FormField
-                control={form.control}
-                name="Title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Title" {...field} />
-                    </FormControl>
+          <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
+            {/* left */}
+            <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
+              <Card className={updateInventory ? 'hidden' : ''}>
+                <CardHeader>
+                  <CardTitle>
+                    {isUpdating ? 'Update Product' : 'Create Product'}
+                  </CardTitle>
+                  <CardDescription>
+                    Enter Product Info Carefully!
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FormField
+                    control={form.control}
+                    name="Title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Title" {...field} />
+                        </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="mt-2">
-                <p className="text-sm text-red-600">
-                  {errors.Description?.message}
-                </p>
-
-                <FormLabel>Description</FormLabel>
-
-                {productDescription && isUpdating && (
-                  <RichTextEditor
-                    initialVal={productDescription}
-                    onValChange={(data) =>
-                      form.setValue('Description', JSON.stringify(data))
-                    }
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                )}
 
-                {!isUpdating && (
-                  <RichTextEditor
-                    onValChange={(data) =>
-                      form.setValue('Description', JSON.stringify(data))
-                    }
-                  />
-                )}
-              </div>
+                  <div className="mt-2">
+                    <p className="text-sm text-red-600">
+                      {errors.Description?.message}
+                    </p>
 
-              {/* <FormField
+                    <FormLabel>Description</FormLabel>
+
+                    {productDescription && isUpdating && (
+                      <RichTextEditor
+                        initialVal={productDescription}
+                        onValChange={(data) =>
+                          form.setValue('Description', JSON.stringify(data))
+                        }
+                      />
+                    )}
+
+                    {!isUpdating && (
+                      <RichTextEditor
+                        onValChange={(data) =>
+                          form.setValue('Description', JSON.stringify(data))
+                        }
+                      />
+                    )}
+                  </div>
+
+                  {/* <FormField
                 control={form.control}
                 name="Description"
                 render={({ field }) => (
@@ -435,172 +490,95 @@ const CreateProduct: React.FC = () => {
                   </FormItem>
                 )}
               /> */}
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
 
-          <Card className={updateInventory ? 'hidden' : ''}>
-            <CardHeader className="pb-0">
-              <CardTitle>Enter Product Slug / Url</CardTitle>
-              <CardDescription>
-                e.g. mydomain.com/blue-t-shirt-special
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <FormField
-                control={form.control}
-                name="Slug"
-                render={({ field }) => (
-                  <FormItem className="space-y-0 !mt-3">
-                    <FormLabel>Slug</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Slug" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
-
-          <Card className={updateInventory ? 'hidden' : ''}>
-            <CardHeader className="pb-0">
-              <CardTitle>Media</CardTitle>
-              <CardDescription>Enter images for your product.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <h3 className="text-red-600">{errors.Images?.message}</h3>
-              <div className="flex gap-4 flex-wrap transition-all duration-200">
-                {/* <DragDropContext onDragEnd={handleDrag} key={imageUpdated}>
-                  <Droppable droppableId="test-items" key={imageUpdated}>
-                    {(provided, snapshot) => (
-                      <div {...provided.droppableProps} ref={provided.innerRef}>
-                        {productImages?.map((image, index) => (
-                          <Draggable
-                            key={`Images[${index}]`}
-                            draggableId={`item-${index}`}
-                            index={index}
-                          >
-                            {(provided, snapshot) => (
-                              <div
-                                className="relative group w-fit m-3 transition-all duration-200"
-                                key={image.ImageUrl}
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                              >
-                                <div
-                                  className={cn(
-                                    'h-[170px] w-[200px] bg-gray-200 rounded flex items-center justify-center',
-                                    index === 0 &&
-                                      '!h-[200px] !w-[250px] border-green-300 border-[3px]'
-                                  )}
-                                >
-                                  <img
-                                    className="h-full w-full object-cover rounded"
-                                    src={image.ImageUrl}
-                                    alt="Product "
-                                  />
-                                </div>
-                                <div className="rounded hidden top-0 right-0 group-hover:block w-full h-full group-hover:absolute group-hover:top-0 text-white group-hover:right-0 group-hover:bg-[#7c64c370]">
-                                  <div
-                                    className="p-4 cursor-pointer"
-                                    {...provided.dragHandleProps}
-                                  >
-                                    <Grip />
-                                  </div>
-                                  <div className="w-full  h-[60%] flex justify-center items-center">
-                                    <div
-                                      onClick={() => removeImage(index)}
-                                      className="flex items-center hover:bg-red-500 p-3 rounded cursor-pointer"
-                                    >
-                                      <Trash className="mr-2" /> Remove
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
-
-                {uploadingList?.map((item, index) => (
-                  <div
-                    key={item.id}
-                    className="h-[170px] w-[170px] flex justify-center m-3 bg-gray-100 rounded items-center"
-                  >
-                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />{' '}
-                    Uploading
-                  </div>
-                ))} */}
-
-                <div className="grid hover:cursor-pointer m-3 h-[170px] w-[170px] border border-[gray] rounded max-w-sm items-center gap-1.5">
-                  <Label
-                    className="w-full hover:cursor-pointer rounded h-full bg-gray-100 flex justify-center items-center"
-                    htmlFor="picture"
-                  >
-                    <div className="flex items-center">
-                      <Plus />
-                      Add Image
-                    </div>
-                  </Label>
-                  <Input
-                    onChange={handleImageUpload}
-                    className="hidden"
-                    id="picture"
-                    name="image"
-                    type="file"
-                    accept="image/*"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {updateInventory && (
-            <h1 className="text-xl font-bold my-3">
-              Update Variants & Inventory (Stock)
-            </h1>
-          )}
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Options & Variants</CardTitle>
-              <CardDescription>
-                Does this product has options like size, color etc.?
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div>
-                <div className="space-y-4">
+              <Card className={updateInventory ? 'hidden' : ''}>
+                <CardHeader className="pb-0">
+                  <CardTitle>Enter Product Slug / Url</CardTitle>
+                  <CardDescription>
+                    e.g. mydomain.com/blue-t-shirt-special
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
                   <FormField
                     control={form.control}
-                    name="HasVariants"
+                    name="Slug"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                        <div className="space-y-0.5">
-                          <FormLabel>Product has variants</FormLabel>
-                          <FormDescription>
-                            Check here if this product has options and variants.
-                          </FormDescription>
-                        </div>
+                      <FormItem className="space-y-0 !mt-3">
+                        <FormLabel>Slug</FormLabel>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Input placeholder="Slug" {...field} />
                         </FormControl>
+
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </div>
-                {hasVariants && (
-                  <div className="mt-3">
-                    {/* {VariantsOptions.map((option, index) => {
+                </CardContent>
+              </Card>
+
+              <Card className="overflow-hidden">
+                <CardHeader>
+                  <CardTitle>Product Images</CardTitle>
+                  <CardDescription>
+                    Lipsum dolor sit amet, consectetur adipiscing elit
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-2">
+                    <div className="grid grid-cols-3 gap-2">
+                      <button className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed">
+                        <Upload className="h-4 w-4 text-muted-foreground" />
+                        <span className="sr-only">Upload</span>
+                      </button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {updateInventory && (
+                <h1 className="text-xl font-bold my-3">
+                  Update Variants & Inventory (Stock)
+                </h1>
+              )}
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Options & Variants</CardTitle>
+                  <CardDescription>
+                    Does this product has options like size, color etc.?
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div>
+                    <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="HasVariants"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                            <div className="space-y-0.5">
+                              <FormLabel>Product has variants</FormLabel>
+                              <FormDescription>
+                                Check here if this product has options and
+                                variants.
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    {hasVariants && (
+                      <div className="mt-3">
+                        {/* {VariantsOptions.map((option, index) => {
                       return (
                         <Card className="mb-3" key={index}>
                           <CardContent>
@@ -664,7 +642,7 @@ const CreateProduct: React.FC = () => {
                       );
                     })} */}
 
-                    {/* <Button
+                        {/* <Button
                       onClick={(e) => {
                         e.preventDefault();
                         append({
@@ -675,53 +653,53 @@ const CreateProduct: React.FC = () => {
                     >
                       Add More Option
                     </Button> */}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
 
-          {!hasVariants && (
-            <Card id="inventory">
-              <CardHeader className="pb-0">
-                <CardTitle>Enter Single Product Price</CardTitle>
-                <CardDescription>e.g. 199 Price (BDT/৳)</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="Price"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0 !mt-3">
-                      <FormLabel>Price (BDT/৳) </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Price" {...field} />
-                      </FormControl>
+              {!hasVariants && (
+                <Card id="inventory">
+                  <CardHeader className="pb-0">
+                    <CardTitle>Enter Single Product Price</CardTitle>
+                    <CardDescription>e.g. 199 Price (BDT/৳)</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <FormField
+                      control={form.control}
+                      name="Price"
+                      render={({ field }) => (
+                        <FormItem className="space-y-0 !mt-3">
+                          <FormLabel>Price (BDT/৳) </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Price" {...field} />
+                          </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                <FormField
-                  control={form.control}
-                  name="Inventory"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0 !mt-3">
-                      <FormLabel>Inventory / Quantity</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Inventory/Qty" {...field} />
-                      </FormControl>
+                    <FormField
+                      control={form.control}
+                      name="Inventory"
+                      render={({ field }) => (
+                        <FormItem className="space-y-0 !mt-3">
+                          <FormLabel>Inventory / Quantity</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Inventory/Qty" {...field} />
+                          </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-          )}
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+              )}
 
-          {/* {hasVariants && (
+              {/* {hasVariants && (
             <Card id="inventory">
               <CardHeader className="pb-0">
                 <CardTitle>
@@ -799,20 +777,48 @@ const CreateProduct: React.FC = () => {
             </Card>
           )} */}
 
-          <Button
-            disabled={updateProductLoading || isPending}
-            type="submit"
-            className="w-full "
-            variant={'defaultGradiant'}
-          >
-            {(isPending || updateProductLoading) && (
-              <>
-                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                Processing
-              </>
-            )}
-            {!isPending && isUpdating ? 'Update' : 'Create'}
-          </Button>
+              <Button
+                disabled={updateProductLoading || isPending}
+                type="submit"
+                className="w-full "
+                variant={'defaultGradiant'}
+              >
+                {(isPending || updateProductLoading) && (
+                  <>
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Processing
+                  </>
+                )}
+                {!isPending && isUpdating ? 'Update' : 'Create'}
+              </Button>
+            </div>
+
+            {/* right */}
+            <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Product Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-6">
+                    <div className="grid gap-3">
+                      <Label htmlFor="status">Status</Label>
+                      <Select>
+                        <SelectTrigger id="status" aria-label="Select status">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="draft">Draft</SelectItem>
+                          <SelectItem value="published">Active</SelectItem>
+                          <SelectItem value="archived">Archived</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </form>
       </Form>
     </section>

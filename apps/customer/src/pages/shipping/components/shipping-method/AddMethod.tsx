@@ -178,7 +178,7 @@ const AddMethod: React.FC = () => {
                       (closeBtn.current as { click: () => void }).click();
                     }
                   }}
-                  variant={'destructive'}
+                  variant={'outline'}
                   className="w-full"
                 >
                   Cancel

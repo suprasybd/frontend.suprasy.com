@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
   Switch,
+  cn,
   useToast,
 } from '@frontend.suprasy.com/ui';
 import { Trash2, Upload } from 'lucide-react';
@@ -62,6 +63,7 @@ import { useModalStore } from '@customer/store/modalStore';
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
+
     defaultValues: {
       Description: '',
       Price: 99,
@@ -82,6 +84,8 @@ const CreateProduct: React.FC = () => {
     },
   });
   const [imageUpdated, setImageUpdated] = useState<number>(0);
+
+  const { errors: formErrors } = form.formState;
 
   const { setModalPath } = useModalStore((state) => state);
   const { toast } = useToast();
@@ -338,7 +342,11 @@ const CreateProduct: React.FC = () => {
                       <FormItem>
                         <FormLabel>Title</FormLabel>
                         <FormControl>
-                          <Input placeholder="Title" {...field} />
+                          <Input
+                            FormError={!!formErrors.Title}
+                            placeholder="Title"
+                            {...field}
+                          />
                         </FormControl>
 
                         <FormMessage />

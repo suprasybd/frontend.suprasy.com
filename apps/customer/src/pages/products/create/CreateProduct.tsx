@@ -253,7 +253,7 @@ const CreateProduct: React.FC = () => {
     control: form.control,
     name: 'AttributeValue',
   });
-  console.log('attribute values', attributeValues);
+
   const productDescription = useMemo(() => {
     return productDetails?.Description;
   }, [productDetails]);
@@ -606,81 +606,6 @@ const CreateProduct: React.FC = () => {
                             </Button>
                           </CardContent>
                         </Card>
-
-                        {/* {VariantsOptions.map((option, index) => {
-                      return (
-                        <Card className="mb-3" key={index}>
-                          <CardContent>
-                            <div>
-                              <FormField
-                                control={form.control}
-                                name={`VariantsOptions.${index}.Name`}
-                                render={({ field }) => (
-                                  <FormItem className=" rounded-lg pt-3">
-                                    <div className="space-y-0.5">
-                                      <FormLabel>Option Name</FormLabel>
-                                      <FormDescription></FormDescription>
-                                    </div>
-                                    <div className="flex gap-[7px] items-center">
-                                      <FormControl>
-                                        <Input
-                                          onChangeCapture={() =>
-                                            incrementChanges()
-                                          }
-                                          placeholder="Option Name"
-                                          {...field}
-                                        />
-                                      </FormControl>
-                                      <Trash2
-                                        onClick={() => remove(removeindex
-                                        className="hover:cursor-pointer"
-                                      />
-                                    </div>
-
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <Card className="mt-3">
-                                <CardContent>
-                                  <h3 className="mt-3">Values</h3>
-
-                                  <div className="flex gap-1 items-center">
-                                    {Variants[index]?.Values.map(
-                                      (option, index) => (
-                                        <span key={index}>
-                                          {option && (
-                                            <span className="block bg-gradient-to-r from-violet-600 to-indigo-600 px-2 w-fit rounded text-sm text-white">
-                                              {option}
-                                            </span>
-                                          )}
-                                        </span>
-                                      )
-                                    )}
-                                  </div>
-
-                                  <NestedValues
-                                    nestIndex={index}
-                                    control={form.control}
-                                  />
-                                </CardContent>
-                              </Card>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })} */}
-                        {/* <Button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        append({
-                          Name: 'Default Name',
-                          Values: ['Value 1', 'Value 2'],
-                        });
-                      }}
-                    >
-                      Add More Option
-                    </Button> */}
                       </div>
                     )}
                   </div>
@@ -734,84 +659,6 @@ const CreateProduct: React.FC = () => {
                   </CardContent>
                 </Card>
               )}
-
-              {/* {hasVariants && (
-            <Card id="inventory">
-              <CardHeader className="pb-0">
-                <CardTitle>
-                  Enter Inventory(Quantity) / Price For Variants
-                </CardTitle>
-                <CardDescription>
-                  e.g. 1 Inventory, 199 Price (BDT/৳)
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {variantSku.map((combinations, index) => (
-                  <div
-                    key={combinations.id}
-                    className="flex items-center justify-between gap-4"
-                  >
-                    <div className="flex-1 flex gap-[8px]">
-                      <div className="whitespace-nowrap">
-                        <FormField
-                          control={form.control}
-                          name={`Variants.${index}.IsActive`}
-                          render={({ field }) => (
-                            <FormItem className="space-y-0 flex items-center">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                              <FormLabel className="whitespace-nowrap ml-[8px]">
-                                {combinations.Options.map(
-                                  (option) => option.Value
-                                ).join('-')}
-                              </FormLabel>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex-1 w-full">
-                      <FormField
-                        control={form.control}
-                        name={`Variants.${index}.Price`}
-                        render={({ field }) => (
-                          <FormItem className="space-y-0">
-                            <FormLabel>Price (BDT/৳) </FormLabel>
-                            <FormControl>
-                              <Input placeholder="Price" {...field} />
-                            </FormControl>
-
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="flex-1 w-full">
-                      <FormField
-                        control={form.control}
-                        name={`Variants.${index}.Inventory`}
-                        render={({ field }) => (
-                          <FormItem className="space-y-0">
-                            <FormLabel>Inventory</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Inventory" {...field} />
-                            </FormControl>
-
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          )} */}
 
               <Button
                 disabled={updateProductLoading || isPending}

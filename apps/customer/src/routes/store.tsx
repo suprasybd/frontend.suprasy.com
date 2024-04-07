@@ -20,7 +20,7 @@ export const Route = createFileRoute('/store')({
         <StoreSidebar />
         <div className="h-full flex flex-col ">
           <StoreHeader />
-          <section className="min-h-[90vh] max-h-[90vh] overflow-auto">
+          <section className="min-h-[87vh] max-h-[87vh] overflow-auto">
             <Outlet />
           </section>
         </div>

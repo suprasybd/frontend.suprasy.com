@@ -119,7 +119,7 @@ const CreateProduct: React.FC = () => {
       appendImage(formatedImagesList);
       setImagesList([]);
     }
-
+    console.log('run');
     // eslint-disable-next-line
   }, [imagesList]);
 
@@ -658,7 +658,7 @@ const CreateProduct: React.FC = () => {
 
               {!hasVariants && (
                 <Card id="inventory">
-                  <CardHeader className="pb-0">
+                  <CardHeader className="pb-0 ">
                     <CardTitle>Enter Single Product Price</CardTitle>
                     <CardDescription>e.g. 199 Price (BDT/৳)</CardDescription>
                   </CardHeader>
@@ -703,21 +703,6 @@ const CreateProduct: React.FC = () => {
                   </CardContent>
                 </Card>
               )}
-
-              <Button
-                disabled={updateProductLoading || isPending}
-                type="submit"
-                className="w-full "
-                variant={'defaultGradiant'}
-              >
-                {(isPending || updateProductLoading) && (
-                  <>
-                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                    Processing
-                  </>
-                )}
-                {!isPending && isUpdating ? 'Update' : 'Create'}
-              </Button>
             </div>
 
             {/* right */}
@@ -777,6 +762,20 @@ const CreateProduct: React.FC = () => {
                   />
                 </CardContent>
               </Card>
+              <Button
+                disabled={updateProductLoading || isPending}
+                type="submit"
+                className="w-full "
+                variant={'defaultGradiant'}
+              >
+                {(isPending || updateProductLoading) && (
+                  <>
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Processing
+                  </>
+                )}
+                {!isPending && isUpdating ? 'Update Product' : 'Create Product'}
+              </Button>
             </div>
           </div>
         </form>

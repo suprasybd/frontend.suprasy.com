@@ -226,6 +226,7 @@ const CreateProduct: React.FC = () => {
   });
 
   function onSubmit(values: z.infer<typeof productSchema>) {
+    console.log(values);
     // const filteredActiveSku = values.Variants.filter((vari) => vari.IsActive);
     // const finalProduct = {
     //   ...values,
@@ -244,40 +245,6 @@ const CreateProduct: React.FC = () => {
 
   const { errors } = form.formState;
 
-  // const generateCombinations = (
-  //   options: {
-  //     Name: string;
-  //     Values: string[];
-  //   }[],
-  //   currentIndex = 0,
-  //   currentCombination = []
-  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // ): any => {
-  //   if (currentIndex === options.length) {
-  //     return [currentCombination];
-  //   }
-
-  //   const currentOption = options[currentIndex];
-  //   const combinations = [];
-
-  //   for (const value of currentOption.Values) {
-  //     const nextCombination = [
-  //       ...currentCombination,
-  //       { OptionName: currentOption.Name, Value: value },
-  //     ];
-  //     combinations.push(
-  //       ...generateCombinations(
-  //         options,
-  //         currentIndex + 1,
-  //         nextCombination as never
-  //       )
-  //     );
-  //   }
-
-  //   return combinations;
-  // };
-
-  // const attributeValues = form.watch('AttributeValue');
   const {
     fields: attributeValues,
     append: appendAttributeValue,
@@ -379,26 +346,6 @@ const CreateProduct: React.FC = () => {
                       />
                     )}
                   </div>
-
-                  {/* <FormField
-                control={form.control}
-                name="Description"
-                render={({ field }) => (
-                  <FormItem className="space-y-0 !mt-3">
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        rows={10}
-                        placeholder="Enter product description"
-                        className="resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
                 </CardContent>
               </Card>
 

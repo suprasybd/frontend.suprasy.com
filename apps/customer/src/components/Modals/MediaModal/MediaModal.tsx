@@ -19,6 +19,7 @@ import { CheckCheckIcon, Upload } from 'lucide-react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { getStoreImages, uplaodImageToStore } from './api';
 import Loader from '@customer/components/Loader/Loader';
+import { useMediaFormStore } from '@customer/store/mediaFormStore';
 
 const MediaModal: React.FC = () => {
   const { modal, clearModalPath } = useModalStore((state) => state);
@@ -28,6 +29,9 @@ const MediaModal: React.FC = () => {
   const [selectedImages, setSelectedImages] = useState<string[]>();
 
   const { toast } = useToast();
+
+  const { setImagesList } = useMediaFormStore((state) => state);
+
   useEffect(() => {
     if (modalName === 'media') {
       setModalOpen(true);
@@ -80,6 +84,8 @@ const MediaModal: React.FC = () => {
     }
   };
 
+  console.log('selected images', selectedImages);
+
   return (
     <div>
       <Dialog
@@ -120,17 +126,24 @@ const MediaModal: React.FC = () => {
                         <div
                           key={image.Id}
                           className="w-[200px] h-[160px] cursor-pointer rounded-sm hover:border-blue-500 hover:border-2"
-                          onClick={() =>
-                            setSelectedImages((prev) => {
-                              if (!selectedImages?.includes(image.ImageUrl)) {
+                          onClick={() => {
+                            if (!selectedImages?.includes(image.ImageUrl)) {
+                              setSelectedImages((prev) => {
                                 if (prev) {
                                   return [...prev, image.ImageUrl];
                                 } else {
                                   return [image.ImageUrl];
                                 }
-                              }
-                            })
-                          }
+                              });
+                            } else {
+                              // image already inclused remove it
+                              const filtered = selectedImages.filter(
+                                (imageState) => imageState !== image.ImageUrl
+                              );
+
+                              setSelectedImages(filtered);
+                            }
+                          }}
                         >
                           {selectedImages?.includes(image.ImageUrl) && (
                             <CheckCheckIcon />
@@ -174,7 +187,20 @@ const MediaModal: React.FC = () => {
               </div>
             </TabsContent>
           </Tabs>
+          <Button
+            disabled={!selectedImages}
+            onClick={() => {
+              if (selectedImages) {
+                setImagesList(selectedImages);
+              }
 
+              setSelectedImages([]);
+
+              closeModal();
+            }}
+          >
+            Pick Selected
+          </Button>
           <Button onClick={() => closeModal()}>Close</Button>
         </DialogContent>
       </Dialog>

@@ -17,7 +17,9 @@ const VariantSchema = z.object({
   Options: z.array(OptionSchema),
 });
 
-const ImageUrl = z.string().url();
+const ImageUrl = z.object({
+  ImageUrl: z.string().url(),
+});
 
 const AttributeValues = z.object({
   Value: z.string(),

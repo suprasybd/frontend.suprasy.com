@@ -27,9 +27,10 @@ import {
   SelectValue,
   Switch,
   cn,
+  useFormField,
   useToast,
 } from '@frontend.suprasy.com/ui';
-import { Trash2, Upload } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Trash, Trash2, Upload } from 'lucide-react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReloadIcon } from '@radix-ui/react-icons';
@@ -59,7 +60,7 @@ import { StorefrontVariants } from '../api/types';
 import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
 import { useModalStore } from '@customer/store/modalStore';
-import { useFunctionStore } from '@customer/store/functionStore';
+import { useMediaFormStore } from '@customer/store/mediaFormStore';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -78,13 +79,38 @@ const CreateProduct: React.FC = () => {
         { Inventory: 99, Price: 190, Sku: 'SF-34526KP', Value: 'xl' },
       ],
       Images: [
-        'https://static.suprasy.com/2470df57-b2e3-46e3-a7d3-2ee62ecb976d20240216012436',
-
-        'https://static.suprasy.com/130c440e-a52c-4383-bb45-f8b22486488720240216012427',
+        {
+          ImageUrl:
+            'https://static.suprasy.com/2470df57-b2e3-46e3-a7d3-2ee62ecb976d20240216012436',
+        },
+        {
+          ImageUrl:
+            'https://static.suprasy.com/130c440e-a52c-4383-bb45-f8b22486488720240216012427',
+        },
       ],
     },
   });
   const [imageUpdated, setImageUpdated] = useState<number>(0);
+
+  const { append: appendImage, remove: removeImage } = useFieldArray({
+    control: form.control,
+    name: 'Images',
+  });
+
+  // set form into form store
+  const { imagesList, setImagesList } = useMediaFormStore((state) => state);
+
+  useEffect(() => {
+    if (imagesList && imagesList.length) {
+      const formatedImagesList = imagesList.map((image) => ({
+        ImageUrl: image,
+      }));
+      appendImage(formatedImagesList);
+      setImagesList([]);
+    }
+
+    // eslint-disable-next-line
+  }, [imagesList]);
 
   const { errors: formErrors } = form.formState;
 
@@ -385,20 +411,50 @@ const CreateProduct: React.FC = () => {
                     Lipsum dolor sit amet, consectetur adipiscing elit
                   </CardDescription>
                 </CardHeader>
-                <CardContent
-                  onClick={() => {
-                    // set modal here
-                    setModalPath({ modal: 'media' });
-                  }}
-                >
-                  <div className="grid gap-2">
-                    <div className="grid grid-cols-3 gap-2">
-                      <button className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed">
-                        <Upload className="h-4 w-4 text-muted-foreground" />
-                        <span className="sr-only">Upload</span>
-                      </button>
-                    </div>
+                <CardContent>
+                  <div className="flex flex-wrap gap-[10px]">
+                    {productImages.map((image, index) => {
+                      return (
+                        <div className="rounded-sm  border-gray-300 border-2">
+                          <div className="relative h-[160px] w-[200px] rounded-sm border broder-b-4 border-blue-400">
+                            <img
+                              src={image.ImageUrl}
+                              alt="product"
+                              className="object-cover w-full h-full "
+                            />
+                          </div>
+                          <div className="flex w-full ">
+                            <button className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2 ">
+                              <ArrowLeft />
+                            </button>
+                            <button className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2 ">
+                              <ArrowRight />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                removeImage(index);
+                              }}
+                              className="w-full flex justify-center hover:bg-slate-300 p-2 "
+                            >
+                              <Trash2 />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
+
+                  <button
+                    onClick={() => {
+                      // set modal here
+                      setModalPath({ modal: 'media' });
+                    }}
+                    className="flex aspect-square mt-10 w-[200px] h-[160px] items-center justify-center rounded-md border border-dashed"
+                  >
+                    <Upload className="h-4 w-4 text-muted-foreground" />
+                    <span className="sr-only">Upload</span>
+                  </button>
                 </CardContent>
               </Card>
 

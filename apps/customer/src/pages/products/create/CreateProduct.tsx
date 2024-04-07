@@ -26,11 +26,22 @@ import {
   SelectTrigger,
   SelectValue,
   Switch,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
   cn,
   useFormField,
   useToast,
 } from '@frontend.suprasy.com/ui';
-import { ArrowLeft, ArrowRight, Trash, Trash2, Upload } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Star,
+  Trash,
+  Trash2,
+  Upload,
+} from 'lucide-react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReloadIcon } from '@radix-ui/react-icons';
@@ -375,35 +386,6 @@ const CreateProduct: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card className={updateInventory ? 'hidden' : ''}>
-                <CardHeader className="pb-0">
-                  <CardTitle>Enter Product Slug / Url</CardTitle>
-                  <CardDescription>
-                    e.g. mydomain.com/blue-t-shirt-special
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="Slug"
-                    render={({ field }) => (
-                      <FormItem className="space-y-0 !mt-3">
-                        <FormLabel>Slug</FormLabel>
-                        <FormControl>
-                          <Input
-                            FormError={!!formErrors.Slug}
-                            placeholder="Slug"
-                            {...field}
-                          />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
               <Card className="overflow-hidden">
                 <CardHeader>
                   <CardTitle>Product Images</CardTitle>
@@ -415,7 +397,7 @@ const CreateProduct: React.FC = () => {
                   <div className="flex flex-wrap gap-[10px]">
                     {productImages.map((image, index) => {
                       return (
-                        <div className="rounded-sm  border-gray-300 border-2">
+                        <div className="rounded-sm relative  border-gray-300 border-2">
                           <div className="relative h-[160px] w-[200px] rounded-sm border broder-b-4 border-blue-400">
                             <img
                               src={image.ImageUrl}
@@ -423,6 +405,12 @@ const CreateProduct: React.FC = () => {
                               className="object-cover w-full h-full "
                             />
                           </div>
+                          {index === 0 && (
+                            <div className="absolute top-[-10px] left-[-10px] bg-yellow-300 text-red-600 rounded-lg p-1">
+                              {' '}
+                              <Star />
+                            </div>
+                          )}
                           <div className="flex w-full ">
                             <button className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2 ">
                               <ArrowLeft />
@@ -759,6 +747,34 @@ const CreateProduct: React.FC = () => {
                       </Select>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+              <Card className={updateInventory ? 'hidden' : ''}>
+                <CardHeader className="pb-0">
+                  <CardTitle>Enter Product Slug / Url</CardTitle>
+                  <CardDescription>
+                    e.g. mydomain.com/blue-t-shirt-special
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FormField
+                    control={form.control}
+                    name="Slug"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0 !mt-3">
+                        <FormLabel>Slug</FormLabel>
+                        <FormControl>
+                          <Input
+                            FormError={!!formErrors.Slug}
+                            placeholder="Slug"
+                            {...field}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </CardContent>
               </Card>
             </div>

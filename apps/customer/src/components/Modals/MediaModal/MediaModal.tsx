@@ -1,10 +1,8 @@
-import { useFunctionStore } from '@customer/store/functionStore';
 import { useModalStore } from '@customer/store/modalStore';
 import {
   Button,
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   Input,
@@ -13,16 +11,23 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  useToast,
 } from '@frontend.suprasy.com/ui';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { Upload } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { CheckCheckIcon, Upload } from 'lucide-react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import { getStoreImages, uplaodImageToStore } from './api';
+import Loader from '@customer/components/Loader/Loader';
 
 const MediaModal: React.FC = () => {
   const { modal, clearModalPath } = useModalStore((state) => state);
   const modalName = modal.modal;
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [tab, setTab] = useState<string>('browse');
+  const [selectedImages, setSelectedImages] = useState<string[]>();
 
+  const { toast } = useToast();
   useEffect(() => {
     if (modalName === 'media') {
       setModalOpen(true);
@@ -32,6 +37,47 @@ const MediaModal: React.FC = () => {
   const closeModal = () => {
     setModalOpen(false);
     clearModalPath();
+  };
+
+  const {
+    data: storeImagesResponse,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ['getStoreImagesList', modalOpen],
+    queryFn: () => getStoreImages(1, 20),
+  });
+
+  const { mutate: handleImageUploadApi, isPending } = useMutation({
+    mutationFn: uplaodImageToStore,
+    onSuccess: () => {
+      setTab('browse');
+      refetch();
+      toast({
+        title: 'Image Upload',
+        description: 'Image upload successfull',
+        variant: 'default',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Image Upload',
+        description: 'image upload failed!',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    const selectedFile = e.target.files?.[0];
+
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('ProductImage', selectedFile);
+      handleImageUploadApi(formData);
+    }
   };
 
   return (
@@ -49,35 +95,82 @@ const MediaModal: React.FC = () => {
             <DialogTitle>Media Managment</DialogTitle>
           </DialogHeader>
 
-          <Tabs defaultValue="browse" className="w-full">
+          <Tabs
+            defaultValue="browse"
+            value={tab}
+            onValueChange={(value) => setTab(value)}
+            className="w-full"
+          >
             <TabsList>
               <TabsTrigger value="browse">browse</TabsTrigger>
               <TabsTrigger value="upload">upload</TabsTrigger>
             </TabsList>
             <TabsContent value="browse">
-              Make changes to your browse here.
+              {isLoading && <Loader />}
+              {!isLoading && !storeImagesResponse?.Data?.length && (
+                <div>You don't have any images please upload</div>
+              )}
+
+              {!isLoading &&
+                storeImagesResponse?.Data &&
+                storeImagesResponse?.Data?.length > 0 && (
+                  <div className="max-h-[80vh] flex gap-[10px] flex-wrap overflow-auto">
+                    {storeImagesResponse.Data.map((image) => {
+                      return (
+                        <div
+                          key={image.Id}
+                          className="w-[200px] h-[160px] cursor-pointer rounded-sm hover:border-blue-500 hover:border-2"
+                          onClick={() =>
+                            setSelectedImages((prev) => {
+                              if (!selectedImages?.includes(image.ImageUrl)) {
+                                if (prev) {
+                                  return [...prev, image.ImageUrl];
+                                } else {
+                                  return [image.ImageUrl];
+                                }
+                              }
+                            })
+                          }
+                        >
+                          {selectedImages?.includes(image.ImageUrl) && (
+                            <CheckCheckIcon />
+                          )}
+
+                          <img
+                            className="object-cover w-full h-full rounded-sm"
+                            src={image.ImageUrl}
+                            alt="media"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
             </TabsContent>
             <TabsContent value="upload">
               <div className="w-full flex justify-center my-10">
-                <Label
-                  className="w-full hover:cursor-pointer rounded h-full  flex justify-center items-center"
-                  htmlFor="picture"
-                >
-                  <div className="flex aspect-square w-[170px] h-[170px] items-center justify-center rounded-md border border-dashed">
-                    <Upload className="h-4 w-4 text-muted-foreground" />
-                    <span className="sr-only">Upload</span>
-                  </div>
-                </Label>
-                <Input
-                  onChange={() => {
-                    console.log('H i');
-                  }}
-                  className="hidden"
-                  id="picture"
-                  name="image"
-                  type="file"
-                  accept="image/*"
-                />
+                {!isPending && (
+                  <>
+                    <Label
+                      className="w-full hover:cursor-pointer rounded h-full  flex justify-center items-center"
+                      htmlFor="picture"
+                    >
+                      <div className="flex aspect-square w-[170px] h-[170px] items-center justify-center rounded-md border border-dashed">
+                        <Upload className="h-4 w-4 text-muted-foreground" />
+                        <span className="sr-only">Upload</span>
+                      </div>
+                    </Label>
+                    <Input
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="picture"
+                      name="image"
+                      type="file"
+                      accept="image/*"
+                    />
+                  </>
+                )}
+                {isPending && <Loader />}
               </div>
             </TabsContent>
           </Tabs>

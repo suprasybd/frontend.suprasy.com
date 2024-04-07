@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { loginSchema } from './zod/loginSchema';
+import { registerSchema } from './zod/registerSchema';
 
 import {
   Button,
@@ -17,37 +17,37 @@ import {
   useToast,
 } from '@frontend.suprasy.com/ui';
 import { useMutation } from '@tanstack/react-query';
-import { login } from './api';
+import { register } from './api';
 import { ReloadIcon } from '@radix-ui/react-icons';
 
-const Login: React.FC = () => {
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+const Register: React.FC = () => {
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: { Password: '', Email: '' },
   });
 
   const { toast } = useToast();
   const formErrors = form.formState;
 
-  const navigate = useNavigate();
-
   const { mutate: loginMutation, isPending } = useMutation({
-    mutationFn: login,
+    mutationFn: register,
     onSuccess: (data) => {
-      navigate({
-        to: '/',
+      toast({
+        title: 'Registration succecssfull',
+        description: 'We have sent you an verification email!',
+        variant: 'destructive',
       });
     },
     onError: (data) => {
       toast({
-        title: 'Login Failed',
+        title: 'Register Failed',
         description: 'Incorrect credintial provided!',
         variant: 'destructive',
       });
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
+  function onSubmit(values: z.infer<typeof registerSchema>) {
     loginMutation(values);
   }
 
@@ -60,7 +60,7 @@ const Login: React.FC = () => {
           alt="Your Company"
         />
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Sign in to your account
+          Create an account
         </h2>
       </div>
 
@@ -69,9 +69,45 @@ const Login: React.FC = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="Email"
+              name="FirstName"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>First Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      FormError={!!formErrors.errors.FirstName}
+                      placeholder="email"
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="LastName"
+              render={({ field }) => (
+                <FormItem className="space-y-0 !mt-3">
+                  <FormLabel>Last Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      FormError={!!formErrors.errors.LastName}
+                      placeholder="email"
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="Email"
+              render={({ field }) => (
+                <FormItem className="space-y-0 !mt-3">
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
@@ -115,18 +151,18 @@ const Login: React.FC = () => {
                   Loging In..
                 </>
               )}
-              {!isPending && <>Login</>}
+              {!isPending && <>Register</>}
             </Button>
           </form>
         </Form>
 
         <p className="mt-10 text-center text-sm text-gray-500 ">
-          Not a member?
+          Already registred?
           <Link
-            to="/register"
+            to="/login"
             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 pl-2"
           >
-            Click here to signup
+            Click here to signin
           </Link>
         </p>
       </div>
@@ -134,4 +170,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Register;

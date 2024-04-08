@@ -85,6 +85,7 @@ const CreateProduct: React.FC = () => {
       Type: '',
       Inventory: 2,
       HasVariants: false,
+      Status: 'draft',
       AttributeName: 'Size',
       AttributeValue: [
         { Inventory: 99, Price: 190, Sku: 'SF-34526KP', Value: 'xl' },
@@ -102,6 +103,8 @@ const CreateProduct: React.FC = () => {
     },
   });
   const [imageUpdated, setImageUpdated] = useState<number>(0);
+
+  console.log('errors', form.formState.errors);
 
   const { append: appendImage, remove: removeImage } = useFieldArray({
     control: form.control,
@@ -264,6 +267,24 @@ const CreateProduct: React.FC = () => {
 
   function onSubmit(values: z.infer<typeof productSchema>) {
     console.log(values);
+    const formatedImages = values.Images.map(
+      (value: { ImageUrl: string }) => value.ImageUrl
+    );
+    const finalProduct = {
+      ...values,
+      Images: formatedImages,
+      Attribute: hasVariants && {
+        Name: values.AttributeName,
+        Values: values.AttributeValue,
+      },
+    };
+
+    if (!isUpdating) {
+      createProduct(finalProduct as any);
+    } else {
+      updateProduct({ data: finalProduct as any, productId: productId });
+    }
+
     // const filteredActiveSku = values.Variants.filter((vari) => vari.IsActive);
     // const finalProduct = {
     //   ...values,
@@ -434,8 +455,9 @@ const CreateProduct: React.FC = () => {
                   </div>
 
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
                       // set modal here
+                      e.preventDefault();
                       setModalPath({ modal: 'media' });
                     }}
                     className="flex aspect-square mt-10 w-[200px] h-[160px] items-center justify-center rounded-md border border-dashed"

@@ -39,8 +39,8 @@ export const productSchema = z
     Status: z.string().min(1),
     Inventory: z.coerce.number().optional(),
     HasVariants: z.boolean().default(false).optional(),
-    AttributeName: z.string().min(1),
-    AttributeValue: z.array(AttributeValues),
+    AttributeName: z.string().min(1).optional(),
+    AttributeValue: z.array(AttributeValues).optional(),
     Images: z.array(ImageUrl).min(1),
   })
   .refine(

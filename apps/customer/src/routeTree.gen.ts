@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TestImport } from './routes/test'
 import { Route as StoreImport } from './routes/store'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
@@ -33,6 +34,7 @@ const StoreStoreKeyPaymentsLazyImport = createFileRoute(
 const StoreStoreKeyOrdersLazyImport = createFileRoute(
   '/store/$storeKey/orders',
 )()
+const StoreStoreKeyMediaLazyImport = createFileRoute('/store/$storeKey/media')()
 const StoreStoreKeyInventoryLazyImport = createFileRoute(
   '/store/$storeKey/inventory',
 )()
@@ -48,6 +50,9 @@ const StoreStoreKeyCustomersLazyImport = createFileRoute(
 )()
 const StoreStoreKeyBillingLazyImport = createFileRoute(
   '/store/$storeKey/billing',
+)()
+const StoreStoreKeyAnalyticsLazyImport = createFileRoute(
+  '/store/$storeKey/analytics',
 )()
 const StoreStoreKeyProductsProductIdDetailsLazyImport = createFileRoute(
   '/store/$storeKey/products/$productId/details',
@@ -71,6 +76,11 @@ const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
+
+const TestRoute = TestImport.update({
+  path: '/test',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const StoreRoute = StoreImport.update({
   path: '/store',
@@ -106,6 +116,13 @@ const StoreStoreKeyOrdersLazyRoute = StoreStoreKeyOrdersLazyImport.update({
   getParentRoute: () => StoreRoute,
 } as any).lazy(() =>
   import('./routes/store/$storeKey/orders.lazy').then((d) => d.Route),
+)
+
+const StoreStoreKeyMediaLazyRoute = StoreStoreKeyMediaLazyImport.update({
+  path: '/$storeKey/media',
+  getParentRoute: () => StoreRoute,
+} as any).lazy(() =>
+  import('./routes/store/$storeKey/media.lazy').then((d) => d.Route),
 )
 
 const StoreStoreKeyInventoryLazyRoute = StoreStoreKeyInventoryLazyImport.update(
@@ -156,6 +173,15 @@ const StoreStoreKeyBillingLazyRoute = StoreStoreKeyBillingLazyImport.update({
   import('./routes/store/$storeKey/billing.lazy').then((d) => d.Route),
 )
 
+const StoreStoreKeyAnalyticsLazyRoute = StoreStoreKeyAnalyticsLazyImport.update(
+  {
+    path: '/$storeKey/analytics',
+    getParentRoute: () => StoreRoute,
+  } as any,
+).lazy(() =>
+  import('./routes/store/$storeKey/analytics.lazy').then((d) => d.Route),
+)
+
 const StoreStoreKeyShippingRoute = StoreStoreKeyShippingImport.update({
   path: '/$storeKey/shipping',
   getParentRoute: () => StoreRoute,
@@ -193,6 +219,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreImport
       parentRoute: typeof rootRoute
     }
+    '/test': {
+      preLoaderRoute: typeof TestImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
@@ -207,6 +237,10 @@ declare module '@tanstack/react-router' {
     }
     '/store/$storeKey/shipping': {
       preLoaderRoute: typeof StoreStoreKeyShippingImport
+      parentRoute: typeof StoreImport
+    }
+    '/store/$storeKey/analytics': {
+      preLoaderRoute: typeof StoreStoreKeyAnalyticsLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/billing': {
@@ -231,6 +265,10 @@ declare module '@tanstack/react-router' {
     }
     '/store/$storeKey/inventory': {
       preLoaderRoute: typeof StoreStoreKeyInventoryLazyImport
+      parentRoute: typeof StoreImport
+    }
+    '/store/$storeKey/media': {
+      preLoaderRoute: typeof StoreStoreKeyMediaLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/orders': {
@@ -263,18 +301,21 @@ export const routeTree = rootRoute.addChildren([
   LoginRoute,
   StoreRoute.addChildren([
     StoreStoreKeyShippingRoute,
+    StoreStoreKeyAnalyticsLazyRoute,
     StoreStoreKeyBillingLazyRoute,
     StoreStoreKeyCustomersLazyRoute,
     StoreStoreKeyDashboardLazyRoute,
     StoreStoreKeyDomainLazyRoute,
     StoreStoreKeyEmailLazyRoute,
     StoreStoreKeyInventoryLazyRoute,
+    StoreStoreKeyMediaLazyRoute,
     StoreStoreKeyOrdersLazyRoute,
     StoreStoreKeyPaymentsLazyRoute,
     StoreStoreKeyProductsLazyRoute,
     StoreStoreKeyProductsCreateRoute,
     StoreStoreKeyProductsProductIdDetailsLazyRoute,
   ]),
+  TestRoute,
   AboutLazyRoute,
   ForgotpasswordLazyRoute,
   RegisterLazyRoute,

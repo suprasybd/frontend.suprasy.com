@@ -14,6 +14,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
+  useToast,
 } from '@frontend.suprasy.com/ui';
 import { useMutation } from '@tanstack/react-query';
 import { login } from './api';
@@ -25,6 +26,9 @@ const Login: React.FC = () => {
     defaultValues: { Password: '', Email: '' },
   });
 
+  const { toast } = useToast();
+  const formErrors = form.formState;
+
   const navigate = useNavigate();
 
   const { mutate: loginMutation, isPending } = useMutation({
@@ -32,6 +36,13 @@ const Login: React.FC = () => {
     onSuccess: (data) => {
       navigate({
         to: '/',
+      });
+    },
+    onError: (data) => {
+      toast({
+        title: 'Login Failed',
+        description: 'Incorrect credintial provided!',
+        variant: 'destructive',
       });
     },
   });
@@ -63,7 +74,11 @@ const Login: React.FC = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="email" {...field} />
+                    <Input
+                      FormError={!!formErrors.errors.Email}
+                      placeholder="email"
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -77,7 +92,12 @@ const Login: React.FC = () => {
                 <FormItem className="space-y-0 !mt-3">
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="password" {...field} />
+                    <Input
+                      FormError={!!formErrors.errors.Password}
+                      type="password"
+                      placeholder="password"
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />

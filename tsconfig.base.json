@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@frontend.suprasy.com/ui": ["libs/ui/src/index.ts"]
+      "@frontend.suprasy.com/ui": ["libs/ui/src/index.ts"],
+      "@customer/*": ["apps/customer/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

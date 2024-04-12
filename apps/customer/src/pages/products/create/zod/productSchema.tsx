@@ -17,10 +17,15 @@ const VariantSchema = z.object({
   Options: z.array(OptionSchema),
 });
 
-const ImageUrl = z.string().url();
+const ImageUrl = z.object({
+  ImageUrl: z.string().url(),
+});
 
-const ImageObject = z.object({
-  ImageUrl: ImageUrl,
+const AttributeValues = z.object({
+  Value: z.string(),
+  Inventory: z.coerce.number().min(0),
+  Price: z.coerce.number().min(0),
+  Sku: z.string().max(100),
 });
 
 export const productSchema = z
@@ -31,12 +36,12 @@ export const productSchema = z
     Title: z.string().min(3),
     Description: z.string().min(10),
     Price: z.coerce.number().optional(),
+    Status: z.string().min(1),
     Inventory: z.coerce.number().optional(),
     HasVariants: z.boolean().default(false).optional(),
-    VariantsOptions: z.array(Options),
-    Variants: z.array(VariantSchema),
-    Images: z.array(ImageObject).min(1),
-    UploadingList: z.array(z.object({})).optional(),
+    AttributeName: z.string().min(1).optional(),
+    AttributeValue: z.array(AttributeValues).optional(),
+    Images: z.array(ImageUrl).min(1),
   })
   .refine(
     (schema) => {
@@ -50,14 +55,17 @@ export const productSchema = z
   )
   .refine(
     (schema) => {
-      if (schema.HasVariants && !schema.VariantsOptions.length) {
+      if (
+        (schema.HasVariants && !schema.AttributeValue.length) ||
+        (schema.HasVariants && !schema.AttributeName)
+      ) {
         return false;
       } else {
         return true;
       }
     },
     {
-      message: 'Please add variants.',
+      message: 'Please add attribute name , values.',
       path: ['HasVariants'],
     }
   )

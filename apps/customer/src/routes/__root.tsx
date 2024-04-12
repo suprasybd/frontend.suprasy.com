@@ -1,5 +1,4 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
-import BottomNav from '../components/BottomNav/BottomNav';
 import NavBar from '../components/NavBar/NavBar';
 import { AuthStoreType, useAuthStore } from '../store/authStore';
 interface MyRouterContext {
@@ -16,7 +15,6 @@ const RootComponent: React.FC = () => {
       <div className="flex gap-2 ">
         <Outlet />
       </div>
-      {isAuthenticated && <BottomNav />}
 
       {/* <TanStackRouterDevtools /> */}
     </>

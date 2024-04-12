@@ -1,0 +1,206 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Link } from '@tanstack/react-router';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { registerSchema } from './zod/registerSchema';
+
+import {
+  Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  useToast,
+} from '@frontend.suprasy.com/ui';
+import { useMutation } from '@tanstack/react-query';
+import { register } from './api';
+import { ReloadIcon } from '@radix-ui/react-icons';
+
+const Register: React.FC = () => {
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { Password: '', Email: '' },
+  });
+
+  const { toast } = useToast();
+  const formErrors = form.formState;
+
+  const {
+    mutate: registerMutation,
+    isPending,
+    isSuccess,
+  } = useMutation({
+    mutationFn: register,
+    onSuccess: (data) => {
+      toast({
+        title: 'Registration succecssfull',
+        description: 'We have sent you an verification email!',
+        variant: 'default',
+      });
+    },
+    onError: (data) => {
+      toast({
+        title: 'Register Failed',
+        description: 'Incorrect credintial provided!',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof registerSchema>) {
+    registerMutation(values);
+  }
+
+  const usersEmail = form.watch('Email');
+
+  return (
+    <div className="flex min-h-full  flex-col justify-center px-6 py-12 lg:px-8">
+      {!isSuccess && (
+        <div>
+          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+            <img
+              className="mx-auto h-10 w-auto"
+              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+              alt="Your Company"
+            />
+            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+              Create an account
+            </h2>
+          </div>
+
+          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
+                <FormField
+                  control={form.control}
+                  name="FirstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          FormError={!!formErrors.errors.FirstName}
+                          placeholder="First Name"
+                          {...field}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="LastName"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0 !mt-3">
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          FormError={!!formErrors.errors.LastName}
+                          placeholder="Last Name"
+                          {...field}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="Email"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0 !mt-3">
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          FormError={!!formErrors.errors.Email}
+                          placeholder="email"
+                          {...field}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="Password"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0 !mt-3">
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          FormError={!!formErrors.errors.Password}
+                          type="password"
+                          placeholder="password"
+                          {...field}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  className="w-full "
+                  variant={'defaultGradiant'}
+                >
+                  {isPending && (
+                    <>
+                      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                      Registering..
+                    </>
+                  )}
+                  {!isPending && <>Register</>}
+                </Button>
+              </form>
+            </Form>
+
+            <p className="mt-10 text-center text-sm text-gray-500 ">
+              Already registred?
+              <Link
+                to="/login"
+                className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 pl-2"
+              >
+                Click here to signin
+              </Link>
+            </p>
+          </div>
+        </div>
+      )}
+      {isSuccess && (
+        <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden py-6 sm:py-12 bg-white">
+          <div className="max-w-xl px-5 text-center">
+            <h2 className="mb-2 text-[42px] font-bold text-zinc-800">
+              Verification Email Sent
+            </h2>
+            <p className="mb-2 text-lg text-zinc-500">
+              We are glad, that you’re with us ? We’ve sent you a verification
+              link to the email address{' '}
+              <span className="font-medium text-indigo-500">{usersEmail}</span>.
+            </p>
+            <a
+              href="/login"
+              className="mt-3 inline-block w-96 rounded bg-indigo-600 px-5 py-3 font-medium text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700"
+            >
+              Continue →
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Register;

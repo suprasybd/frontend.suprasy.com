@@ -225,6 +225,8 @@ const CreateProduct: React.FC = () => {
       const productImagesFormatted = productImagesData.map((image) => ({
         ImageUrl: image.ImageUrl,
       }));
+      console.log(productImagesFormatted);
+      form.setValue('Images', productImagesFormatted);
 
       setImageUpdated((prev) => prev + 1);
     }

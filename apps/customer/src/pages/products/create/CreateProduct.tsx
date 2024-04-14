@@ -208,9 +208,10 @@ const CreateProduct: React.FC = () => {
       const mappedAttributesValues = productAttributes.Values.map((value) => ({
         Inventory: value.sku.Inventory,
         Price: value.sku.Price,
-        Sku: value.sku.StoreKey,
+        Sku: value.sku.Sku,
         Value: value.attributeValue.Value,
       }));
+      console.log('mapped', mappedAttributesValues);
       form.setValue('AttributeName', productAttributes.Name.Name);
       form.setValue('AttributeValue', mappedAttributesValues);
     }

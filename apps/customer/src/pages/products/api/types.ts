@@ -127,6 +127,7 @@ export interface ProductSku {
   ProductId: number;
   AttributeOptionId: number;
   Price: number;
+  Sku: string;
   Inventory: number;
   CreatedAt: string;
   UpdatedAt: string;

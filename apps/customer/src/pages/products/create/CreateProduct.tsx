@@ -60,6 +60,7 @@ import ApiClient from '../../../libs/ApiClient';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 import {
   createStoresProduct,
+  getProductAttributes,
   getProductsDetails,
   getProductsImages,
   getProductsMultipleVariants,
@@ -155,6 +156,12 @@ const CreateProduct: React.FC = () => {
     enabled: !!productId && update,
   });
 
+  const { data: productAttributeResponse } = useQuery({
+    queryKey: ['getProductsAttribute', productId],
+    queryFn: () => getProductAttributes(productId || 0),
+    enabled: !!productId && update,
+  });
+
   const { data: productImagesResponse } = useQuery({
     queryKey: ['getProductImages', productId],
     queryFn: () => getProductsImages(productId || 0),
@@ -179,6 +186,7 @@ const CreateProduct: React.FC = () => {
   const productDetails = productDetailsResponse?.Data;
   const productVariantDetails = productVariantsResponse?.Data;
   const productImagesData = productImagesResponse?.Data;
+  const productAttributes = productAttributeResponse?.Data;
   const productOptions = productOptionsResponse?.Data;
   const productsMultipleVariants = productMultipleVariantsResponse?.Data;
 
@@ -194,6 +202,17 @@ const CreateProduct: React.FC = () => {
       form.setValue('Description', productDetails.Description);
       form.setValue('Slug', productDetails.Slug);
       form.setValue('HasVariants', productDetails.HasVariant);
+    }
+
+    if (productAttributes) {
+      const mappedAttributesValues = productAttributes.Values.map((value) => ({
+        Inventory: value.sku.Inventory,
+        Price: value.sku.Price,
+        Sku: value.sku.StoreKey,
+        Value: value.attributeValue.Value,
+      }));
+      form.setValue('AttributeName', productAttributes.Name.Name);
+      form.setValue('AttributeValue', mappedAttributesValues);
     }
 
     if (productVariantDetails) {
@@ -214,6 +233,7 @@ const CreateProduct: React.FC = () => {
     productVariantDetails,
     productImagesData,
     isUpdating,
+    productAttributes,
   ]);
 
   const navigate = useNavigate();

@@ -6,6 +6,7 @@ import {
 import {
   MultipleVariantsTypes,
   Options,
+  ProductAttributeTypes,
   ProductImagesTypes,
   ProductType,
   ProductsVairantsTypes,
@@ -57,6 +58,14 @@ export const getProductsImages = async (
   productId: number
 ): Promise<ListResponseType<ProductImagesTypes>> => {
   const response = await ApiClient.get(`/products/images/${productId}`);
+
+  return response.data;
+};
+
+export const getProductAttributes = async (
+  productId: number
+): Promise<ResponseType<ProductAttributeTypes>> => {
+  const response = await ApiClient.get(`/products/attribute/${productId}`);
 
   return response.data;
 };

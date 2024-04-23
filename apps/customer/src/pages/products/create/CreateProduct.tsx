@@ -60,6 +60,7 @@ import ApiClient from '../../../libs/ApiClient';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 import {
   createStoresProduct,
+  getProductAttributes,
   getProductsDetails,
   getProductsImages,
   getProductsMultipleVariants,
@@ -155,6 +156,12 @@ const CreateProduct: React.FC = () => {
     enabled: !!productId && update,
   });
 
+  const { data: productAttributeResponse } = useQuery({
+    queryKey: ['getProductsAttribute', productId],
+    queryFn: () => getProductAttributes(productId || 0),
+    enabled: !!productId && update,
+  });
+
   const { data: productImagesResponse } = useQuery({
     queryKey: ['getProductImages', productId],
     queryFn: () => getProductsImages(productId || 0),
@@ -179,6 +186,7 @@ const CreateProduct: React.FC = () => {
   const productDetails = productDetailsResponse?.Data;
   const productVariantDetails = productVariantsResponse?.Data;
   const productImagesData = productImagesResponse?.Data;
+  const productAttributes = productAttributeResponse?.Data;
   const productOptions = productOptionsResponse?.Data;
   const productsMultipleVariants = productMultipleVariantsResponse?.Data;
 
@@ -196,6 +204,18 @@ const CreateProduct: React.FC = () => {
       form.setValue('HasVariants', productDetails.HasVariant);
     }
 
+    if (productAttributes) {
+      const mappedAttributesValues = productAttributes.Values.map((value) => ({
+        Inventory: value.sku.Inventory,
+        Price: value.sku.Price,
+        Sku: value.sku.Sku,
+        Value: value.attributeValue.Value,
+      }));
+      console.log('mapped', mappedAttributesValues);
+      form.setValue('AttributeName', productAttributes.Name.Name);
+      form.setValue('AttributeValue', mappedAttributesValues);
+    }
+
     if (productVariantDetails) {
       form.setValue('Price', productVariantDetails.Price);
       form.setValue('Inventory', productVariantDetails.Inventory);
@@ -205,6 +225,8 @@ const CreateProduct: React.FC = () => {
       const productImagesFormatted = productImagesData.map((image) => ({
         ImageUrl: image.ImageUrl,
       }));
+      console.log(productImagesFormatted);
+      form.setValue('Images', productImagesFormatted);
 
       setImageUpdated((prev) => prev + 1);
     }
@@ -214,6 +236,7 @@ const CreateProduct: React.FC = () => {
     productVariantDetails,
     productImagesData,
     isUpdating,
+    productAttributes,
   ]);
 
   const navigate = useNavigate();

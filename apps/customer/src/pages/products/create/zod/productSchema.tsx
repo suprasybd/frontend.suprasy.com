@@ -56,7 +56,7 @@ export const productSchema = z
   .refine(
     (schema) => {
       if (
-        (schema.HasVariants && !schema.AttributeValue.length) ||
+        (schema.HasVariants && !schema.AttributeValue?.length) ||
         (schema.HasVariants && !schema.AttributeName)
       ) {
         return false;

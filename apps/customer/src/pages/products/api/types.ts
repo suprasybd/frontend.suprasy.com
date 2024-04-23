@@ -101,3 +101,44 @@ export interface StorefrontOptionsValue {
   CreatedAt: string;
   UpdatedAt: string;
 }
+
+export interface AttributeName {
+  Id: number;
+  StoreKey: string;
+  ProductId: number;
+  Name: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface AttributeValue {
+  Id: number;
+  StoreKey: string;
+  AttributeId: number;
+  ProductId: number;
+  Value: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface ProductSku {
+  Id: number;
+  StoreKey: string;
+  ProductId: number;
+  AttributeOptionId: number;
+  Price: number;
+  Sku: string;
+  Inventory: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+interface AtrrValues {
+  sku: ProductSku;
+  attributeValue: AttributeValue;
+}
+
+export interface ProductAttributeTypes {
+  Name: AttributeName;
+  Values: AtrrValues[];
+}

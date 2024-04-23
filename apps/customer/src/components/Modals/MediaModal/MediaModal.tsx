@@ -125,7 +125,7 @@ const MediaModal: React.FC = () => {
                       return (
                         <div
                           key={image.Id}
-                          className="w-[200px] h-[160px] cursor-pointer rounded-sm hover:border-blue-500 hover:border-2"
+                          className="w-[200px] relative h-[160px] cursor-pointer rounded-sm hover:border-blue-500 hover:border-2"
                           onClick={() => {
                             if (!selectedImages?.includes(image.ImageUrl)) {
                               setSelectedImages((prev) => {
@@ -146,7 +146,7 @@ const MediaModal: React.FC = () => {
                           }}
                         >
                           {selectedImages?.includes(image.ImageUrl) && (
-                            <CheckCheckIcon />
+                            <CheckCheckIcon className="absolute top-[5px] right-[5px] text-green-300" />
                           )}
 
                           <img

@@ -61,6 +61,7 @@ import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/pr
 import {
   createStoresProduct,
   getProductAttributes,
+  getProductSku,
   getProductsDetails,
   getProductsImages,
   getProductsMultipleVariants,
@@ -162,34 +163,26 @@ const CreateProduct: React.FC = () => {
     enabled: !!productId && update,
   });
 
+  const { data: productSkuResponse } = useQuery({
+    queryKey: ['getProductsAttribute', productId, productDetailsResponse],
+    queryFn: () => getProductSku(productId || 0),
+    enabled:
+      !!productId &&
+      update &&
+      !productDetailsResponse?.Data.HasVariant &&
+      !!productDetailsResponse?.Data,
+  });
+
   const { data: productImagesResponse } = useQuery({
     queryKey: ['getProductImages', productId],
     queryFn: () => getProductsImages(productId || 0),
     enabled: !!productId && update,
   });
 
-  const { data: productOptionsResponse } = useQuery({
-    queryKey: ['getProductOptions', productId, uuid],
-    queryFn: () => getProudcctsOptions(productId || 0),
-    enabled: !!productId && update,
-  });
-
-  const {
-    data: productMultipleVariantsResponse,
-    isSuccess: getMultipleVariantsSuccess,
-  } = useQuery({
-    queryKey: ['getProductsMultipleVariantsOptionsValue', productId, uuid],
-    queryFn: () => getProductsMultipleVariants(productId || 0),
-    enabled: !!productId && update,
-  });
-
   const productDetails = productDetailsResponse?.Data;
-  const productVariantDetails = productVariantsResponse?.Data;
   const productImagesData = productImagesResponse?.Data;
   const productAttributes = productAttributeResponse?.Data;
-  const productOptions = productOptionsResponse?.Data;
-  const productsMultipleVariants = productMultipleVariantsResponse?.Data;
-
+  const productSku = productSkuResponse?.Data;
   const hasVariants = form.watch('HasVariants');
 
   const productImages = form.watch('Images');
@@ -204,21 +197,22 @@ const CreateProduct: React.FC = () => {
       form.setValue('HasVariants', productDetails.HasVariant);
     }
 
-    if (productAttributes) {
+    if (productAttributes && productDetails?.HasVariant) {
       const mappedAttributesValues = productAttributes.Values.map((value) => ({
         Inventory: value.sku.Inventory,
         Price: value.sku.Price,
         Sku: value.sku.Sku,
         Value: value.attributeValue.Value,
       }));
-      console.log('mapped', mappedAttributesValues);
+
       form.setValue('AttributeName', productAttributes.Name.Name);
       form.setValue('AttributeValue', mappedAttributesValues);
     }
 
-    if (productVariantDetails) {
-      form.setValue('Price', productVariantDetails.Price);
-      form.setValue('Inventory', productVariantDetails.Inventory);
+    if (productSku) {
+      form.setValue('Sku', productSku.Sku);
+      form.setValue('Price', productSku.Price);
+      form.setValue('Inventory', productSku.Inventory);
     }
 
     if (productImagesData) {
@@ -233,10 +227,10 @@ const CreateProduct: React.FC = () => {
   }, [
     productDetails,
     form,
-    productVariantDetails,
     productImagesData,
     isUpdating,
     productAttributes,
+    productSku,
   ]);
 
   const navigate = useNavigate();
@@ -307,21 +301,6 @@ const CreateProduct: React.FC = () => {
     } else {
       updateProduct({ data: finalProduct as any, productId: productId });
     }
-
-    // const filteredActiveSku = values.Variants.filter((vari) => vari.IsActive);
-    // const finalProduct = {
-    //   ...values,
-    //   Variants: hasVariants
-    //     ? filteredActiveSku
-    //     : [{ Price: values.Price, Inventory: values.Inventory }],
-    //   Options: values.VariantsOptions,
-    // };
-    // if (!isUpdating) {
-    //   createProduct(finalProduct as any);
-    // } else {
-    //   // hit update product endpoint
-    //   updateProduct({ data: finalProduct as any, productId: productId });
-    // }
   }
 
   const { errors } = form.formState;
@@ -507,6 +486,32 @@ const CreateProduct: React.FC = () => {
                 <CardContent>
                   <div>
                     <div className="space-y-4">
+                      {!hasVariants && (
+                        <FormField
+                          control={form.control}
+                          name={'Sku'}
+                          render={({ field }) => (
+                            <FormItem className=" rounded-lg pt-3">
+                              <div className="space-y-0.5">
+                                <FormLabel>Product Sku</FormLabel>
+                                <FormDescription></FormDescription>
+                              </div>
+                              <div className="flex gap-[7px] items-center">
+                                <FormControl>
+                                  <Input
+                                    defaultValue={'SKU-234512'}
+                                    placeholder="Sku"
+                                    {...field}
+                                  />
+                                </FormControl>
+                              </div>
+
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+
                       <FormField
                         control={form.control}
                         name="HasVariants"
@@ -756,7 +761,7 @@ const CreateProduct: React.FC = () => {
                 <CardHeader>
                   <CardTitle>Product Status</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent key={`${productDetails?.Status}`}>
                   <div className="grid gap-6">
                     <div className="grid gap-3">
                       <Label htmlFor="status">Status</Label>
@@ -764,7 +769,7 @@ const CreateProduct: React.FC = () => {
                         onValueChange={(value) => {
                           form.setValue('Status', value);
                         }}
-                        defaultValue="draft"
+                        defaultValue={productDetails?.Status || 'draft'}
                       >
                         <SelectTrigger id="status" aria-label="Select status">
                           <SelectValue placeholder="Select status" />

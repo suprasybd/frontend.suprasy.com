@@ -4,11 +4,16 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
   Button,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
 } from '@frontend.suprasy.com/ui';
+
 import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { LoaderMain } from '../../components/Loader/Loader';
 import { DataTable } from '../../components/Table/table';
 import { getUserStoresProductsList } from './api';
@@ -16,15 +21,16 @@ import { productsColumn } from './table/columns';
 
 const Products: React.FC = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+  const [tab, setTab] = useState('draft');
+
   const { data: products, isLoading } = useQuery({
-    queryKey: ['getUserStoresProductsList', storeKey],
-    queryFn: getUserStoresProductsList,
+    queryKey: ['getUserStoresProductsList', storeKey, tab],
+    queryFn: () => getUserStoresProductsList({ Status: tab }),
   });
 
   return (
     <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       {/* breadcrumbs */}
-
       <Breadcrumb className="pb-5">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -46,6 +52,19 @@ const Products: React.FC = () => {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
+      <Tabs
+        onValueChange={(val) => {
+          setTab(val);
+        }}
+        defaultValue={tab}
+        className="w-[400px]"
+      >
+        <TabsList>
+          <TabsTrigger value="draft">Draft</TabsTrigger>
+          <TabsTrigger value="active">Active</TabsTrigger>
+          <TabsTrigger value="archived">Archived</TabsTrigger>
+        </TabsList>
+      </Tabs>
       {isLoading && <LoaderMain />}
       {!isLoading && products?.Data && products?.Data?.length > 0 && (
         <Button className="mt-3 my-6" variant={'defaultGradiant'}>
@@ -58,7 +77,6 @@ const Products: React.FC = () => {
           </Link>
         </Button>
       )}
-
       {!isLoading && !products?.Data?.length && (
         <div className="flex min-h-[50vh] flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
           <div className="flex flex-col items-center gap-1 text-center">
@@ -81,7 +99,6 @@ const Products: React.FC = () => {
           </div>
         </div>
       )}
-
       {!isLoading && products?.Data && products?.Data?.length > 0 && (
         <DataTable columns={productsColumn} data={products?.Data || []} />
       )}

@@ -36,6 +36,7 @@ export const productSchema = z
     Title: z.string().min(3),
     Description: z.string().min(10),
     Price: z.coerce.number().optional(),
+    Sku: z.string().max(100),
     Status: z.string().min(1),
     Inventory: z.coerce.number().optional(),
     HasVariants: z.boolean().default(false).optional(),
@@ -52,6 +53,16 @@ export const productSchema = z
       }
     },
     { message: 'No price found while there is no variants.', path: ['Price'] }
+  )
+  .refine(
+    (schema) => {
+      if (!schema.HasVariants && !schema.Sku) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    { message: 'No sku found while there is no variants.', path: ['Price'] }
   )
   .refine(
     (schema) => {

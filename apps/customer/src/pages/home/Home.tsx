@@ -39,7 +39,7 @@ const Home: React.FC = () => {
       {isLoading && <LoaderMain />}
       <div className="grid grid-cols-1">
         {storeList?.Data?.map((store) => (
-          <Card key={store.Id}>
+          <Card key={store.Id} className="my-5">
             <CardHeader>
               <CardTitle>{store.StoreName}</CardTitle>
               <CardDescription>

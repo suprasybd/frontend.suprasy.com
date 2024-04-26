@@ -1,15 +1,36 @@
 import React, { useEffect } from 'react';
-import { useSelected, useFocused } from 'slate-react';
+import {
+  useSelected,
+  useFocused,
+  ReactEditor,
+  useSlateStatic,
+} from 'slate-react';
 
 import useResize from '../../utils/customHooks/useResize.js';
 import { Scale3D } from 'lucide-react';
+import { Transforms } from 'slate';
 // import "./Video.css";
 
 const Video = ({ attributes, element, children }) => {
-  const { url, alt } = element;
-  const [size, onMouseDown, resizing] = useResize();
+  const { url, alt, width, height } = element;
+  const [size, onMouseDown, resizing] = useResize(width, height);
   const selected = useSelected();
   const focused = useFocused();
+
+  const editor = useSlateStatic();
+
+  // Persist width and height when size changes
+  React.useEffect(() => {
+    if (true) {
+      const path = ReactEditor.findPath(editor, element);
+      console.log('nodes path', path);
+      Transforms.setNodes(
+        editor,
+        { width: size.width, height: size.height },
+        { at: path }
+      );
+    }
+  }, [size]);
   return (
     <div
       {...attributes}
@@ -20,12 +41,10 @@ const Video = ({ attributes, element, children }) => {
       }}
       {...element.attr}
     >
-      asdf
       <div
         contentEditable={false}
         style={{ width: `${size.width}px`, height: `${size.height}px` }}
       >
-        asdf
         {
           // The iframe reloads on each re-render and hence it stutters and the document doesn't detect mouse-up event leading to unwanted behaviour
           // So during resize replace the iframe with a simple div

@@ -1,5 +1,5 @@
 /* eslint-disable2 */
-// @ts-nocheck2
+// @ts-nocheck33
 
 import { Card, CardContent } from '../../index';
 import isHotkey from 'is-hotkey';
@@ -33,6 +33,10 @@ import {
 import { Button, Toolbar } from './RichTextComponents/Components';
 import TableSelector from './Elements/Table/TableSelector';
 import withTable from './Plugins/withTable';
+import Embed from './Elements/Embed/Embed';
+import withEmbeds from './Plugins/withEmbeds';
+import Image from './Elements/Embed/Image';
+import Video from './Elements/Embed/Video';
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -93,6 +97,8 @@ const RichTextEditor: React.FC<{
             <BlockButton format="right" icon={<AlignRight size="17px" />} />
             <BlockButton format="justify" icon={<AlignJustify size="17px" />} />
             <TableSelector key={'element.id'} editor={editor} />
+            <Embed key={'element.id2'} format={'image'} editor={editor} />
+            <Embed key={'element.id3'} format={'video'} editor={editor} />
           </Toolbar>
         </CardContent>
       </Card>
@@ -126,7 +132,7 @@ export const RichTextRender: React.FC<{
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(
-    () => withTable(withHistory(withReact(createEditor()))),
+    () => withEmbeds(withTable(withHistory(withReact(createEditor())))),
     []
   );
 
@@ -297,6 +303,11 @@ const Element = (props) => {
           {children}
         </td>
       );
+
+    case 'image':
+      return <Image {...props} />;
+    case 'video':
+      return <Video {...props} />;
     default:
       return (
         <p style={style} {...attributes}>

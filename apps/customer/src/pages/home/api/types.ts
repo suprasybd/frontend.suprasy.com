@@ -18,3 +18,10 @@ export interface BalanceResponseType {
   CreatedAt: string;
   UpdatedAt: string;
 }
+
+export interface PlanResponseType {
+  Id: number;
+  MonthlyCharge: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+}

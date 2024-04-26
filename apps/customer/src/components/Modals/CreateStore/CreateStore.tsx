@@ -8,7 +8,7 @@ import {
   DialogTitle,
   useToast,
 } from '@frontend.suprasy.com/ui';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -22,8 +22,13 @@ import {
   FormMessage,
 } from '@frontend.suprasy.com/ui';
 import { Input } from '@frontend.suprasy.com/ui';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createStore } from './api';
+import { getPlan, getUserBalance } from '@customer/pages/home/api';
+
+import { Terminal } from 'lucide-react';
+
+import { Alert, AlertDescription, AlertTitle } from '@frontend.suprasy.com/ui';
 
 const formSchema = z.object({
   StoreName: z
@@ -72,6 +77,18 @@ const CreateStoreModal: React.FC = () => {
     clearModalPath();
   };
 
+  const { data: planResponse, isSuccess } = useQuery({
+    queryKey: ['getPlan'],
+    queryFn: getPlan,
+  });
+  const { data: balanceResponse, isSuccess: balanceSuccess } = useQuery({
+    queryKey: ['getUserBalance'],
+    queryFn: getUserBalance,
+  });
+
+  const planData = planResponse?.Data;
+  const balance = balanceResponse?.Data;
+
   const { mutate: handleCreateStore, isPending } = useMutation({
     mutationFn: createStore,
     onSuccess: () => {
@@ -99,6 +116,17 @@ const CreateStoreModal: React.FC = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     handleCreateStore(values as any);
   }
+
+  const haveBalance = useMemo(() => {
+    if (balance && planData) {
+      if (balance.Balance >= planData.MonthlyCharge) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }, [balance, planData]);
 
   return (
     <div>
@@ -166,7 +194,41 @@ const CreateStoreModal: React.FC = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
+
+              {balanceSuccess && balance && planData && (
+                <div>
+                  {haveBalance ? (
+                    <Alert>
+                      <AlertTitle>Transaction Details</AlertTitle>
+                      <AlertDescription>
+                        {isSuccess && (
+                          <div>
+                            <div>
+                              {planData?.MonthlyCharge} BDT will be deducted
+                              from your balance
+                            </div>
+                            {balanceSuccess && balance && planData && (
+                              <div>
+                                Remaining balance will be :{' '}
+                                {balance?.Balance - planData?.MonthlyCharge}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </AlertDescription>
+                    </Alert>
+                  ) : (
+                    <Alert variant={'destructive'}>
+                      <AlertTitle>Not enough balance</AlertTitle>
+                      <AlertDescription>
+                        You don't have enought balance.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
+              )}
+
+              <Button disabled={!haveBalance} type="submit" className="w-full">
                 {isPending && 'Creating...'}
                 {!isPending && 'Create Store'}
               </Button>

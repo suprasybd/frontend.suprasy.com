@@ -1,7 +1,7 @@
 import { Badge, Button } from '@frontend.suprasy.com/ui';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import { getUserStoresList } from './api';
+import { getUserBalance, getUserStoresList } from './api';
 
 import {
   Card,
@@ -21,10 +21,25 @@ const Home: React.FC = () => {
     queryFn: getUserStoresList,
   });
 
+  const { data: balanceResponse, isLoading: balanceLoading } = useQuery({
+    queryKey: ['getUserBalance'],
+    queryFn: getUserBalance,
+  });
+
+  const balance = balanceResponse?.Data.Balance;
+
   const { setModalPath } = useModalStore((state) => state);
 
   return (
     <section className="w-full max-w-[94rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+      {/* show balance */}
+
+      {!balanceLoading && (
+        <div className="w-full text-right">
+          Balance: {balance?.toFixed(2)} (BDT/৳)
+        </div>
+      )}
+
       <Button
         onClick={(e) => {
           e.preventDefault();

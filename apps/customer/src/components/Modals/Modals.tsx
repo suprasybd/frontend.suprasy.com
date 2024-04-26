@@ -1,10 +1,11 @@
 import React from 'react';
-import MediaModal from './MediaModal/MediaModal';
+
+import CreateStoreModal from './CreateStore/CreateStore';
 
 const Modals: React.FC = () => {
   return (
     <div>
-      <MediaModal />
+      <CreateStoreModal />
     </div>
   );
 };

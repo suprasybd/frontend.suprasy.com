@@ -8,14 +8,20 @@ import {
   Options,
   ProductAttributeTypes,
   ProductImagesTypes,
+  ProductSku,
   ProductType,
   ProductsVairantsTypes,
 } from './types';
 import { productSchema } from '../create/zod/productSchema';
-export const getUserStoresProductsList = async (): Promise<
-  ListResponseType<ProductType>
-> => {
-  const response = await ApiClient.get('/products');
+
+export const getUserStoresProductsList = async (Queries: {
+  Page?: number;
+  Limit?: number;
+  Status?: string;
+}): Promise<ListResponseType<ProductType>> => {
+  const response = await ApiClient.get('/products', {
+    params: Queries,
+  });
 
   return response.data;
 };
@@ -66,6 +72,14 @@ export const getProductAttributes = async (
   productId: number
 ): Promise<ResponseType<ProductAttributeTypes>> => {
   const response = await ApiClient.get(`/products/attribute/${productId}`);
+
+  return response.data;
+};
+
+export const getProductSku = async (
+  productId: number
+): Promise<ResponseType<ProductSku>> => {
+  const response = await ApiClient.get(`/inventory/sku/${productId}`);
 
   return response.data;
 };

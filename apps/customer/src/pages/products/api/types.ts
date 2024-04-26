@@ -4,6 +4,7 @@ export interface ProductType {
   HasVariant: boolean;
   CategoryId: number;
   Slug: string;
+  Status: string;
   Title: string;
   Description: string;
   IsActive: boolean;

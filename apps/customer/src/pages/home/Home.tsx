@@ -1,7 +1,7 @@
-import { Badge } from '@frontend.suprasy.com/ui';
+import { Badge, Button } from '@frontend.suprasy.com/ui';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import { getUserStoresList } from './api';
+import { getUserBalance, getUserStoresList } from './api';
 
 import {
   Card,
@@ -13,21 +13,48 @@ import {
 } from '@frontend.suprasy.com/ui';
 import { LoaderMain } from '../../components/Loader/Loader';
 import { Link } from '@tanstack/react-router';
+import { useModalStore } from '@customer/store/modalStore';
 
 const Home: React.FC = () => {
   const { data: storeList, isLoading } = useQuery({
     queryKey: ['getUserStoresList'],
     queryFn: getUserStoresList,
   });
-  console.log(storeList);
+
+  const { data: balanceResponse, isLoading: balanceLoading } = useQuery({
+    queryKey: ['getUserBalance'],
+    queryFn: getUserBalance,
+  });
+
+  const balance = balanceResponse?.Data.Balance;
+
+  const { setModalPath } = useModalStore((state) => state);
+
   return (
     <section className="w-full max-w-[94rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+      {/* show balance */}
+
+      {!balanceLoading && (
+        <div className="w-full text-right">
+          Balance: {balance?.toFixed(2)} (BDT/৳)
+        </div>
+      )}
+
+      <Button
+        onClick={(e) => {
+          e.preventDefault();
+          setModalPath({ modal: 'create-store' });
+        }}
+        className="my-3"
+      >
+        Create Store
+      </Button>
       <h1 className="text-xl my-4">Stores</h1>
 
       {isLoading && <LoaderMain />}
       <div className="grid grid-cols-1">
         {storeList?.Data?.map((store) => (
-          <Card key={store.Id}>
+          <Card key={store.Id} className="my-5">
             <CardHeader>
               <CardTitle>{store.StoreName}</CardTitle>
               <CardDescription>
@@ -70,6 +97,7 @@ const Home: React.FC = () => {
           </Card>
         ))}
       </div>
+      {!storeList?.Data.length && <p>Not stores found!</p>}
     </section>
   );
 };

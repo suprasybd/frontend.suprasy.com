@@ -5,6 +5,8 @@ export const createEmbedNode = (type, { url, alt }) => ({
   type,
   alt,
   url,
+  width: 100,
+  height: 100,
   children: [{ text: '' }],
 });
 

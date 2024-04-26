@@ -1,7 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const useResize = () => {
-  const [size, setSize] = useState({ width: 300, height: 300 });
+const useResize = (defautlWidth, defaultHeight) => {
+  const [size, setSize] = useState({
+    width: defautlWidth || 300,
+    height: defaultHeight || 300,
+  });
+  useEffect(() => {
+    if (defaultHeight || defautlWidth) {
+      setSize({ height: defaultHeight, width: defautlWidth });
+    }
+  }, [defaultHeight, defautlWidth]);
+
   const [resizing, setResizing] = useState(false);
   const onMouseDown = () => {
     document.addEventListener('mousemove', onMouseMove);

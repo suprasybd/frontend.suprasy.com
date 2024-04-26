@@ -1,14 +1,34 @@
 import React from 'react';
-import { useSelected, useFocused } from 'slate-react';
-
+import {
+  useSelected,
+  useFocused,
+  useEditor,
+  ReactEditor,
+  useSlateStatic,
+} from 'slate-react';
+import { Transforms } from 'slate';
 import useResize from '../../utils/customHooks/useResize.ts';
 import { Scale3D } from 'lucide-react';
 
 const Image = ({ attributes, element, children }) => {
-  const { url, alt } = element;
+  const { url, alt, width, height } = element;
   const selected = useSelected();
   const focused = useFocused();
-  const [size, onMouseDown] = useResize();
+  const [size, onMouseDown] = useResize(width, height);
+  const editor = useSlateStatic();
+
+  // Persist width and height when size changes
+  React.useEffect(() => {
+    if (true) {
+      const path = ReactEditor.findPath(editor, element);
+      console.log('nodes path', path);
+      Transforms.setNodes(
+        editor,
+        { width: size.width, height: size.height },
+        { at: path }
+      );
+    }
+  }, [size]);
 
   return (
     <div
@@ -25,6 +45,7 @@ const Image = ({ attributes, element, children }) => {
         style={{ width: `${size.width}px`, height: `${size.height}px` }}
       >
         <img alt={alt} src={url} />
+        {width} -{height}
         {true && (
           <button
             onClick={(e) => e.preventDefault()}
@@ -44,4 +65,5 @@ const Image = ({ attributes, element, children }) => {
     </div>
   );
 };
+
 export default Image;

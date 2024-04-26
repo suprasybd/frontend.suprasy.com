@@ -27,6 +27,7 @@ const Image = ({ attributes, element, children }) => {
         <img alt={alt} src={url} />
         {true && (
           <button
+            onClick={(e) => e.preventDefault()}
             onMouseDown={onMouseDown}
             style={{
               width: '15px',

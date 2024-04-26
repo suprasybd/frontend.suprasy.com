@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelected, useFocused } from 'slate-react';
 
 import useResize from '../../utils/customHooks/useResize.js';
+import { Scale3D } from 'lucide-react';
 // import "./Video.css";
 
 const Video = ({ attributes, element, children }) => {
@@ -19,10 +20,12 @@ const Video = ({ attributes, element, children }) => {
       }}
       {...element.attr}
     >
+      asdf
       <div
         contentEditable={false}
         style={{ width: `${size.width}px`, height: `${size.height}px` }}
       >
+        asdf
         {
           // The iframe reloads on each re-render and hence it stutters and the document doesn't detect mouse-up event leading to unwanted behaviour
           // So during resize replace the iframe with a simple div
@@ -43,9 +46,11 @@ const Video = ({ attributes, element, children }) => {
             <iframe src={url} frameBorder="0" title={alt} />
           )
         }
-
-        {selected && (
+        {true && (
           <button
+            onClick={(e) => {
+              e.preventDefault();
+            }}
             onMouseDown={onMouseDown}
             style={{
               width: '15px',
@@ -54,7 +59,7 @@ const Video = ({ attributes, element, children }) => {
               background: 'transparent',
             }}
           >
-            resize icon
+            <Scale3D className="text-red-500" />
           </button>
         )}
       </div>

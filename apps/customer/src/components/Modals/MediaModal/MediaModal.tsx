@@ -21,7 +21,17 @@ import { getStoreImages, uplaodImageToStore } from './api';
 import Loader from '@customer/components/Loader/Loader';
 import { useMediaFormStore } from '@customer/store/mediaFormStore';
 
-const MediaModal: React.FC = () => {
+const MediaModal: React.FC<{
+  Editor?: boolean;
+  Open?: boolean;
+  setFormData?: React.Dispatch<
+    React.SetStateAction<{
+      url: string;
+      alt: string;
+    }>
+  >;
+  ModalImageSubmit?: (val: string) => void;
+}> = ({ Editor, Open, setFormData, ModalImageSubmit }) => {
   const { modal, clearModalPath } = useModalStore((state) => state);
   const modalName = modal.modal;
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -37,6 +47,12 @@ const MediaModal: React.FC = () => {
       setModalOpen(true);
     }
   }, [modalName]);
+
+  useEffect(() => {
+    if (Open) {
+      setModalOpen(true);
+    }
+  }, [Open]);
 
   const closeModal = () => {
     setModalOpen(false);
@@ -190,13 +206,24 @@ const MediaModal: React.FC = () => {
           <Button
             disabled={!selectedImages}
             onClick={() => {
-              if (selectedImages) {
-                setImagesList(selectedImages);
+              if (!Editor) {
+                if (selectedImages) {
+                  setImagesList(selectedImages);
+                }
+
+                setSelectedImages([]);
+
+                closeModal();
               }
 
-              setSelectedImages([]);
+              if (Editor && setFormData && selectedImages && ModalImageSubmit) {
+                console.log('updates', selectedImages);
 
-              closeModal();
+                ModalImageSubmit(selectedImages[0]);
+                setSelectedImages([]);
+
+                closeModal();
+              }
             }}
           >
             Pick Selected

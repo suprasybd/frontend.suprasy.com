@@ -1,17 +1,18 @@
 import React, { useRef, useState } from 'react';
-import { Button } from '@frontend.suprasy.com/ui';
 
 import { isBlockActive } from '../../utils/SlateUtilityFunctions';
 import usePopup from '../../utils/customHooks/usePopup';
 import { insertEmbed } from '../../utils/embed.js';
 import { Transforms } from 'slate';
 import { ReactEditor } from 'slate-react';
-
+import MediaModal from '@customer/components/Modals/MediaModal/MediaModal';
 import './Embed.css';
+import { Clapperboard, Image } from 'lucide-react';
+import { Button } from '../../RichTextComponents/Components';
 const Embed = ({ editor, format }) => {
   const urlInputRef = useRef();
   const [showInput, setShowInput] = usePopup(urlInputRef);
-  const [formData, setFormData] = useState({
+  const [formDataGlobal, setFormData] = useState<{ url: string; alt: string }>({
     url: '',
     alt: '',
   });
@@ -23,13 +24,16 @@ const Embed = ({ editor, format }) => {
 
     setShowInput((prev) => !prev);
   };
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-
+  const handleFormSubmit = (formData: { url: string; alt: string }) => {
     selection && Transforms.select(editor, selection);
     selection && ReactEditor.focus(editor);
+    console.log('form data', formData);
+    if (format === 'image') {
+      insertEmbed(editor, { ...formData }, format);
+    } else {
+      insertEmbed(editor, { ...formDataGlobal }, format);
+    }
 
-    insertEmbed(editor, { ...formData }, format);
     setShowInput(false);
     setFormData({
       url: '',
@@ -39,6 +43,11 @@ const Embed = ({ editor, format }) => {
   const handleImageUpload = () => {
     setShowInput(false);
   };
+
+  const ModalImageSubmit = (image) => {
+    handleFormSubmit({ url: image, alt: '' });
+  };
+
   return (
     <div ref={urlInputRef} className="popup-wrapper">
       <Button
@@ -49,8 +58,18 @@ const Embed = ({ editor, format }) => {
         }}
         onClick={handleButtonClick}
       >
-        icon {format}
+        {format === 'image' && <Image size="17px" />}
+        {format === 'video' && <Clapperboard size="17px" />}
       </Button>
+      {format === 'image' && (
+        <MediaModal
+          Editor
+          ModalImageSubmit={ModalImageSubmit}
+          Open={!!showInput}
+          setFormData={setFormData}
+        />
+      )}
+
       {showInput && (
         <div className="popup">
           {format === 'image' && (
@@ -71,7 +90,7 @@ const Embed = ({ editor, format }) => {
             <input
               type="text"
               placeholder="Enter url"
-              value={formData.url}
+              value={formDataGlobal.url}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, url: e.target.value }))
               }
@@ -79,7 +98,7 @@ const Embed = ({ editor, format }) => {
             <input
               type="text"
               placeholder="Enter alt"
-              value={formData.alt}
+              value={formDataGlobal.alt}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, alt: e.target.value }))
               }
@@ -88,7 +107,7 @@ const Embed = ({ editor, format }) => {
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                handleFormSubmit(e);
+                handleFormSubmit({ url: '', alt: '' });
               }}
               type="submit"
             >

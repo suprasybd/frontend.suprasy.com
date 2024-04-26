@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelected, useFocused } from 'slate-react';
 
 import useResize from '../../utils/customHooks/useResize.ts';
+import { Scale3D } from 'lucide-react';
 
 const Image = ({ attributes, element, children }) => {
   const { url, alt } = element;
@@ -24,7 +25,7 @@ const Image = ({ attributes, element, children }) => {
         style={{ width: `${size.width}px`, height: `${size.height}px` }}
       >
         <img alt={alt} src={url} />
-        {selected && (
+        {true && (
           <button
             onMouseDown={onMouseDown}
             style={{
@@ -34,7 +35,7 @@ const Image = ({ attributes, element, children }) => {
               background: 'transparent',
             }}
           >
-            resize icon
+            <Scale3D />
           </button>
         )}
       </div>

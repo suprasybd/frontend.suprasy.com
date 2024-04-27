@@ -43,7 +43,7 @@ const MediaModal: React.FC<{
   const { setImagesList } = useMediaFormStore((state) => state);
 
   useEffect(() => {
-    if (modalName === 'media') {
+    if (modalName === 'media' && !Editor) {
       setModalOpen(true);
     }
   }, [modalName]);

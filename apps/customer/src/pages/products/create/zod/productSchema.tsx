@@ -35,6 +35,7 @@ export const productSchema = z
     Slug: z.string().min(3),
     Title: z.string().min(3),
     Description: z.string().min(10),
+    Summary: z.string().min(10),
     Price: z.coerce.number().optional(),
     Sku: z.string().max(100),
     Status: z.string().min(1),

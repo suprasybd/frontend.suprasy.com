@@ -7,6 +7,7 @@ export interface ProductType {
   Status: string;
   Title: string;
   Description: string;
+  Summary: string;
   IsActive: boolean;
   CreatedAt: string;
   UpdatedAt: string;

@@ -318,6 +318,10 @@ const CreateProduct: React.FC = () => {
     return productDetails?.Description;
   }, [productDetails]);
 
+  const productSummary = useMemo(() => {
+    return productDetails?.Summary;
+  }, [productDetails]);
+
   return (
     <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       {/* breadcrumbs */}
@@ -402,6 +406,32 @@ const CreateProduct: React.FC = () => {
                       <RichTextEditor
                         onValChange={(data) =>
                           form.setValue('Description', JSON.stringify(data))
+                        }
+                      />
+                    )}
+                  </div>
+
+                  {/* summary */}
+                  <div className="mt-2">
+                    <p className="text-sm text-red-600">
+                      {errors.Description?.message}
+                    </p>
+
+                    <FormLabel>Summary</FormLabel>
+
+                    {productSummary && isUpdating && (
+                      <RichTextEditor
+                        initialVal={productSummary}
+                        onValChange={(data) =>
+                          form.setValue('Summary', JSON.stringify(data))
+                        }
+                      />
+                    )}
+
+                    {!isUpdating && (
+                      <RichTextEditor
+                        onValChange={(data) =>
+                          form.setValue('Summary', JSON.stringify(data))
                         }
                       />
                     )}

@@ -193,6 +193,7 @@ const CreateProduct: React.FC = () => {
     if (productDetails) {
       form.setValue('Title', productDetails.Title);
       form.setValue('Description', productDetails.Description);
+      form.setValue('Summary', productDetails.Summary);
       form.setValue('Slug', productDetails.Slug);
       form.setValue('HasVariants', productDetails.HasVariant);
     }

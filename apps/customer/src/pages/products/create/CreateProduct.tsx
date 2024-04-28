@@ -88,9 +88,18 @@ const CreateProduct: React.FC = () => {
       Inventory: 2,
       HasVariants: false,
       Status: 'draft',
+      ShowCompareAtPrice: true,
+      CompareAtPrice: 190,
       AttributeName: 'Size',
       AttributeValue: [
-        { Inventory: 99, Price: 190, Sku: 'SF-34526KP', Value: 'xl' },
+        {
+          Inventory: 99,
+          Price: 190,
+          Sku: 'SF-34526KP',
+          Value: 'xl',
+          CompareAtPrice: 190,
+          ShowCompareAtPrice: true,
+        },
       ],
       Images: [
         {
@@ -204,6 +213,8 @@ const CreateProduct: React.FC = () => {
         Price: value.sku.Price,
         Sku: value.sku.Sku,
         Value: value.attributeValue.Value,
+        ShowCompareAtPrice: value.sku.ShowCompareAtPrice,
+        CompareAtPrice: value.sku.CompareAtPrice,
       }));
 
       form.setValue('AttributeName', productAttributes.Name.Name);
@@ -597,7 +608,10 @@ const CreateProduct: React.FC = () => {
                           <CardContent>
                             {attributeValues.map((option, index) => {
                               return (
-                                <div key={option.id} className="flex gap-[3px]">
+                                <div
+                                  key={option.id}
+                                  className="flex flex-wrap gap-[3px] border my-2 border-gray-600 p-3 rounded-md"
+                                >
                                   <FormField
                                     control={form.control}
                                     name={`AttributeValue.${index}.Value`}
@@ -679,6 +693,53 @@ const CreateProduct: React.FC = () => {
                                       </FormItem>
                                     )}
                                   />
+
+                                  <FormField
+                                    control={form.control}
+                                    name={`AttributeValue.${index}.CompareAtPrice`}
+                                    render={({ field }) => (
+                                      <FormItem className="space-y-0 !mt-3">
+                                        <FormLabel>
+                                          Compare At Price (BDT/৳){' '}
+                                        </FormLabel>
+                                        <FormControl>
+                                          <Input
+                                            FormError={
+                                              !!formErrors?.AttributeValue?.[
+                                                index
+                                              ]?.CompareAtPrice
+                                            }
+                                            placeholder="Compare At Price"
+                                            {...field}
+                                          />
+                                        </FormControl>
+
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+
+                                  <FormField
+                                    control={form.control}
+                                    name={`AttributeValue.${index}.ShowCompareAtPrice`}
+                                    render={({ field }) => (
+                                      <FormItem className=" mt-3 mx-3 px-3 flex-row items-center justify-between rounded-lg border shadow-sm">
+                                        <div className="space-y-0.5">
+                                          <FormLabel>
+                                            Show compare at price
+                                          </FormLabel>
+                                        </div>
+                                        <FormControl>
+                                          <Switch
+                                            className="p-0"
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
                                   <FormField
                                     control={form.control}
                                     name={`AttributeValue.${index}.Price`}
@@ -720,10 +781,12 @@ const CreateProduct: React.FC = () => {
                               onClick={(e) => {
                                 e.preventDefault();
                                 appendAttributeValue({
-                                  Inventory: 0,
+                                  Inventory: 88,
                                   Price: 10,
                                   Sku: 'DEFAULT_SKU_35234',
                                   Value: 'xl',
+                                  CompareAtPrice: 190,
+                                  ShowCompareAtPrice: true,
                                 });
                               }}
                             >
@@ -758,6 +821,48 @@ const CreateProduct: React.FC = () => {
                             />
                           </FormControl>
 
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="CompareAtPrice"
+                      render={({ field }) => (
+                        <FormItem className="space-y-0 !mt-3">
+                          <FormLabel>Compare At Price (BDT/৳) </FormLabel>
+                          <FormControl>
+                            <Input
+                              FormError={!!formErrors.CompareAtPrice}
+                              placeholder="Compare At Price"
+                              {...field}
+                            />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="ShowCompareAtPrice"
+                      render={({ field }) => (
+                        <FormItem className="flex mt-3 flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                          <div className="space-y-0.5">
+                            <FormLabel>Show compare at price</FormLabel>
+                            <FormDescription>
+                              Check here if you want to show compare at price
+                              with how much off
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}

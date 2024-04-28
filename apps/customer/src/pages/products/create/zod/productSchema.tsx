@@ -26,6 +26,8 @@ const AttributeValues = z.object({
   Inventory: z.coerce.number().min(0),
   Price: z.coerce.number().min(0),
   Sku: z.string().max(100),
+  ShowCompareAtPrice: z.boolean(),
+  CompareAtPrice: z.coerce.number().min(0),
 });
 
 export const productSchema = z
@@ -37,7 +39,9 @@ export const productSchema = z
     Description: z.string().min(10),
     Summary: z.string().min(10),
     Price: z.coerce.number().optional(),
-    Sku: z.string().max(100),
+    Sku: z.string().max(100).optional(),
+    ShowCompareAtPrice: z.boolean().optional(),
+    CompareAtPrice: z.coerce.number().min(0).optional(),
     Status: z.string().min(1),
     Inventory: z.coerce.number().optional(),
     HasVariants: z.boolean().default(false).optional(),
@@ -64,6 +68,32 @@ export const productSchema = z
       }
     },
     { message: 'No sku found while there is no variants.', path: ['Price'] }
+  )
+  .refine(
+    (schema) => {
+      if (!schema.HasVariants && !schema.ShowCompareAtPrice) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    {
+      message: 'No ShowCompareAtPrice found while there is no variants.',
+      path: ['Price'],
+    }
+  )
+  .refine(
+    (schema) => {
+      if (!schema.HasVariants && !schema.CompareAtPrice) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    {
+      message: 'No CompareAtPrice found while there is no variants.',
+      path: ['Price'],
+    }
   )
   .refine(
     (schema) => {

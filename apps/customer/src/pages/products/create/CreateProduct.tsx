@@ -224,6 +224,8 @@ const CreateProduct: React.FC = () => {
     if (productSku) {
       form.setValue('Sku', productSku.Sku);
       form.setValue('Price', productSku.Price);
+      form.setValue('ShowCompareAtPrice', productSku.ShowCompareAtPrice);
+      form.setValue('CompareAtPrice', productSku.CompareAtPrice);
       form.setValue('Inventory', productSku.Inventory);
     }
 

@@ -67,21 +67,9 @@ export const productSchema = z
         return true;
       }
     },
-    { message: 'No sku found while there is no variants.', path: ['Price'] }
+    { message: 'No sku found while there is no variants.', path: ['Sku'] }
   )
-  .refine(
-    (schema) => {
-      if (!schema.HasVariants && !schema.ShowCompareAtPrice) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-    {
-      message: 'No ShowCompareAtPrice found while there is no variants.',
-      path: ['Price'],
-    }
-  )
+
   .refine(
     (schema) => {
       if (!schema.HasVariants && !schema.CompareAtPrice) {
@@ -92,7 +80,7 @@ export const productSchema = z
     },
     {
       message: 'No CompareAtPrice found while there is no variants.',
-      path: ['Price'],
+      path: ['CompareAtPrice'],
     }
   )
   .refine(

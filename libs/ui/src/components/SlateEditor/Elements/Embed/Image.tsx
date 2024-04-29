@@ -42,9 +42,20 @@ const Image = ({ attributes, element, children }) => {
     >
       <div
         contentEditable={false}
-        style={{ width: `${size.width}px`, height: `${size.height}px` }}
+        style={{
+          maxWidth: `${size.width}px`,
+          maxHeight: `${size.height}px`,
+          overflow: 'hidden',
+        }}
       >
-        <img alt={alt} src={url} />
+        <img
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+          alt={alt}
+          src={url}
+        />
         {width} -{height}
         {true && (
           <button

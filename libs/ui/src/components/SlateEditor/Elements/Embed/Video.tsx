@@ -34,16 +34,23 @@ const Video = ({ attributes, element, children }) => {
   return (
     <div
       {...attributes}
-      className="embed"
+      className="embed !w-full h-full"
       style={{
         display: 'flex',
         boxShadow: selected && focused && '0 0 3px 3px lightgray',
+        height: `${size.height}px`,
+        maxWidth: `${size.width}px`,
       }}
       {...element.attr}
     >
       <div
         contentEditable={false}
-        style={{ width: `${size.width}px`, height: `${size.height}px` }}
+        style={{
+          maxWidth: `${size.width}px`,
+          maxHeight: `${size.height}px`,
+          width: '100%',
+          height: '100%',
+        }}
       >
         {
           // The iframe reloads on each re-render and hence it stutters and the document doesn't detect mouse-up event leading to unwanted behaviour
@@ -62,7 +69,15 @@ const Video = ({ attributes, element, children }) => {
               video player icon
             </div>
           ) : (
-            <iframe src={url} frameBorder="0" title={alt} />
+            <iframe
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              src={url}
+              frameBorder="0"
+              title={alt}
+            />
           )
         }
         {true && (

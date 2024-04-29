@@ -1,6 +1,7 @@
 import { Button } from '@frontend.suprasy.com/ui';
 import { Link, useParams } from '@tanstack/react-router';
 import {
+  BarChartHorizontal,
   Bell,
   Container,
   GalleryVerticalEnd,
@@ -103,6 +104,20 @@ const StoreSidebar = () => {
             >
               <Users className="h-4 w-4" />
               Customers
+            </Link>
+
+            <Link
+              to="/store/$storeKey/categories"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <BarChartHorizontal className="h-4 w-4" />
+              Categories
             </Link>
 
             <Link

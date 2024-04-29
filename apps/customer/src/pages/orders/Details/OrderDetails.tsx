@@ -1,12 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { getOrderById, getOrderProductsById } from '../api';
 import { formatPrice } from '@customer/libs/helpers/formatdate';
 import {
   getProductsDetails,
   getProductsImages,
 } from '@customer/pages/products/api';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@frontend.suprasy.com/ui';
 
 const OrderDetails = () => {
   const { orderId } = useParams({ strict: false }) as {
@@ -28,6 +34,30 @@ const OrderDetails = () => {
 
   const order = orderResponse?.Data;
   const orderProducts = orderProductsResponse?.Data;
+
+  const totalCost = useMemo(() => {
+    let total = 0;
+    if (orderProducts && order && orderProducts.length) {
+      total += order.DeliveryMethodPrice;
+      total += order.ShippingMethodPrice;
+      for (const product of orderProducts) {
+        total += product.Price;
+      }
+      return total;
+    }
+    return total;
+  }, [orderProducts, order]);
+
+  const totalProductCost = useMemo(() => {
+    let total = 0;
+    if (orderProducts && order && orderProducts.length) {
+      for (const product of orderProducts) {
+        total += product.Price;
+      }
+      return total;
+    }
+    return total;
+  }, [orderProducts, order]);
 
   return (
     <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -65,18 +95,14 @@ const OrderDetails = () => {
 
         <div>
           <h1 className="text-sm font-medium">Delivery Method </h1>
-          <h1>
-            {order?.DeliveryMethod} -{' '}
-            {formatPrice(order?.DeliveryMethodPrice || 0)}
-          </h1>
+          <h1>{order?.DeliveryMethod}</h1>
+          {formatPrice(order?.DeliveryMethodPrice || 0)}
         </div>
 
         <div>
           <h1 className="text-sm font-medium">Shipping Method </h1>
-          <h1>
-            {order?.ShippingMethod} -{' '}
-            {formatPrice(order?.ShippingMethodPrice || 0)}
-          </h1>
+          <h1>{order?.ShippingMethod} </h1>
+          {formatPrice(order?.ShippingMethodPrice || 0)}
         </div>
       </div>
       <h1 className="font-bold my-5">Other</h1>
@@ -94,10 +120,11 @@ const OrderDetails = () => {
         )}
       </div>
 
+      {/* products list */}
       <h1 className="font-bold my-5">Products Ordered Listed Bellow</h1>
 
       {orderProducts?.map((product) => (
-        <div className="p-4 border border-gray-400 rounded-md">
+        <div className="p-4 border border-gray-400 rounded-md my-3">
           <ProductDetails ProductId={product.ProductId} />
           <div className="flex gap-[100px] flex-wrap w-full">
             <div>
@@ -123,18 +150,48 @@ const OrderDetails = () => {
           </div>
         </div>
       ))}
+
+      {/* total cost */}
+      <div>
+        <Accordion type="single" collapsible defaultValue="item-1">
+          <AccordionItem value="item-1">
+            <AccordionTrigger>
+              <div className="flex  font-medium text-3xl justify-between w-full">
+                <h1 className=" my-5">Cost Breakdown</h1>
+                <h1>Total Cost: {formatPrice(totalCost || 0)}</h1>
+              </div>
+            </AccordionTrigger>
+
+            <AccordionContent>
+              Breakdown Is Bellow
+              <div className="my-3">
+                <h1 className="text-sm font-medium"> Shipping Cost</h1>
+                <h1>{formatPrice(order?.ShippingMethodPrice || 0)} </h1>
+              </div>
+              <div className="my-3">
+                <h1 className="text-sm font-medium"> Delivery Cost</h1>
+                <h1>{formatPrice(order?.DeliveryMethodPrice || 0)} </h1>
+              </div>
+              <div className="my-3">
+                <h1 className="text-sm font-medium"> Total Product Cost</h1>
+                <h1>{formatPrice(totalProductCost || 0)} </h1>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
     </section>
   );
 };
 
 const ProductDetails: React.FC<{ ProductId: number }> = ({ ProductId }) => {
   const { data: productDetailsResponse } = useQuery({
-    queryKey: ['getProductDetailsOrderDPage'],
+    queryKey: ['getProductDetailsOrderDPage', ProductId],
     queryFn: () => getProductsDetails(ProductId || 0),
     enabled: !!ProductId,
   });
   const { data: productImagesResponse } = useQuery({
-    queryKey: ['getProductImagesOrderDPage'],
+    queryKey: ['getProductImagesOrderDPage', ProductId],
     queryFn: () => getProductsImages(ProductId || 0),
     enabled: !!ProductId,
   });
@@ -148,13 +205,14 @@ const ProductDetails: React.FC<{ ProductId: number }> = ({ ProductId }) => {
         <img
           src={productImages[0].ImageUrl}
           width={'100px'}
+          className="rounded-md"
           height={'100px'}
           alt="product"
         />
       )}
       <div className="flex gap-[100px] flex-wrap w-full">
         <div>
-          <h1 className="text-sm font-medium">Title </h1>
+          <h1 className="text-sm font-medium mt-3">Title </h1>
           <h1>{productDetails?.Title} </h1>
         </div>
       </div>

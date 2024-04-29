@@ -72,17 +72,6 @@ const Home: React.FC = () => {
             <CardContent>
               <div>
                 <p className="break-words">Store Key: {store.StoreKey}</p>
-                <p>
-                  <span className="mr-2">Active Subdomain:</span>
-                  <a
-                    className="text-blue-600 hover:underline"
-                    rel="noreferrer"
-                    target="_blank"
-                    href={`https://${store.StoreName}.mysuprasy.com`}
-                  >
-                    {store.StoreName}.mysuprasy.com
-                  </a>
-                </p>
               </div>
             </CardContent>
             <CardFooter>

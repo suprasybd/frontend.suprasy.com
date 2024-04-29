@@ -19,6 +19,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as StoreStoreKeyShippingImport } from './routes/store/$storeKey/shipping'
 import { Route as StoreStoreKeyProductsCreateImport } from './routes/store/$storeKey/products_/create'
+import { Route as StoreStoreKeyOrdersOrderIdIndexImport } from './routes/store/$storeKey/orders_/$orderId/index'
 
 // Create Virtual Routes
 
@@ -193,6 +194,12 @@ const StoreStoreKeyProductsCreateRoute =
     getParentRoute: () => StoreRoute,
   } as any)
 
+const StoreStoreKeyOrdersOrderIdIndexRoute =
+  StoreStoreKeyOrdersOrderIdIndexImport.update({
+    path: '/$storeKey/orders/$orderId/',
+    getParentRoute: () => StoreRoute,
+  } as any)
+
 const StoreStoreKeyProductsProductIdDetailsLazyRoute =
   StoreStoreKeyProductsProductIdDetailsLazyImport.update({
     path: '/$storeKey/products/$productId/details',
@@ -291,6 +298,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreStoreKeyProductsProductIdDetailsLazyImport
       parentRoute: typeof StoreImport
     }
+    '/store/$storeKey/orders/$orderId/': {
+      preLoaderRoute: typeof StoreStoreKeyOrdersOrderIdIndexImport
+      parentRoute: typeof StoreImport
+    }
   }
 }
 
@@ -314,6 +325,7 @@ export const routeTree = rootRoute.addChildren([
     StoreStoreKeyProductsLazyRoute,
     StoreStoreKeyProductsCreateRoute,
     StoreStoreKeyProductsProductIdDetailsLazyRoute,
+    StoreStoreKeyOrdersOrderIdIndexRoute,
   ]),
   TestRoute,
   AboutLazyRoute,

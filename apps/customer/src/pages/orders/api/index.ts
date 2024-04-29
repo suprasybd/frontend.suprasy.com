@@ -25,6 +25,18 @@ export interface OrderType {
   UpdatedAt: string;
 }
 
+export interface OrderProductsType {
+  Id: number;
+  StoreKey: string;
+  OrderId: number;
+  ProductId: number;
+  Price: number;
+  Quantity: number;
+  ProductAttribute: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
 export const getStoreOrders = async (Queries: {
   [key: string]: any;
   Page?: number;
@@ -34,6 +46,22 @@ export const getStoreOrders = async (Queries: {
   const response = await ApiClient.get('/orders/all', {
     params: Queries,
   });
+
+  return response.data;
+};
+
+export const getOrderById = async (
+  orderId: string
+): Promise<ResponseType<OrderType>> => {
+  const response = await await ApiClient.get('/orders/' + orderId);
+
+  return response.data;
+};
+
+export const getOrderProductsById = async (
+  orderId: string
+): Promise<ListResponseType<OrderProductsType>> => {
+  const response = await await ApiClient.get('/orders/products/' + orderId);
 
   return response.data;
 };

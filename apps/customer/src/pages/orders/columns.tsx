@@ -61,7 +61,7 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const product = row.original;
+      const order = row.original;
 
       return (
         <DropdownMenu>
@@ -77,23 +77,23 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <Link
-                to="/store/$storeKey/products/$productId/details"
+                to="/store/$storeKey/orders/$orderId"
                 params={{
-                  productId: product.Id?.toString(),
-                  storeKey: product.StoreKey,
+                  orderId: order.Id?.toString(),
+                  storeKey: order.StoreKey,
                 }}
               >
-                View product details
+                View order details
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Link
                 to="/store/$storeKey/products/create"
                 params={{
-                  storeKey: product.StoreKey,
+                  storeKey: order.StoreKey,
                 }}
                 search={{
-                  productId: product.Id,
+                  productId: order.Id,
                   update: true,
                   uuid: uuidv4(),
                 }}
@@ -106,11 +106,11 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
               <Link
                 to="/store/$storeKey/products/create"
                 params={{
-                  storeKey: product.StoreKey,
+                  storeKey: order.StoreKey,
                 }}
                 search={{
                   updateInventory: true,
-                  productId: product.Id,
+                  productId: order.Id,
                   update: true,
                   uuid: uuidv4(),
                 }}

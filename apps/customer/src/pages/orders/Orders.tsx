@@ -23,6 +23,7 @@ import { ordersColumn } from './columns';
 import PaginationMain from '@customer/components/Pagination/Pagination';
 import { LoaderMain } from '@customer/components/Loader/Loader';
 import { activeFilters } from '@customer/libs/helpers/filters';
+import { Search } from 'lucide-react';
 const Orders = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
 
@@ -77,7 +78,9 @@ const Orders = () => {
       <Accordion type="single" collapsible>
         <AccordionItem className="border-b-0" value="item-1">
           <AccordionTrigger className="hover:no-underline border-b-0">
-            <Button variant={'defaultGradiant'}>Filters / Search</Button>
+            <Button variant={'defaultGradiant'}>
+              Filters / Search <Search className="ml-3" />
+            </Button>
           </AccordionTrigger>
           <AccordionContent>
             <div className="flex flex-col gap-[10px]">

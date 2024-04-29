@@ -18,14 +18,19 @@ import { LoaderMain } from '../../components/Loader/Loader';
 import { DataTable } from '../../components/Table/table';
 import { getUserStoresProductsList } from './api';
 import { productsColumn } from './table/columns';
+import PaginationMain from '@customer/components/Pagination/Pagination';
 
 const Products: React.FC = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
   const [tab, setTab] = useState('draft');
 
   const { data: products, isLoading } = useQuery({
-    queryKey: ['getUserStoresProductsList', storeKey, tab],
-    queryFn: () => getUserStoresProductsList({ Status: tab }),
+    queryKey: ['getUserStoresProductsList', storeKey, tab, page, limit],
+    queryFn: () =>
+      getUserStoresProductsList({ Status: tab, Page: page, Limit: limit }),
   });
 
   return (
@@ -101,6 +106,13 @@ const Products: React.FC = () => {
       )}
       {!isLoading && products?.Data && products?.Data?.length > 0 && (
         <DataTable columns={productsColumn} data={products?.Data || []} />
+      )}
+
+      {products?.Pagination && (
+        <PaginationMain
+          PaginationDetails={products?.Pagination}
+          setPage={setPage}
+        />
       )}
     </section>
   );

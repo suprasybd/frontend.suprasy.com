@@ -26,47 +26,49 @@ const PaginationMain: React.FC<{
 
   return (
     <div className="my-5">
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handlePageChange(Page - 1);
-              }}
-              isActive={Page !== 1}
-            />
-          </PaginationItem>
-
-          {/* Render the page numbers */}
-          {[...Array(TotalPages)].map((_, index) => (
-            <PaginationItem key={index}>
-              <PaginationLink
+      {PaginationDetails.TotalPages > 0 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
                 href="#"
-                isActive={index + 1 === Page}
                 onClick={(e) => {
                   e.preventDefault();
-                  handlePageChange(index + 1);
+                  handlePageChange(Page - 1);
                 }}
-              >
-                {index + 1}
-              </PaginationLink>
+                isActive={Page !== 1}
+              />
             </PaginationItem>
-          ))}
 
-          <PaginationItem>
-            <PaginationNext
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handlePageChange(Page + 1);
-              }}
-              isActive={Page !== TotalPages}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+            {/* Render the page numbers */}
+            {[...Array(TotalPages)].map((_, index) => (
+              <PaginationItem key={index}>
+                <PaginationLink
+                  href="#"
+                  isActive={index + 1 === Page}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(index + 1);
+                  }}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(Page + 1);
+                }}
+                isActive={Page !== TotalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 };

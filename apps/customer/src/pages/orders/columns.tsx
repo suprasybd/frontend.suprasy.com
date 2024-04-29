@@ -27,11 +27,20 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
   },
   {
     accessorKey: 'FirstName',
-    header: 'FirstName',
+    header: 'First Name',
+  },
+  {
+    accessorKey: 'LastName',
+    header: 'Last Name',
   },
   {
     accessorKey: 'ShippingMethod',
     header: 'Shipping',
+    cell: ({ row }) => {
+      return (
+        <p className="">{row.original.ShippingMethod.slice(0, 30) + '...'}</p>
+      );
+    },
   },
   {
     accessorKey: 'Status',

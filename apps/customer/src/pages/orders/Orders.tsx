@@ -16,6 +16,7 @@ import { getStoreOrders } from './api';
 import { DataTable } from '@customer/components/Table/table';
 import { ordersColumn } from './columns';
 import PaginationMain from '@customer/components/Pagination/Pagination';
+import { LoaderMain } from '@customer/components/Loader/Loader';
 const Orders = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
 
@@ -66,6 +67,9 @@ const Orders = () => {
           <TabsTrigger value="cancled">Cancled</TabsTrigger>
         </TabsList>
       </Tabs>
+
+      {isLoading && <LoaderMain />}
+      {!isLoading && !orders?.length && <div>No orders found!</div>}
 
       {!isLoading && orders && orders?.length > 0 && (
         <DataTable columns={ordersColumn} data={orders || []} />

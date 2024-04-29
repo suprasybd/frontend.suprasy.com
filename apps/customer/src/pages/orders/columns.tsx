@@ -34,6 +34,14 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
     header: 'Last Name',
   },
   {
+    accessorKey: 'Phone',
+    header: 'Phone',
+  },
+  {
+    accessorKey: 'Email',
+    header: 'Email',
+  },
+  {
     accessorKey: 'ShippingMethod',
     header: 'Shipping',
     cell: ({ row }) => {

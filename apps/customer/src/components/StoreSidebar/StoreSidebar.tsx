@@ -21,9 +21,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@frontend.suprasy.com/ui';
+import { useQuery } from '@tanstack/react-query';
+import { getStoreOrders } from '@customer/pages/orders/api';
 
 const StoreSidebar = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+
+  const { data: ordersResponse, isLoading } = useQuery({
+    queryKey: ['getStoreOrders', 1, 5, 'pending'],
+    queryFn: () => getStoreOrders({ Limit: 10, Page: 1, Status: 'pending' }),
+  });
 
   return (
     <div className="hidden border-r bg-muted/40 md:block">
@@ -66,7 +73,9 @@ const StoreSidebar = () => {
               <ShoppingCart className="h-4 w-4" />
               Orders
               <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                6
+                {!isLoading && ordersResponse?.Pagination && (
+                  <>{ordersResponse.Pagination.TotalItems}</>
+                )}
               </Badge>
             </Link>
             <Link

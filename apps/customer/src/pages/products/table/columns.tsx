@@ -30,12 +30,16 @@ export const productsColumn: ColumnDef<ProductType>[] = [
     header: 'Slug',
   },
   {
-    accessorKey: 'Description',
-    header: 'Description',
+    accessorKey: 'Status',
+    header: 'Status',
+  },
+  {
+    accessorKey: 'UpdatedAt',
+    header: 'UpdatedAt',
     cell: ({ row }) => {
       const product = row.original;
 
-      return product.Description.slice(0, 50) + '...';
+      return formatDate(product.UpdatedAt);
     },
   },
   {

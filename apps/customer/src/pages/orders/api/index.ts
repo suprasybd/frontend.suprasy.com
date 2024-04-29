@@ -26,6 +26,7 @@ export interface OrderType {
 }
 
 export const getStoreOrders = async (Queries: {
+  [key: string]: any;
   Page?: number;
   Limit?: number;
   Status?: string;

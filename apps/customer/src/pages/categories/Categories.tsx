@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,11 +14,52 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  useToast,
 } from '@frontend.suprasy.com/ui';
-import { Link, useParams } from '@tanstack/react-router';
+import { Link, useParams, useStableCallback } from '@tanstack/react-router';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  Category,
+  addCategory,
+  getCategories,
+  removeCategory,
+  updateCategory,
+} from './api';
+import { FilePenLine } from 'lucide-react';
 
 const Categories = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+
+  const [category, setCategory] = useState<string>('');
+
+  const { toast } = useToast();
+
+  const { data: categoryResponse, refetch } = useQuery({
+    queryKey: ['getCategories'],
+    queryFn: () => getCategories(),
+  });
+
+  const categories = categoryResponse?.Data;
+
+  const { mutate: handleAddCategory } = useMutation({
+    mutationFn: addCategory,
+    onSuccess: () => {
+      refetch();
+      toast({
+        title: 'Category create',
+        description: 'category create successfull',
+        variant: 'default',
+      });
+      setCategory('');
+    },
+    onError: () => {
+      toast({
+        title: 'Category create',
+        description: 'category create failed',
+        variant: 'destructive',
+      });
+    },
+  });
 
   return (
     <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -46,10 +87,111 @@ const Categories = () => {
 
       <div className="my-2">
         <h1>Add Category</h1>
-        <Input className="my-3" placeholder="category name" />
-        <Button>Add</Button>
+        <Input
+          onChange={(e) => {
+            setCategory(e.target.value);
+          }}
+          value={category}
+          className="my-3"
+          placeholder="category name"
+        />
+        <Button
+          onClick={() => {
+            if (category) {
+              handleAddCategory(category);
+            }
+          }}
+        >
+          Add
+        </Button>
+      </div>
+
+      <div className="my-5 flex gap-[10px] flex-wrap">
+        {categories?.map((category) => (
+          <UpdateCategory key={category.Id} category={category} />
+        ))}
       </div>
     </section>
+  );
+};
+
+const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
+  const { toast } = useToast();
+
+  const [categoryState, setCategory] = useState<string>(category.Name);
+
+  const queryClient = useQueryClient();
+
+  const { mutate: handleUpdateCategory } = useMutation({
+    mutationFn: updateCategory,
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ['getCategories'] });
+      toast({
+        title: 'Category update',
+        description: 'category update successfull',
+        variant: 'default',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Category update',
+        description: 'category update failed',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const { mutate: handleRemove } = useMutation({
+    mutationFn: removeCategory,
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ['getCategories'] });
+      toast({
+        title: 'Category removed',
+        description: 'category removed successfull',
+        variant: 'default',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Category removed',
+        description: 'category removed failed',
+        variant: 'destructive',
+      });
+    },
+  });
+  return (
+    <div className="border border-gray-300 rounded-md p-3 w-fit">
+      <Input
+        onChange={(e) => {
+          setCategory(e.target.value);
+        }}
+        value={categoryState}
+      />
+
+      <div className="flex justify-between gap-[3px]">
+        <Button
+          className="my-2 mt-5 w-full"
+          onClick={() => {
+            handleUpdateCategory({
+              id: category.Id,
+              categoryName: categoryState,
+            });
+          }}
+        >
+          Update
+        </Button>
+
+        <Button
+          className="my-2 mt-5 w-full"
+          variant={'destructive'}
+          onClick={() => {
+            handleRemove({ id: category.Id });
+          }}
+        >
+          Remove
+        </Button>
+      </div>
+    </div>
   );
 };
 

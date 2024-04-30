@@ -15,6 +15,7 @@ import DeleteProductModal from './components/DeleteProductModal';
 import { Link } from '@tanstack/react-router';
 import { v4 as uuidv4 } from 'uuid';
 import { formatDate } from '../../../../src/libs/helpers/formatdate';
+import { useModalStore } from '@customer/store/modalStore';
 
 export const productsColumn: ColumnDef<ProductType>[] = [
   {
@@ -95,23 +96,7 @@ export const productsColumn: ColumnDef<ProductType>[] = [
               </Link>
             </DropdownMenuItem>
 
-            <DropdownMenuItem>
-              <Link
-                to="/store/$storeKey/products/create"
-                params={{
-                  storeKey: product.StoreKey,
-                }}
-                search={{
-                  updateInventory: true,
-                  productId: product.Id,
-                  update: true,
-                  uuid: uuidv4(),
-                }}
-                hash="inventory"
-              >
-                Update Inventory
-              </Link>
-            </DropdownMenuItem>
+            <UpdateWrapper productId={product.Id} />
             <DropdownMenuItem
               onClick={(e) => e.preventDefault()}
               className="hover:!bg-red-500 hover:!text-white"
@@ -124,3 +109,18 @@ export const productsColumn: ColumnDef<ProductType>[] = [
     },
   },
 ];
+
+const UpdateWrapper: React.FC<{ productId: number }> = ({ productId }) => {
+  const { setModalPath } = useModalStore((state) => state);
+  return (
+    <DropdownMenuItem
+      onClick={(e) => {
+        e.preventDefault();
+        setModalPath({ modal: 'update-category-product', productId });
+      }}
+      className="  hover:cursor-pointer"
+    >
+      Update Category
+    </DropdownMenuItem>
+  );
+};

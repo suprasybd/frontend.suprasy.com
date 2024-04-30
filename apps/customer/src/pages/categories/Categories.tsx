@@ -168,6 +168,7 @@ const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
         value={categoryState}
       />
 
+      <h1 className="mt-3">Category Id: {category.Id}</h1>
       <div className="flex justify-between gap-[3px]">
         <Button
           className="my-2 mt-5 w-full"

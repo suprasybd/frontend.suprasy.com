@@ -31,7 +31,7 @@ const Home: React.FC = () => {
   const { setModalPath } = useModalStore((state) => state);
 
   return (
-    <section className="w-full max-w-[94rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+    <section className="w-full h-[90vh] overflow-auto max-w-[94rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       {/* show balance */}
 
       {!balanceLoading && (

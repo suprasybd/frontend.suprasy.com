@@ -107,9 +107,11 @@ const Categories = () => {
       </div>
 
       <div className="my-5 flex gap-[10px] flex-wrap">
-        {categories?.map((category) => (
-          <UpdateCategory key={category.Id} category={category} />
-        ))}
+        {categories &&
+          categories?.length > 0 &&
+          categories?.map((category) => (
+            <UpdateCategory key={category.Id} category={category} />
+          ))}
       </div>
     </section>
   );

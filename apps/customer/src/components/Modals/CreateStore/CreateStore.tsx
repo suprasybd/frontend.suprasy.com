@@ -29,6 +29,7 @@ import { getPlan, getUserBalance } from '@customer/pages/home/api';
 import { Terminal } from 'lucide-react';
 
 import { Alert, AlertDescription, AlertTitle } from '@frontend.suprasy.com/ui';
+import { MONTHLY_COST } from '@customer/config/api';
 
 const formSchema = z.object({
   StoreName: z
@@ -36,17 +37,7 @@ const formSchema = z.object({
     .min(2, {
       message: 'Username must be at least 2 characters.',
     })
-    .refine(
-      (val) => /^[a-zA-Z0-9]+$/.test(val ?? ''),
-      'Please enter valid name.'
-    ),
-  Subdomain: z
-    .string()
-    .min(2, 'At least put 2 characters.')
-    .refine(
-      (val) => /^(?!-)[a-zA-Z0-9-]{1,63}(?<!-)$/.test(val ?? ''),
-      'Please enter valid subdomain.'
-    ),
+    .max(150),
 });
 
 const CreateStoreModal: React.FC = () => {
@@ -62,7 +53,6 @@ const CreateStoreModal: React.FC = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       StoreName: '',
-      Subdomain: '',
     },
   });
 
@@ -167,34 +157,6 @@ const CreateStoreModal: React.FC = () => {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="Subdomain"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sub Domain</FormLabel>
-                    <FormControl>
-                      <div className="flex items-center justify-center">
-                        <Input
-                          FormError={!!form.formState.errors.Subdomain}
-                          placeholder="Subdomain"
-                          {...field}
-                        />
-                        .suprasy.com
-                      </div>
-                    </FormControl>
-                    {form.getValues('Subdomain') && (
-                      <FormDescription>
-                        Your Subdomain is {form.getValues('Subdomain')}
-                        .suprasy.com
-                      </FormDescription>
-                    )}
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               {balanceSuccess && balance && planData && (
                 <div>
                   {haveBalance ? (
@@ -204,13 +166,13 @@ const CreateStoreModal: React.FC = () => {
                         {isSuccess && (
                           <div>
                             <div>
-                              {planData?.MonthlyCharge} BDT will be deducted
-                              from your balance
+                              {MONTHLY_COST} BDT will be deducted from your
+                              balance
                             </div>
                             {balanceSuccess && balance && planData && (
                               <div>
                                 Remaining balance will be :{' '}
-                                {balance?.Balance - planData?.MonthlyCharge}
+                                {balance?.Balance - MONTHLY_COST}
                               </div>
                             )}
                           </div>

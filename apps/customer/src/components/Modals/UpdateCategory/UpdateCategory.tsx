@@ -63,7 +63,7 @@ const UpdateCategory: React.FC = () => {
   const categories = categoryResponse?.Data;
 
   useEffect(() => {
-    if (categories) {
+    if (categories && categories.length) {
       setSelectedCategory(categories[0].Id);
     }
   }, [categories]);
@@ -84,19 +84,21 @@ const UpdateCategory: React.FC = () => {
           </DialogHeader>
 
           <div className="flex flex-wrap gap-[5px]">
-            {categories?.map((category) => (
-              <span
-                onClick={() => {
-                  setSelectedCategory(category.Id);
-                }}
-                className={cn(
-                  'inline-block hover:bg-gray-700 hover:text-white border border-gray-300 rounded-md p-3 w-fit hover:cursor-pointer',
-                  category.Id === selectedCategory && 'bg-gray-700 text-white'
-                )}
-              >
-                {category.Name}
-              </span>
-            ))}
+            {categories &&
+              categories?.length > 0 &&
+              categories?.map((category) => (
+                <span
+                  onClick={() => {
+                    setSelectedCategory(category.Id);
+                  }}
+                  className={cn(
+                    'inline-block hover:bg-gray-700 hover:text-white border border-gray-300 rounded-md p-3 w-fit hover:cursor-pointer',
+                    category.Id === selectedCategory && 'bg-gray-700 text-white'
+                  )}
+                >
+                  {category.Name}
+                </span>
+              ))}
           </div>
 
           <Button

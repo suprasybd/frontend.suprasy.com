@@ -39,6 +39,7 @@ const StoreStoreKeyMediaLazyImport = createFileRoute('/store/$storeKey/media')()
 const StoreStoreKeyInventoryLazyImport = createFileRoute(
   '/store/$storeKey/inventory',
 )()
+const StoreStoreKeyHomeLazyImport = createFileRoute('/store/$storeKey/home')()
 const StoreStoreKeyEmailLazyImport = createFileRoute('/store/$storeKey/email')()
 const StoreStoreKeyDomainLazyImport = createFileRoute(
   '/store/$storeKey/domain',
@@ -136,6 +137,13 @@ const StoreStoreKeyInventoryLazyRoute = StoreStoreKeyInventoryLazyImport.update(
   } as any,
 ).lazy(() =>
   import('./routes/store/$storeKey/inventory.lazy').then((d) => d.Route),
+)
+
+const StoreStoreKeyHomeLazyRoute = StoreStoreKeyHomeLazyImport.update({
+  path: '/$storeKey/home',
+  getParentRoute: () => StoreRoute,
+} as any).lazy(() =>
+  import('./routes/store/$storeKey/home.lazy').then((d) => d.Route),
 )
 
 const StoreStoreKeyEmailLazyRoute = StoreStoreKeyEmailLazyImport.update({
@@ -285,6 +293,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreStoreKeyEmailLazyImport
       parentRoute: typeof StoreImport
     }
+    '/store/$storeKey/home': {
+      preLoaderRoute: typeof StoreStoreKeyHomeLazyImport
+      parentRoute: typeof StoreImport
+    }
     '/store/$storeKey/inventory': {
       preLoaderRoute: typeof StoreStoreKeyInventoryLazyImport
       parentRoute: typeof StoreImport
@@ -334,6 +346,7 @@ export const routeTree = rootRoute.addChildren([
     StoreStoreKeyDashboardLazyRoute,
     StoreStoreKeyDomainLazyRoute,
     StoreStoreKeyEmailLazyRoute,
+    StoreStoreKeyHomeLazyRoute,
     StoreStoreKeyInventoryLazyRoute,
     StoreStoreKeyMediaLazyRoute,
     StoreStoreKeyOrdersLazyRoute,

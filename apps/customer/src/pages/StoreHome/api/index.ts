@@ -50,3 +50,13 @@ export const getHomesectionsProducts = async (
 
   return response.data;
 };
+
+export const deleteSection = async (
+  sectionId: number
+): Promise<ListResponseType<SectionProductsType>> => {
+  const response = await ApiClient.delete(
+    '/homesections/delete-section/' + sectionId
+  );
+
+  return response.data;
+};

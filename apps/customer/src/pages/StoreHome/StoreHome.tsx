@@ -14,6 +14,12 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   RichTextEditor,
   useToast,
   RichTextRender,
@@ -37,6 +43,7 @@ import { Trash2 } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   createSectionPost,
+  deleteSection,
   getHomeSections,
   getHomesectionsProducts,
 } from './api';
@@ -64,9 +71,16 @@ const StoreHome = () => {
 
   const { toast } = useToast();
 
+  const { data: homeSectionsResponse, refetch } = useQuery({
+    queryKey: ['getHomeSections'],
+    queryFn: () => getHomeSections(),
+  });
+
   const { mutate: handleCreateSection } = useMutation({
     mutationFn: createSectionPost,
     onSuccess: () => {
+      refetch();
+
       toast({
         title: 'home section create',
         description: 'home section create successfull',
@@ -82,9 +96,23 @@ const StoreHome = () => {
     },
   });
 
-  const { data: homeSectionsResponse } = useQuery({
-    queryKey: ['getHomeSections'],
-    queryFn: () => getHomeSections(),
+  const { mutate: handleDeleteSection } = useMutation({
+    mutationFn: deleteSection,
+    onSuccess: () => {
+      refetch();
+      toast({
+        title: 'home section delete',
+        description: 'home section delete successfull',
+        variant: 'default',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'home section delete',
+        description: 'home section delete failed',
+        variant: 'destructive',
+      });
+    },
   });
 
   const homeSesctions = homeSectionsResponse?.Data;
@@ -126,74 +154,95 @@ const StoreHome = () => {
 
       {/* create section */}
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="Title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="section title" {...field} />
-                </FormControl>
+      <Card>
+        <CardHeader>
+          <CardTitle>Create Section</CardTitle>
+          <CardDescription>Create Section Form</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="Title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="section title" {...field} />
+                    </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <h1>Section Summary</h1>
+              <h1>Section Summary</h1>
 
-          <RichTextEditor
-            onValChange={(data) =>
-              form.setValue('Description', JSON.stringify(data))
-            }
-          />
-          <p className="text-sm text-red-600">{errors.Description?.message}</p>
+              <RichTextEditor
+                onValChange={(data) =>
+                  form.setValue('Description', JSON.stringify(data))
+                }
+              />
+              <p className="text-sm text-red-600">
+                {errors.Description?.message}
+              </p>
 
-          <h1>Product List (Place The Product Id the input)</h1>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Products List</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <h1>Product List (Place The Product Id the input)</h1>
 
-          <div className="flex w-full flex-wrap gap-[30px]">
-            {products.map((product, index) => (
-              <div className="w-fit  min-w-[100px] flex justify-center items-center gap-[3px]">
-                <FormField
-                  control={form.control}
-                  name={`Products.${index}.ProductId`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input placeholder="section title" {...field} />
-                      </FormControl>
+                  <div className="flex w-full flex-wrap gap-[30px]">
+                    {products.map((product, index) => (
+                      <div className="w-fit  min-w-[100px] flex justify-center items-center gap-[3px]">
+                        <FormField
+                          control={form.control}
+                          name={`Products.${index}.ProductId`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input placeholder="section title" {...field} />
+                              </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    remove(index);
-                  }}
-                >
-                  <Trash2 />
-                </Button>
-              </div>
-            ))}
-          </div>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            remove(index);
+                          }}
+                        >
+                          <Trash2 />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
 
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              append({ ProductId: 1 });
-            }}
-          >
-            Add Product
-          </Button>
-          <br></br>
-          <Button type="submit">Create Section</Button>
-        </form>
-      </Form>
+                  <Button
+                    className="my-3"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      append({ ProductId: 1 });
+                    }}
+                  >
+                    Add Product
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <br></br>
+              <Button className="w-full" type="submit">
+                Create Section
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
 
       {/* home sections */}
       <h1 className="my-10">Sections List</h1>
@@ -205,6 +254,16 @@ const StoreHome = () => {
             <RichTextRender initialVal={section.Description} />
 
             <SectionProducts sectionId={section.Id} />
+
+            <Button
+              className="my-5"
+              variant={'destructive'}
+              onClick={() => {
+                handleDeleteSection(section.Id);
+              }}
+            >
+              Remove Section
+            </Button>
           </div>
         ))}
     </section>

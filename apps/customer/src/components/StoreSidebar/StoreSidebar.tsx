@@ -147,7 +147,7 @@ const StoreSidebar = () => {
               <Container className="h-4 w-4" />
               Shipping
             </Link>
-            <Link
+            {/* <Link
               to="/store/$storeKey/media"
               params={{
                 storeKey: storeKey,
@@ -159,7 +159,7 @@ const StoreSidebar = () => {
             >
               <GalleryVerticalEnd className="h-4 w-4" />
               Media
-            </Link>
+            </Link> */}
           </nav>
         </div>
       </div>

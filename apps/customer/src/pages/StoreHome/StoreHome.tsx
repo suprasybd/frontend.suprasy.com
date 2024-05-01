@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -40,12 +40,14 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Trash2 } from 'lucide-react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createSectionPost,
   deleteSection,
   getHomeSections,
   getHomesectionsProducts,
+  getSectionById,
+  updateSectionPost,
 } from './api';
 
 export const formSchemaHomesection = z.object({
@@ -56,12 +58,12 @@ export const formSchemaHomesection = z.object({
 
 const StoreHome = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+  const [sectionId, setSectionId] = useState<number>(0);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchemaHomesection>>({
     resolver: zodResolver(formSchemaHomesection),
-    defaultValues: {
-      Products: [{ ProductId: 1 }],
-    },
+    defaultValues: {},
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -69,12 +71,44 @@ const StoreHome = () => {
     name: 'Products',
   });
 
+  const queryClient = useQueryClient();
+
   const { toast } = useToast();
 
   const { data: homeSectionsResponse, refetch } = useQuery({
     queryKey: ['getHomeSections'],
     queryFn: () => getHomeSections(),
   });
+
+  const { data: sectionResponse } = useQuery({
+    queryKey: ['getSectionById', sectionId],
+    queryFn: () => getSectionById(sectionId),
+    enabled: !!sectionId && isUpdating,
+  });
+
+  const { data: sectionProductsResponse } = useQuery({
+    queryKey: ['getSectionProductsByIdForUpdate', sectionId],
+    queryFn: () => getHomesectionsProducts(sectionId),
+    enabled: !!sectionId && isUpdating,
+  });
+
+  const section = sectionResponse?.Data;
+  const sectionProducts = sectionProductsResponse?.Data;
+  console.log('section products out', sectionProducts);
+  useEffect(() => {
+    if (section) {
+      form.setValue('Title', section?.Title);
+      form.setValue('Description', section?.Description);
+    }
+
+    if (sectionProducts && sectionProducts.length > 0) {
+      const formatedP = sectionProducts.map((pro) => ({
+        ProductId: pro.ProductId,
+      }));
+      console.log('section products formated', formatedP);
+      form.setValue('Products', formatedP);
+    }
+  }, [section, sectionProducts]);
 
   const { mutate: handleCreateSection } = useMutation({
     mutationFn: createSectionPost,
@@ -91,6 +125,26 @@ const StoreHome = () => {
       toast({
         title: 'home section create',
         description: 'home section create failed',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const { mutate: handleUpdateSection } = useMutation({
+    mutationFn: updateSectionPost,
+    onSuccess: () => {
+      refetch();
+      queryClient.refetchQueries({ queryKey: ['getSectionsProducts'] });
+      toast({
+        title: 'home section update',
+        description: 'home section update successfull',
+        variant: 'default',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'home section update',
+        description: 'home section update failed',
         variant: 'destructive',
       });
     },
@@ -115,6 +169,10 @@ const StoreHome = () => {
     },
   });
 
+  const description = useMemo(() => {
+    return section?.Description;
+  }, [section]);
+
   const homeSesctions = homeSectionsResponse?.Data;
 
   function onSubmit(values: z.infer<typeof formSchemaHomesection>) {
@@ -123,7 +181,16 @@ const StoreHome = () => {
     const formatedProducts = values.Products.map(
       (product) => product.ProductId
     );
-    handleCreateSection({ ...values, Products: formatedProducts });
+
+    if (!isUpdating) {
+      handleCreateSection({ ...values, Products: formatedProducts });
+    }
+    if (isUpdating) {
+      handleUpdateSection({
+        sectionId,
+        data: { ...values, Products: formatedProducts },
+      });
+    }
   }
 
   const products = form.getValues('Products');
@@ -179,11 +246,23 @@ const StoreHome = () => {
 
               <h1>Section Summary</h1>
 
-              <RichTextEditor
-                onValChange={(data) =>
-                  form.setValue('Description', JSON.stringify(data))
-                }
-              />
+              {!isUpdating && (
+                <RichTextEditor
+                  onValChange={(data) =>
+                    form.setValue('Description', JSON.stringify(data))
+                  }
+                />
+              )}
+
+              {description && isUpdating && (
+                <RichTextEditor
+                  initialVal={description}
+                  onValChange={(data) =>
+                    form.setValue('Description', JSON.stringify(data))
+                  }
+                />
+              )}
+
               <p className="text-sm text-red-600">
                 {errors.Description?.message}
               </p>
@@ -196,31 +275,35 @@ const StoreHome = () => {
                   <h1>Product List (Place The Product Id the input)</h1>
 
                   <div className="flex w-full flex-wrap gap-[30px]">
-                    {products.map((product, index) => (
-                      <div className="w-fit  min-w-[100px] flex justify-center items-center gap-[3px]">
-                        <FormField
-                          control={form.control}
-                          name={`Products.${index}.ProductId`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Input placeholder="section title" {...field} />
-                              </FormControl>
+                    {products?.length > 0 &&
+                      products.map((product, index) => (
+                        <div className="w-fit  min-w-[100px] flex justify-center items-center gap-[3px]">
+                          <FormField
+                            control={form.control}
+                            name={`Products.${index}.ProductId`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    placeholder="section title"
+                                    {...field}
+                                  />
+                                </FormControl>
 
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <Button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            remove(index);
-                          }}
-                        >
-                          <Trash2 />
-                        </Button>
-                      </div>
-                    ))}
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <Button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              remove(index);
+                            }}
+                          >
+                            <Trash2 />
+                          </Button>
+                        </div>
+                      ))}
                   </div>
 
                   <Button
@@ -237,7 +320,7 @@ const StoreHome = () => {
 
               <br></br>
               <Button className="w-full" type="submit">
-                Create Section
+                {isUpdating ? 'Update Section' : '    Create Section'}
               </Button>
             </form>
           </Form>
@@ -263,6 +346,17 @@ const StoreHome = () => {
               }}
             >
               Remove Section
+            </Button>
+
+            <Button
+              className="my-5 mx-2"
+              onClick={() => {
+                form.setValue('Products', []);
+                setSectionId(section.Id);
+                setIsUpdating(true);
+              }}
+            >
+              Update Section
             </Button>
           </div>
         ))}

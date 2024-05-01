@@ -33,6 +33,21 @@ export const createSectionPost = async (
   return response.data;
 };
 
+export const updateSectionPost = async ({
+  data,
+  sectionId,
+}: {
+  data: any;
+  sectionId: number;
+}): Promise<ResponseType<string>> => {
+  const response = await ApiClient.put(
+    '/homesections/update-section/' + sectionId,
+    data
+  );
+
+  return response.data;
+};
+
 export const getHomeSections = async (): Promise<
   ListResponseType<HomeSectionsTypes>
 > => {
@@ -47,6 +62,14 @@ export const getHomesectionsProducts = async (
   const response = await ApiClient.get(
     '/homesections/getsectionproducts/' + sectionId
   );
+
+  return response.data;
+};
+
+export const getSectionById = async (
+  sectionId: number
+): Promise<ResponseType<HomeSectionsTypes>> => {
+  const response = await ApiClient.get('/homesections/getsection/' + sectionId);
 
   return response.data;
 };

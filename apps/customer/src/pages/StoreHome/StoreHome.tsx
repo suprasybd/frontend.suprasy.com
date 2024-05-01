@@ -135,6 +135,8 @@ const StoreHome = () => {
     onSuccess: () => {
       refetch();
       queryClient.refetchQueries({ queryKey: ['getSectionsProducts'] });
+      setIsUpdating(false);
+      form.reset();
       toast({
         title: 'home section update',
         description: 'home section update successfull',

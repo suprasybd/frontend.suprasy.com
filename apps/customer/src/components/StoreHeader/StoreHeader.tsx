@@ -14,15 +14,15 @@ import {
   Users,
 } from 'lucide-react';
 
-import { Badge } from '@frontend.suprasy.com/ui';
-import { Button } from '@frontend.suprasy.com/ui';
+import { Badge } from '@customer/components/index';
+import { Button } from '@customer/components/index';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,9 +30,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@frontend.suprasy.com/ui';
-import { Input } from '@frontend.suprasy.com/ui';
-import { Sheet, SheetContent, SheetTrigger } from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
+import { Input } from '@customer/components/index';
+import { Sheet, SheetContent, SheetTrigger } from '@customer/components/index';
 const StoreHeader: React.FC = () => {
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">

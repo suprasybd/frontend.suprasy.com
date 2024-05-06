@@ -4,7 +4,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import Area from './components/Area';
 import ShippingMethod from './components/shipping-method/Method';
 

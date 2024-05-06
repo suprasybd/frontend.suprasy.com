@@ -12,7 +12,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 
 const OrderDetails = () => {
   const { orderId } = useParams({ strict: false }) as {

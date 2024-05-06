@@ -3,7 +3,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import React from 'react';
 import { routeTree } from './routeTree.gen';
 
-import { Toaster } from '@frontend.suprasy.com/ui';
+import { Toaster } from '@customer/components/index';
 
 export const router = createRouter({
   routeTree,

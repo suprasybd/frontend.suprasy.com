@@ -1,4 +1,4 @@
-import { Button } from '@frontend.suprasy.com/ui';
+import { Button } from '@customer/components/index';
 import { Link } from '@tanstack/react-router';
 import { ColumnDef } from '@tanstack/react-table';
 import { v4 as uuidv4 } from 'uuid';

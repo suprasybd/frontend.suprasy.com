@@ -15,7 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   useToast,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import { Link, useParams, useStableCallback } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {

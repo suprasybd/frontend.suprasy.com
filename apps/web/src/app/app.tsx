@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import styles from './app.module.scss';
 
-import { Button } from '@frontend.suprasy.com/ui';
+import { Button } from '@customer/components/index';
 import NxWelcome from './nx-welcome';
 
 export function App() {

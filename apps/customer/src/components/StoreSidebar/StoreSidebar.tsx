@@ -1,4 +1,4 @@
-import { Button } from '@frontend.suprasy.com/ui';
+import { Button } from '@customer/components/index';
 import { Link, useParams } from '@tanstack/react-router';
 import {
   BarChartHorizontal,
@@ -13,7 +13,7 @@ import {
   Users,
 } from 'lucide-react';
 
-import { Badge } from '@frontend.suprasy.com/ui';
+import { Badge } from '@customer/components/index';
 
 import {
   Card,
@@ -21,7 +21,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import { useQuery } from '@tanstack/react-query';
 import { getStoreOrders } from '@customer/pages/orders/api';
 

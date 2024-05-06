@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   useToast,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import cn from 'classnames';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';

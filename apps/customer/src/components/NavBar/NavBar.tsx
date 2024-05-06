@@ -5,7 +5,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import { Link } from '@tanstack/react-router';
 import { Power, UserRound } from 'lucide-react';
 import { logoutUser } from '../../config/profile/logout';

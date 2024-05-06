@@ -15,7 +15,7 @@ import {
   FormMessage,
   Input,
   useToast,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import { useMutation } from '@tanstack/react-query';
 import { login } from './api';
 import { ReloadIcon } from '@radix-ui/react-icons';

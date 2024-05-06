@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
   useToast,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react';

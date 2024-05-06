@@ -10,7 +10,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 
 const ProductsDetailsMain: React.FC = () => {
   return (

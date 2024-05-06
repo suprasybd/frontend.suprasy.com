@@ -1,4 +1,4 @@
-import { Badge, Button } from '@frontend.suprasy.com/ui';
+import { Badge, Button } from '@customer/components/index';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { getUserBalance, getUserStoresList } from './api';
@@ -10,7 +10,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import { LoaderMain } from '../../components/Loader/Loader';
 import { Link } from '@tanstack/react-router';
 import { useModalStore } from '@customer/store/modalStore';

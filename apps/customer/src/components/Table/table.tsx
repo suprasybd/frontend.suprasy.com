@@ -14,7 +14,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

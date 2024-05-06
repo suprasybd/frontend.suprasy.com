@@ -23,7 +23,7 @@ import {
   RichTextEditor,
   useToast,
   RichTextRender,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 
 import {
   Form,
@@ -33,7 +33,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 
 import { Link, useParams } from '@tanstack/react-router';
 import { z } from 'zod';

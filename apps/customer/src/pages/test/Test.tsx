@@ -11,15 +11,15 @@ import {
   Users,
 } from 'lucide-react';
 
-import { Badge } from '@frontend.suprasy.com/ui';
-import { Button } from '@frontend.suprasy.com/ui';
+import { Badge } from '@customer/components/index';
+import { Button } from '@customer/components/index';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,9 +27,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@frontend.suprasy.com/ui';
-import { Input } from '@frontend.suprasy.com/ui';
-import { Sheet, SheetContent, SheetTrigger } from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
+import { Input } from '@customer/components/index';
+import { Sheet, SheetContent, SheetTrigger } from '@customer/components/index';
 
 export default function Dashboard() {
   return (

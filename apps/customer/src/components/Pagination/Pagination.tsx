@@ -7,7 +7,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 
 import { PaginationType } from '@customer/libs/types/responseTypes';
 

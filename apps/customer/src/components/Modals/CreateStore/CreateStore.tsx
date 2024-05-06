@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   useToast,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import React, { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -20,15 +20,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@frontend.suprasy.com/ui';
-import { Input } from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
+import { Input } from '@customer/components/index';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createStore } from './api';
 import { getPlan, getUserBalance } from '@customer/pages/home/api';
 
 import { Terminal } from 'lucide-react';
 
-import { Alert, AlertDescription, AlertTitle } from '@frontend.suprasy.com/ui';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@customer/components/index';
 import { MONTHLY_COST } from '@customer/config/api';
 
 const formSchema = z.object({

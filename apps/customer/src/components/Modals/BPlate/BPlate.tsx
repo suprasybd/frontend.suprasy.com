@@ -6,7 +6,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import React, { useEffect, useState } from 'react';
 
 const MediaModal: React.FC = () => {

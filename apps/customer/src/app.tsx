@@ -5,7 +5,7 @@ import { routeTree } from './routeTree.gen';
 import { useAuthStore } from './store/authStore';
 import loadCurrentUser from './config/profile/loadUser';
 import { hasCookie } from './config/profile/hasCookie';
-import { Toaster } from '@frontend.suprasy.com/ui';
+import { Toaster } from '@customer/components/index';
 
 export const router = createRouter({
   routeTree,

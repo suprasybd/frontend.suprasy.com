@@ -12,7 +12,7 @@ import {
   TabsList,
   TabsTrigger,
   useToast,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { CheckCheckIcon, Upload } from 'lucide-react';

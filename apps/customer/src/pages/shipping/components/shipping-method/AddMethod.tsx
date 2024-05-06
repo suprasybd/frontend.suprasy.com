@@ -13,7 +13,7 @@ import {
   FormMessage,
   Input,
   useToast,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 import React, { useEffect, useRef } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';

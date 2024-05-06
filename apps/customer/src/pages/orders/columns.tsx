@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { MoreHorizontal } from 'lucide-react';
 
-import { Button } from '@frontend.suprasy.com/ui';
+import { Button } from '@customer/components/index';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@frontend.suprasy.com/ui';
+} from '@customer/components/index';
 
 import { Link } from '@tanstack/react-router';
 import { v4 as uuidv4 } from 'uuid';

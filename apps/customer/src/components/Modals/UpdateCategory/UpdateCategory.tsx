@@ -58,6 +58,7 @@ const UpdateCategory: React.FC = () => {
   const { data: categoryResponse } = useQuery({
     queryKey: ['getCategories'],
     queryFn: () => getCategories(),
+    enabled: modalOpen,
   });
 
   const categories = categoryResponse?.Data;

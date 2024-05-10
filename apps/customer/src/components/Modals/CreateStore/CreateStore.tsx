@@ -74,10 +74,12 @@ const CreateStoreModal: React.FC = () => {
   const { data: planResponse, isSuccess } = useQuery({
     queryKey: ['getPlan'],
     queryFn: getPlan,
+    enabled: modalOpen,
   });
   const { data: balanceResponse, isSuccess: balanceSuccess } = useQuery({
     queryKey: ['getUserBalance'],
     queryFn: getUserBalance,
+    enabled: modalOpen,
   });
 
   const planData = planResponse?.Data;

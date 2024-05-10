@@ -66,6 +66,7 @@ const MediaModal: React.FC<{
   } = useQuery({
     queryKey: ['getStoreImagesList', modalOpen],
     queryFn: () => getStoreImages(1, 20),
+    enabled: modalOpen,
   });
 
   const { mutate: handleImageUploadApi, isPending } = useMutation({

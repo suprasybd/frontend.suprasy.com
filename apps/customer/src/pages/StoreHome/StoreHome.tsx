@@ -50,6 +50,8 @@ import {
   updateSectionPost,
 } from './api';
 import { useModalStore } from '@customer/store/modalStore';
+import { useProductSelectionStore } from '@customer/store/productSelection';
+import { ProductCard } from '@customer/components/Modals/ProductSelection/ProductSelection';
 
 export const formSchemaHomesection = z.object({
   Title: z.string().min(2).max(50),
@@ -73,6 +75,7 @@ const StoreHome = () => {
   });
 
   const { setModalPath } = useModalStore((state) => state);
+  const { Product } = useProductSelectionStore((state) => state);
 
   const queryClient = useQueryClient();
 
@@ -180,6 +183,13 @@ const StoreHome = () => {
 
   const homeSesctions = homeSectionsResponse?.Data;
 
+  useEffect(() => {
+    if (Product) {
+      append({ ProductId: Product });
+    }
+    // eslint-disable-next-line
+  }, [Product]);
+
   function onSubmit(values: z.infer<typeof formSchemaHomesection>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
@@ -282,24 +292,10 @@ const StoreHome = () => {
                   <div className="flex w-full flex-wrap gap-[30px]">
                     {products?.length > 0 &&
                       products.map((product, index) => (
-                        <div className="w-fit  min-w-[100px] flex justify-center items-center gap-[3px]">
-                          <FormField
-                            control={form.control}
-                            name={`Products.${index}.ProductId`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <Input
-                                    placeholder="section title"
-                                    {...field}
-                                  />
-                                </FormControl>
-
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                        <div className="w-fit border border-slate-600 rounded-md bg-slate-500 text-white hover:bg-slate-700 min-w-[100px] flex justify-center items-center gap-[3px]">
+                          <ProductCard ProductId={product.ProductId} />
                           <Button
+                            className="h-full"
                             onClick={(e) => {
                               e.preventDefault();
                               remove(index);
@@ -380,12 +376,12 @@ const SectionProducts: React.FC<{ sectionId: number }> = ({ sectionId }) => {
   const sectionProducts = sectionProductsResponse?.Data;
 
   return (
-    <div>
+    <div className="flex gap-[10px] flex-wrap">
       {sectionProducts &&
         sectionProducts.length &&
         sectionProducts.map((products) => (
-          <div>
-            <h1>Product Id: {products.ProductId} </h1>
+          <div className="w-fit">
+            <ProductCard ProductId={products.ProductId} />
           </div>
         ))}
     </div>

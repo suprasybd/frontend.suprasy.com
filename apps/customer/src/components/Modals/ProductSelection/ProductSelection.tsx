@@ -8,15 +8,18 @@ import {
 } from '@customer/components/index';
 import { activeFilters } from '@customer/libs/helpers/filters';
 import {
+  getProductsDetails,
   getProductsImages,
   getUserStoresProductsList,
 } from '@customer/pages/products/api';
 import { useModalStore } from '@customer/store/modalStore';
+import { useProductSelectionStore } from '@customer/store/productSelection';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 
 const ProductSelection: React.FC = () => {
   const { modal, clearModalPath } = useModalStore((state) => state);
+  const { setProduct } = useProductSelectionStore((state) => state);
   const modalName = modal.modal;
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
@@ -62,7 +65,7 @@ const ProductSelection: React.FC = () => {
             <DialogDescription>
               {/* searc */}
               <Input
-                placeholder="Title product by title"
+                placeholder="Search product by title"
                 onChange={(e) => {
                   setTitle(e.target.value);
                 }}
@@ -72,7 +75,14 @@ const ProductSelection: React.FC = () => {
                 {products &&
                   products.length > 0 &&
                   products.map((product) => (
-                    <ProductCard ProductId={product.Id} Title={product.Title} />
+                    <div
+                      onClick={() => {
+                        setProduct(product.Id);
+                        closeModal();
+                      }}
+                    >
+                      <ProductCard ProductId={product.Id} />
+                    </div>
                   ))}
               </div>
             </DialogDescription>
@@ -83,17 +93,21 @@ const ProductSelection: React.FC = () => {
   );
 };
 
-const ProductCard: React.FC<{ ProductId: number; Title: string }> = ({
-  ProductId,
-  Title,
-}) => {
+export const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
   const { data: imagesResposne } = useQuery({
     queryFn: () => getProductsImages(ProductId),
     queryKey: ['getProductImagesForSelectionModal', ProductId],
     enabled: !!ProductId,
   });
 
+  const { data: productDetailsResposne } = useQuery({
+    queryFn: () => getProductsDetails(ProductId),
+    queryKey: ['getProductDetailsForSelectionModal', ProductId],
+    enabled: !!ProductId,
+  });
+
   const images = imagesResposne?.Data;
+  const productDetails = productDetailsResposne?.Data;
 
   return (
     <div>
@@ -101,7 +115,7 @@ const ProductCard: React.FC<{ ProductId: number; Title: string }> = ({
         className="p-3 rounded-md my-2 bg-slate-500 text-white hover:bg-slate-700 cursor-pointer"
         key={ProductId}
       >
-        <p>{Title}</p>
+        <p>{productDetails?.Title}</p>
         {images && images.length > 0 && (
           <img
             className="rounded-md"

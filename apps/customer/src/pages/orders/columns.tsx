@@ -15,6 +15,7 @@ import {
 import { Link } from '@tanstack/react-router';
 import { v4 as uuidv4 } from 'uuid';
 import { OrderType } from './api';
+import { useModalStore } from '@customer/store/modalStore';
 
 export const ordersColumn: ColumnDef<OrderType>[] = [
   {
@@ -86,46 +87,26 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
                 View order details
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link
-                to="/store/$storeKey/products/create"
-                params={{
-                  storeKey: order.StoreKey,
-                }}
-                search={{
-                  productId: order.Id,
-                  update: true,
-                  uuid: uuidv4(),
-                }}
-              >
-                Update Product
-              </Link>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem>
-              <Link
-                to="/store/$storeKey/products/create"
-                params={{
-                  storeKey: order.StoreKey,
-                }}
-                search={{
-                  updateInventory: true,
-                  productId: order.Id,
-                  update: true,
-                  uuid: uuidv4(),
-                }}
-                hash="inventory"
-              >
-                Update Inventory
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={(e) => e.preventDefault()}
-              className="hover:!bg-red-500 hover:!text-white"
-            ></DropdownMenuItem>
+            <UpdateOrder OrderId={order.Id} />
           </DropdownMenuContent>
         </DropdownMenu>
       );
     },
   },
 ];
+
+const UpdateOrder: React.FC<{ OrderId: number }> = ({ OrderId }) => {
+  const { setModalPath } = useModalStore((state) => state);
+  return (
+    <div>
+      <DropdownMenuItem
+        className="cursor-pointer"
+        onClick={() => {
+          setModalPath({ modal: 'update-order', OrderId });
+        }}
+      >
+        Update Order
+      </DropdownMenuItem>
+    </div>
+  );
+};

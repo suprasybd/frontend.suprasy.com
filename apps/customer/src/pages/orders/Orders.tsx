@@ -118,6 +118,7 @@ const Orders = () => {
           <TabsTrigger value="shipped">Shipped</TabsTrigger>
           <TabsTrigger value="completed">Completed</TabsTrigger>
           <TabsTrigger value="cancled">Cancled</TabsTrigger>
+          <TabsTrigger value="returned">Returned</TabsTrigger>
         </TabsList>
       </Tabs>
 

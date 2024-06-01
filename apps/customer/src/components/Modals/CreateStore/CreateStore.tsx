@@ -26,8 +26,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createStore } from './api';
 import { getPlan, getUserBalance } from '@customer/pages/home/api';
 
-import { Terminal } from 'lucide-react';
-
 import {
   Alert,
   AlertDescription,
@@ -191,7 +189,10 @@ const CreateStoreModal: React.FC = () => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>This is Subdomain</FormDescription>
+                    <FormDescription>
+                      {' '}
+                      {form.watch('Subdomain')}.suprasy.com This is Subdomain
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

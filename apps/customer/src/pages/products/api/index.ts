@@ -15,6 +15,7 @@ import {
 import { productSchema } from '../create/zod/productSchema';
 
 export const getUserStoresProductsList = async (Queries: {
+  [key: string]: any;
   Page?: number;
   Limit?: number;
   Status?: string;

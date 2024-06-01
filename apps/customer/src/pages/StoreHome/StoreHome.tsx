@@ -49,6 +49,7 @@ import {
   getSectionById,
   updateSectionPost,
 } from './api';
+import { useModalStore } from '@customer/store/modalStore';
 
 export const formSchemaHomesection = z.object({
   Title: z.string().min(2).max(50),
@@ -70,6 +71,8 @@ const StoreHome = () => {
     control: form.control,
     name: 'Products',
   });
+
+  const { setModalPath } = useModalStore((state) => state);
 
   const queryClient = useQueryClient();
 
@@ -312,7 +315,9 @@ const StoreHome = () => {
                     className="my-3"
                     onClick={(e) => {
                       e.preventDefault();
-                      append({ ProductId: 1 });
+                      // append({ ProductId: 1 });
+                      setModalPath({ modal: 'product-selection' });
+                      //  here
                     }}
                   >
                     Add Product

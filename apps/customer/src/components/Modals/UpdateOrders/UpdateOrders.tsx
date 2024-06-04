@@ -176,7 +176,7 @@ const UpdateOrder: React.FC = () => {
               </Button>
               <Button
                 className="w-full !mt-3"
-                variant={'default'}
+                variant={'outline'}
                 onClick={() => closeModal()}
               >
                 Close

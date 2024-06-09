@@ -20,6 +20,8 @@ import { useMutation } from '@tanstack/react-query';
 import { login } from './api';
 import { ReloadIcon } from '@radix-ui/react-icons';
 
+import logo from './assets/lg-full-blacks.png';
+
 const Login: React.FC = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -54,11 +56,7 @@ const Login: React.FC = () => {
   return (
     <div className="flex min-h-full  flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        {/* <img
-          className="mx-auto h-10 w-auto"
-          src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-          alt="Your Company"
-        /> */}
+        <img width={'250px'} height={'auto'} src={logo} alt="logo" />
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Sign in to your account
         </h2>
@@ -106,7 +104,7 @@ const Login: React.FC = () => {
             />
             <Button
               type="submit"
-              className="w-full "
+              className="w-full h-11"
               variant={'defaultGradiant'}
             >
               {isPending && (

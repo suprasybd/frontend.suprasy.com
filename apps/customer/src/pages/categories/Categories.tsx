@@ -15,6 +15,9 @@ import {
   AccordionItem,
   AccordionTrigger,
   useToast,
+  Card,
+  CardHeader,
+  CardContent,
 } from '@customer/components/index';
 import { Link, useParams, useStableCallback } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -85,26 +88,30 @@ const Categories = () => {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="my-2">
-        <h1>Add Category</h1>
-        <Input
-          onChange={(e) => {
-            setCategory(e.target.value);
-          }}
-          value={category}
-          className="my-3"
-          placeholder="category name"
-        />
-        <Button
-          onClick={() => {
-            if (category) {
-              handleAddCategory(category);
-            }
-          }}
-        >
-          Add
-        </Button>
-      </div>
+      <Card>
+        <CardContent>
+          <div className="my-2 mt-4">
+            <h1>Add Category</h1>
+            <Input
+              onChange={(e) => {
+                setCategory(e.target.value);
+              }}
+              value={category}
+              className="my-3"
+              placeholder="category name"
+            />
+            <Button
+              onClick={() => {
+                if (category) {
+                  handleAddCategory(category);
+                }
+              }}
+            >
+              Add Category
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="my-5 flex gap-[10px] flex-wrap">
         {categories &&
@@ -173,6 +180,7 @@ const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
       <h1 className="mt-3">Category Id: {category.Id}</h1>
       <div className="flex justify-between gap-[3px]">
         <Button
+          variant={'outline'}
           className="my-2 mt-5 w-full"
           onClick={() => {
             handleUpdateCategory({
@@ -186,7 +194,7 @@ const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
 
         <Button
           className="my-2 mt-5 w-full"
-          variant={'destructive'}
+          variant={'gradiantT'}
           onClick={() => {
             handleRemove({ id: category.Id });
           }}

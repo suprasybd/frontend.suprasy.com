@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  Badge,
   DropdownMenuTrigger,
 } from '@customer/components/index';
 
@@ -23,37 +24,41 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
     header: 'Id',
   },
   {
-    accessorKey: 'Email',
-    header: 'Email',
+    id: 'contact',
+    header: 'Contact',
+    cell: ({ row }) => {
+      const order = row.original;
+
+      return (
+        <div>
+          <p>
+            {order.FirstName} {order.LastName}
+          </p>
+          <p>{order.Phone}</p>
+          <p>{order.Email}</p>
+        </div>
+      );
+    },
   },
-  {
-    accessorKey: 'FirstName',
-    header: 'First Name',
-  },
-  {
-    accessorKey: 'LastName',
-    header: 'Last Name',
-  },
-  {
-    accessorKey: 'Phone',
-    header: 'Phone',
-  },
-  {
-    accessorKey: 'Email',
-    header: 'Email',
-  },
+
   {
     accessorKey: 'ShippingMethod',
     header: 'Shipping',
     cell: ({ row }) => {
       return (
-        <p className="">{row.original.ShippingMethod.slice(0, 30) + '...'}</p>
+        <div>
+          <p className="">{row.original.ShippingMethod.slice(0, 30) + '...'}</p>
+          {Boolean(row.original.Note) && <p>Note: {row.original.Note}</p>}
+        </div>
       );
     },
   },
   {
     accessorKey: 'Status',
     header: 'Status',
+    cell: ({ row }) => {
+      return <Badge variant="secondary">{row.original.Status}</Badge>;
+    },
   },
   {
     accessorKey: 'CreatedAt',

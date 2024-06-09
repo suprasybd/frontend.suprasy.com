@@ -329,6 +329,11 @@ const CreateProduct: React.FC = () => {
     name: 'AttributeValue',
   });
 
+  const { move: moveImage } = useFieldArray({
+    control: form.control,
+    name: 'Images',
+  });
+
   const productDescription = useMemo(() => {
     return productDetails?.Description;
   }, [productDetails]);
@@ -458,7 +463,7 @@ const CreateProduct: React.FC = () => {
                 <CardHeader>
                   <CardTitle>Product Images</CardTitle>
                   <CardDescription>
-                    Lipsum dolor sit amet, consectetur adipiscing elit
+                    Select images and order them bellow
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -480,10 +485,30 @@ const CreateProduct: React.FC = () => {
                             </div>
                           )}
                           <div className="flex w-full ">
-                            <button className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2 ">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                if (index !== 0) {
+                                  moveImage(index, index - 1);
+                                } else {
+                                  moveImage(index, productImages.length - 1);
+                                }
+                              }}
+                              className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2 "
+                            >
                               <ArrowLeft />
                             </button>
-                            <button className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2 ">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                if (index !== productImages.length - 1) {
+                                  moveImage(index, index + 1);
+                                } else {
+                                  moveImage(index, 0);
+                                }
+                              }}
+                              className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2 "
+                            >
                               <ArrowRight />
                             </button>
                             <button

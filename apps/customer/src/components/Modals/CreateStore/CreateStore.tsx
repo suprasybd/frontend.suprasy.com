@@ -43,17 +43,6 @@ const formSchema = z.object({
       message: "Store name can't have special char or numbers",
     })
     .max(150),
-  Subdomain: z
-    .string()
-    // eslint-disable-next-line
-    .regex(/^[a-z][a-z\-]*[a-z]$/i, {
-      message:
-        'Subdomain must start and end with a letter, and only contain letters and dashes (dashes must be within letters, not at the beginning or end)',
-    })
-    .min(2, {
-      message: 'Store Name must be at least 2 characters.',
-    })
-    .max(150),
 });
 
 const CreateStoreModal: React.FC = () => {
@@ -69,7 +58,6 @@ const CreateStoreModal: React.FC = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       StoreName: '',
-      Subdomain: '',
     },
   });
 
@@ -170,28 +158,6 @@ const CreateStoreModal: React.FC = () => {
                     </FormControl>
                     <FormDescription>
                       This is your public display name.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="Subdomain"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Subdomain</FormLabel>
-                    <FormControl>
-                      <Input
-                        FormError={!!form.formState.errors.Subdomain}
-                        placeholder="Sub Domain"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {' '}
-                      {form.watch('Subdomain')}.suprasy.com This is Subdomain
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

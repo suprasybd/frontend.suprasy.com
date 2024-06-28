@@ -112,17 +112,18 @@ export const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
   return (
     <div>
       <div
-        className="p-3 rounded-md my-2 bg-slate-500 text-white hover:bg-slate-700 cursor-pointer"
+        className="p-3 rounded-md my-2 min-h-[120px] bg-slate-800 text-white hover:bg-slate-700 cursor-pointer"
         key={ProductId}
       >
-        <p>{productDetails?.Title}</p>
+        <p>Title: {productDetails?.Title}</p>
+        <p>Product Id: {productDetails?.Id}</p>
         {images && images.length > 0 && (
           <img
-            className="rounded-md"
+            className="rounded-md h-[50px] w-[50px] border-2 border-white"
             alt="product"
             src={images[0].ImageUrl}
             width={'50px'}
-            height={'auto'}
+            height={'50px'}
           />
         )}
       </div>

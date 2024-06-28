@@ -105,7 +105,7 @@ const RichTextEditor: React.FC<{
 
       <Editable
         // readOnly
-        className="p-4  rounded-md rounded-t-none border border-input shadow-sm
+        className="p-4 !mt-0  rounded-md rounded-t-none border border-input shadow-sm
         focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[200px]"
         renderElement={renderElement}
         renderLeaf={renderLeaf}

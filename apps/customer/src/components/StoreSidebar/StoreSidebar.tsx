@@ -4,26 +4,19 @@ import {
   BarChartHorizontal,
   Bell,
   Container,
-  GalleryVerticalEnd,
   Home,
-  LineChart,
   Package,
   Package2,
   ShoppingCart,
+  Store,
   Users,
 } from 'lucide-react';
 
 import { Badge } from '@customer/components/index';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@customer/components/index';
 import { useQuery } from '@tanstack/react-query';
 import { getStoreOrders } from '@customer/pages/orders/api';
+import { getStoreDetails } from '@customer/pages/home/api';
 
 const StoreSidebar = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
@@ -33,18 +26,26 @@ const StoreSidebar = () => {
     queryFn: () => getStoreOrders({ Limit: 10, Page: 1, Status: 'pending' }),
   });
 
+  const { data: storeDetailsResponse } = useQuery({
+    queryKey: ['getStoreDetails'],
+    queryFn: () => getStoreDetails(storeKey),
+  });
+
+  const storeData = storeDetailsResponse?.Data;
+
   return (
     <div className="hidden border-r bg-muted/40 md:block">
       <div className="flex h-full max-h-[93vh]  flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-          <a href="/" className="flex items-center gap-2 font-semibold">
-            <Package2 className="h-6 w-6" />
-            <span className="">Acme Inc</span>
-          </a>
-          <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+          <span className="flex items-center gap-2 font-semibold">
+            <Store className="h-6 w-6" />
+
+            <span className="">{storeData?.StoreName}</span>
+          </span>
+          {/* <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
             <Bell className="h-4 w-4" />
             <span className="sr-only">Toggle notifications</span>
-          </Button>
+          </Button> */}
         </div>
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">

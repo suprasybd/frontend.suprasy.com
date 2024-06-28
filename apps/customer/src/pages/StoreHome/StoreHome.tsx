@@ -14,6 +14,15 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
   Card,
   CardContent,
   CardDescription,
@@ -285,14 +294,13 @@ const StoreHome = () => {
               <Card>
                 <CardHeader>
                   <CardTitle>Products List</CardTitle>
+                  <h1>Product List (Place The Product Id the input)</h1>
                 </CardHeader>
                 <CardContent>
-                  <h1>Product List (Place The Product Id the input)</h1>
-
                   <div className="flex w-full flex-wrap gap-[30px]">
                     {products?.length > 0 &&
                       products.map((product, index) => (
-                        <div className="w-fit border border-slate-600 rounded-md bg-slate-500 text-white hover:bg-slate-700 min-w-[100px] flex justify-center items-center gap-[3px]">
+                        <div className="w-fit border border-slate-600 rounded-md bg-slate-800 text-white min-w-[100px] flex justify-center items-center gap-[3px]">
                           <ProductCard ProductId={product.ProductId} />
                           <Button
                             className="h-full"
@@ -331,38 +339,72 @@ const StoreHome = () => {
       </Card>
 
       {/* home sections */}
-      <h1 className="my-10">Sections List</h1>
-      {homeSesctions &&
-        homeSesctions.length > 0 &&
-        homeSesctions.map((section) => (
-          <div className="p-5 border my-2 border-gray-300 rounded-md">
-            <h1 className="text-4xl font-medium">{section.Title}</h1>
-            <RichTextRender initialVal={section.Description} />
+      <Card className="my-10">
+        <CardHeader>
+          <CardTitle>
+            {' '}
+            <h1 className="my-4 font-bold text-xl">Sections List</h1>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {homeSesctions &&
+            homeSesctions.length > 0 &&
+            homeSesctions.map((section) => (
+              <div className="p-5 border my-2 border-gray-300 rounded-md">
+                <h1 className="text-4xl font-medium">{section.Title}</h1>
+                <RichTextRender initialVal={section.Description} />
 
-            <SectionProducts sectionId={section.Id} />
+                <SectionProducts sectionId={section.Id} />
 
-            <Button
-              className="my-5"
-              variant={'destructive'}
-              onClick={() => {
-                handleDeleteSection(section.Id);
-              }}
-            >
-              Remove Section
-            </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger>
+                    {' '}
+                    <Button className="my-5" variant={'destructive'}>
+                      Remove Section
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete your section and remove your data from our
+                        servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction className="p-0">
+                        <Button
+                          className="my-5"
+                          variant={'destructive'}
+                          onClick={() => {
+                            handleDeleteSection(section.Id);
+                          }}
+                        >
+                          Confirm Remove
+                        </Button>
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
 
-            <Button
-              className="my-5 mx-2"
-              onClick={() => {
-                form.setValue('Products', []);
-                setSectionId(section.Id);
-                setIsUpdating(true);
-              }}
-            >
-              Update Section
-            </Button>
-          </div>
-        ))}
+                <Button
+                  className="my-5 mx-2"
+                  onClick={() => {
+                    form.setValue('Products', []);
+                    setSectionId(section.Id);
+                    setIsUpdating(true);
+                  }}
+                >
+                  Update Section
+                </Button>
+              </div>
+            ))}
+        </CardContent>
+      </Card>
     </section>
   );
 };

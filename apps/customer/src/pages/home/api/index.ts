@@ -13,6 +13,13 @@ export const getUserStoresList = async (): Promise<
   return response.data;
 };
 
+export const getStoreDetails = async (
+  StoreKey: string
+): Promise<ResponseType<StoreType>> => {
+  const response = await ApiClient.get('/store/details/' + StoreKey);
+  return response.data;
+};
+
 export const getUserBalance = async (): Promise<
   ResponseType<BalanceResponseType>
 > => {

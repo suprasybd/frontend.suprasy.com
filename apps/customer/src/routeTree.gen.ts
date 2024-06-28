@@ -15,6 +15,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as TestImport } from './routes/test'
 import { Route as StoreImport } from './routes/store'
+import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as StoreStoreKeyShippingImport } from './routes/store/$storeKey/shipping'
@@ -23,7 +24,6 @@ import { Route as StoreStoreKeyOrdersOrderIdIndexImport } from './routes/store/$
 
 // Create Virtual Routes
 
-const RegisterLazyImport = createFileRoute('/register')()
 const ForgotpasswordLazyImport = createFileRoute('/forgotpassword')()
 const AboutLazyImport = createFileRoute('/about')()
 const StoreStoreKeyProductsLazyImport = createFileRoute(
@@ -65,11 +65,6 @@ const StoreStoreKeyProductsProductIdDetailsLazyImport = createFileRoute(
 
 // Create/Update Routes
 
-const RegisterLazyRoute = RegisterLazyImport.update({
-  path: '/register',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
-
 const ForgotpasswordLazyRoute = ForgotpasswordLazyImport.update({
   path: '/forgotpassword',
   getParentRoute: () => rootRoute,
@@ -89,6 +84,11 @@ const TestRoute = TestImport.update({
 
 const StoreRoute = StoreImport.update({
   path: '/store',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const RegisterRoute = RegisterImport.update({
+  path: '/register',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -241,6 +241,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/register': {
+      preLoaderRoute: typeof RegisterImport
+      parentRoute: typeof rootRoute
+    }
     '/store': {
       preLoaderRoute: typeof StoreImport
       parentRoute: typeof rootRoute
@@ -255,10 +259,6 @@ declare module '@tanstack/react-router' {
     }
     '/forgotpassword': {
       preLoaderRoute: typeof ForgotpasswordLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/register': {
-      preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
     }
     '/store/$storeKey/shipping': {
@@ -337,6 +337,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
   LoginRoute,
+  RegisterRoute,
   StoreRoute.addChildren([
     StoreStoreKeyShippingRoute,
     StoreStoreKeyAnalyticsLazyRoute,
@@ -359,7 +360,6 @@ export const routeTree = rootRoute.addChildren([
   TestRoute,
   AboutLazyRoute,
   ForgotpasswordLazyRoute,
-  RegisterLazyRoute,
 ])
 
 /* prettier-ignore-end */

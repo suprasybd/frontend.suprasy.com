@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@customer/components/index';
 import DeleteProductModal from './components/DeleteProductModal';
-import { Link } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
 import { v4 as uuidv4 } from 'uuid';
 import { formatDate } from '../../../../src/libs/helpers/formatdate';
 import { useModalStore } from '@customer/store/modalStore';
@@ -57,58 +57,64 @@ export const productsColumn: ColumnDef<ProductType>[] = [
     cell: ({ row }) => {
       const product = row.original;
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link
-                to="/store/$storeKey/products/$productId/details"
-                params={{
-                  productId: product.Id?.toString(),
-                  storeKey: product.StoreKey,
-                }}
-              >
-                View product details
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link
-                to="/store/$storeKey/products/create"
-                params={{
-                  storeKey: product.StoreKey,
-                }}
-                search={{
-                  productId: product.Id,
-                  update: true,
-                  uuid: uuidv4(),
-                }}
-              >
-                Update Product
-              </Link>
-            </DropdownMenuItem>
-
-            <UpdateWrapper productId={product.Id} />
-            <DropdownMenuItem
-              onClick={(e) => e.preventDefault()}
-              className="hover:!bg-red-500 hover:!text-white"
-            >
-              <DeleteProductModal productId={product.Id} />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      return <ActionComponent product={product} />;
     },
   },
 ];
+
+const ActionComponent: React.FC<{ product: ProductType }> = ({ product }) => {
+  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <Link
+            to="/store/$storeKey/products/$productId/details"
+            params={{
+              productId: product.Id?.toString(),
+              storeKey,
+            }}
+          >
+            View product details
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link
+            to="/store/$storeKey/products/create"
+            params={{
+              storeKey,
+            }}
+            search={{
+              productId: product.Id,
+              update: true,
+              uuid: uuidv4(),
+            }}
+          >
+            Update Product
+          </Link>
+        </DropdownMenuItem>
+
+        <UpdateWrapper productId={product.Id} />
+        <DropdownMenuItem
+          onClick={(e) => e.preventDefault()}
+          className="hover:!bg-red-500 hover:!text-white"
+        >
+          <DeleteProductModal productId={product.Id} />
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 const UpdateWrapper: React.FC<{ productId: number }> = ({ productId }) => {
   const { setModalPath } = useModalStore((state) => state);

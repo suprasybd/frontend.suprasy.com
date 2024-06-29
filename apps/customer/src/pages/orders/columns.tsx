@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@customer/components/index';
 
-import { Link } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
 import { v4 as uuidv4 } from 'uuid';
 import { OrderType } from './api';
 import { useModalStore } from '@customer/store/modalStore';
@@ -69,36 +69,41 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
     cell: ({ row }) => {
       const order = row.original;
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link
-                to="/store/$storeKey/orders/$orderId"
-                params={{
-                  orderId: order.Id?.toString(),
-                  storeKey: order.StoreKey,
-                }}
-              >
-                View order details
-              </Link>
-            </DropdownMenuItem>
-            <UpdateOrder OrderId={order.Id} />
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      return <ActionComponent order={order} />;
     },
   },
 ];
+
+const ActionComponent: React.FC<{ order: OrderType }> = ({ order }) => {
+  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <Link
+            to="/store/$storeKey/orders/$orderId"
+            params={{
+              orderId: order.Id?.toString(),
+              storeKey,
+            }}
+          >
+            View order details
+          </Link>
+        </DropdownMenuItem>
+        <UpdateOrder OrderId={order.Id} />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 const UpdateOrder: React.FC<{ OrderId: number }> = ({ OrderId }) => {
   const { setModalPath } = useModalStore((state) => state);

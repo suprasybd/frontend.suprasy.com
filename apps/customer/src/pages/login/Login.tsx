@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from '@tanstack/react-router';
-import React from 'react';
+import React, { useReducer } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { loginSchema } from './zod/loginSchema';
@@ -32,7 +32,7 @@ const Login: React.FC = () => {
   const { toast } = useToast();
   const formErrors = form.formState;
 
-  useTurnStileHook();
+  const [turnstileLoaded] = useTurnStileHook();
 
   const navigate = useNavigate();
 
@@ -60,15 +60,24 @@ const Login: React.FC = () => {
     } as z.infer<typeof loginSchema>);
   }
 
+  const forceUpdate = () => {
+    window.location.reload();
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFormWrapper = (e: any) => {
     e.preventDefault();
-    const tRes = e.target['cf-turnstile-response'].value;
+    try {
+      const tRes = e.target['cf-turnstile-response'].value;
 
-    if (!tRes) return;
-    localStorage.setItem('cf-turnstile-in-storage', tRes);
+      if (!tRes) return;
 
-    form.handleSubmit(onSubmit)(e);
+      localStorage.setItem('cf-turnstile-in-storage', tRes);
+
+      form.handleSubmit(onSubmit)(e);
+    } catch (error) {
+      forceUpdate();
+    }
   };
 
   return (
@@ -129,6 +138,7 @@ const Login: React.FC = () => {
               />
 
               <div
+                id="suprasy-turnstile"
                 className="cf-turnstile"
                 data-sitekey="0x4AAAAAAAQW6BNxMGjPxRxa"
               ></div>
@@ -136,15 +146,27 @@ const Login: React.FC = () => {
               <Button
                 type="submit"
                 className="w-full h-14 font-xl font-bold"
+                disabled={!turnstileLoaded}
                 variant={'defaultGradiant'}
               >
-                {isPending && (
+                {!turnstileLoaded && (
                   <>
-                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                    Loging In..
+                    <ReloadIcon className="mr-2 h-7 w-7 animate-spin" />
+                    wait a few moment..
                   </>
                 )}
-                {!isPending && <>Sign In</>}
+
+                {turnstileLoaded && (
+                  <>
+                    {isPending && (
+                      <>
+                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                        Loging In..
+                      </>
+                    )}
+                    {!isPending && <>Sign In</>}
+                  </>
+                )}
               </Button>
             </form>
           </Form>

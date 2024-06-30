@@ -54,79 +54,87 @@ const Login: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-full  flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img width={'250px'} height={'auto'} src={logo} alt="logo" />
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Sign in to your account
-        </h2>
-      </div>
+    <div className="flex min-h-full flex-col justify-center md:px-6 md:py-12 lg:px-8 ">
+      <div className="bg-white p-4 md:p-20  rounded-2xl">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <div className="w-full flex justify-center">
+            <img width={'250px'} height={'auto'} src={logo} alt="logo" />
+          </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="Email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      FormError={!!formErrors.errors.Email}
-                      placeholder="email"
-                      {...field}
-                    />
-                  </FormControl>
+          <h2 className="mt-10 mb-2 text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            Sign in to your account
+          </h2>
+          <p>Launch your ecommerce site with suprasy under 1 minute. </p>
+        </div>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="Password"
-              render={({ field }) => (
-                <FormItem className="space-y-0 !mt-3">
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      FormError={!!formErrors.errors.Password}
-                      type="password"
-                      placeholder="password"
-                      {...field}
-                    />
-                  </FormControl>
+        <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="Email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="h-14"
+                        FormError={!!formErrors.errors.Email}
+                        placeholder="Enter Email"
+                        {...field}
+                      />
+                    </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button
-              type="submit"
-              className="w-full h-11"
-              variant={'defaultGradiant'}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="Password"
+                render={({ field }) => (
+                  <FormItem className="space-y-0 !mt-5">
+                    <FormLabel className="font-bold">Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="h-14"
+                        FormError={!!formErrors.errors.Password}
+                        type="password"
+                        placeholder="Enter Password"
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                className="w-full h-14 font-xl font-bold"
+                variant={'defaultGradiant'}
+              >
+                {isPending && (
+                  <>
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Loging In..
+                  </>
+                )}
+                {!isPending && <>Sign In</>}
+              </Button>
+            </form>
+          </Form>
+
+          <p className="mt-10 text-center text-sm text-gray-500 ">
+            Not a member?
+            <Link
+              to="/register"
+              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 pl-2"
             >
-              {isPending && (
-                <>
-                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                  Loging In..
-                </>
-              )}
-              {!isPending && <>Login</>}
-            </Button>
-          </form>
-        </Form>
-
-        <p className="mt-10 text-center text-sm text-gray-500 ">
-          Not a member?
-          <Link
-            to="/register"
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 pl-2"
-          >
-            Click here to signup
-          </Link>
-        </p>
+              Click here to signup
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

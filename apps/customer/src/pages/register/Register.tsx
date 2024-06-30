@@ -60,143 +60,155 @@ const Register: React.FC = () => {
   const usersEmail = form.watch('Email');
 
   return (
-    <div className="flex min-h-full  flex-col justify-center px-6 py-12 lg:px-8">
-      {!isSuccess && (
-        <div>
-          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            <img width={'250px'} height={'auto'} src={logo} alt="logo" />
-            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-              Create an account
-            </h2>
-          </div>
+    <div className="flex min-h-full mt-20 md:mt-0 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="bg-white p-4 md:p-20  rounded-2xl">
+        {!isSuccess && (
+          <div>
+            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+              <div className="w-full flex justify-center">
+                <img width={'250px'} height={'auto'} src={logo} alt="logo" />
+              </div>
+              <h2 className="mt-10  text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                Create an account
+              </h2>
+              <p>Launch your ecommerce site with suprasy under 1 minute. </p>
+            </div>
 
-          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
-              >
-                <FormField
-                  control={form.control}
-                  name="FirstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          FormError={!!formErrors.errors.FirstName}
-                          placeholder="First Name"
-                          {...field}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="LastName"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0 !mt-3">
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          FormError={!!formErrors.errors.LastName}
-                          placeholder="Last Name"
-                          {...field}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="Email"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0 !mt-3">
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          FormError={!!formErrors.errors.Email}
-                          placeholder="email"
-                          {...field}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="Password"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0 !mt-3">
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          FormError={!!formErrors.errors.Password}
-                          type="password"
-                          placeholder="password"
-                          {...field}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="submit"
-                  className="w-full h-11"
-                  variant={'defaultGradiant'}
+            <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-8"
                 >
-                  {isPending && (
-                    <>
-                      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                      Registering..
-                    </>
-                  )}
-                  {!isPending && <>Register</>}
-                </Button>
-              </form>
-            </Form>
+                  <FormField
+                    control={form.control}
+                    name="FirstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="h-14"
+                            FormError={!!formErrors.errors.FirstName}
+                            placeholder="First Name"
+                            {...field}
+                          />
+                        </FormControl>
 
-            <p className="mt-10 text-center text-sm text-gray-500 ">
-              Already registred?
-              <Link
-                to="/login"
-                className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 pl-2"
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="LastName"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0 !mt-3">
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="h-14"
+                            FormError={!!formErrors.errors.LastName}
+                            placeholder="Last Name"
+                            {...field}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="Email"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0 !mt-3">
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="h-14"
+                            FormError={!!formErrors.errors.Email}
+                            placeholder="Enter Email"
+                            {...field}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="Password"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0 !mt-3">
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="h-14"
+                            FormError={!!formErrors.errors.Password}
+                            type="password"
+                            placeholder="***********"
+                            {...field}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type="submit"
+                    className="w-full h-11"
+                    variant={'defaultGradiant'}
+                  >
+                    {isPending && (
+                      <>
+                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                        Registering..
+                      </>
+                    )}
+                    {!isPending && <>Register</>}
+                  </Button>
+                </form>
+              </Form>
+
+              <p className="mt-10 text-center text-sm text-gray-500 ">
+                Already registred?
+                <Link
+                  to="/login"
+                  className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 pl-2"
+                >
+                  Click here to signin
+                </Link>
+              </p>
+            </div>
+          </div>
+        )}
+        {isSuccess && (
+          <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden py-6 sm:py-12 bg-white">
+            <div className="max-w-xl px-5 text-center">
+              <h2 className="mb-2 text-[42px] font-bold text-zinc-800">
+                Verification Email Sent
+              </h2>
+              <p className="mb-2 text-lg text-zinc-500">
+                We are glad, that you’re with us ? We’ve sent you a verification
+                link to the email address{' '}
+                <span className="font-medium text-indigo-500">
+                  {usersEmail}
+                </span>
+                .
+              </p>
+              <a
+                href="/login"
+                className="mt-3 inline-block w-96 rounded bg-indigo-600 px-5 py-3 font-medium text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700"
               >
-                Click here to signin
-              </Link>
-            </p>
+                Continue →
+              </a>
+            </div>
           </div>
-        </div>
-      )}
-      {isSuccess && (
-        <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden py-6 sm:py-12 bg-white">
-          <div className="max-w-xl px-5 text-center">
-            <h2 className="mb-2 text-[42px] font-bold text-zinc-800">
-              Verification Email Sent
-            </h2>
-            <p className="mb-2 text-lg text-zinc-500">
-              We are glad, that you’re with us ? We’ve sent you a verification
-              link to the email address{' '}
-              <span className="font-medium text-indigo-500">{usersEmail}</span>.
-            </p>
-            <a
-              href="/login"
-              className="mt-3 inline-block w-96 rounded bg-indigo-600 px-5 py-3 font-medium text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700"
-            >
-              Continue →
-            </a>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

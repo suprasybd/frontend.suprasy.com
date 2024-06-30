@@ -21,6 +21,7 @@ import { login } from './api';
 import { ReloadIcon } from '@radix-ui/react-icons';
 
 import logo from './assets/lg-full-blacks.png';
+import useTurnStileHook from '@customer/hooks/turnstile';
 
 const Login: React.FC = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -30,6 +31,8 @@ const Login: React.FC = () => {
 
   const { toast } = useToast();
   const formErrors = form.formState;
+
+  useTurnStileHook();
 
   const navigate = useNavigate();
 
@@ -50,8 +53,23 @@ const Login: React.FC = () => {
   });
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    loginMutation(values);
+    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
+    loginMutation({
+      ...values,
+      'cf-turnstile-response': turnstileResponse,
+    } as z.infer<typeof loginSchema>);
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFormWrapper = (e: any) => {
+    e.preventDefault();
+    const tRes = e.target['cf-turnstile-response'].value;
+
+    if (!tRes) return;
+    localStorage.setItem('cf-turnstile-in-storage', tRes);
+
+    form.handleSubmit(onSubmit)(e);
+  };
 
   return (
     <div className="flex min-h-full flex-col justify-center md:px-6 md:py-12 lg:px-8 ">
@@ -69,7 +87,7 @@ const Login: React.FC = () => {
 
         <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={handleFormWrapper} className="space-y-8">
               <FormField
                 control={form.control}
                 name="Email"
@@ -109,6 +127,12 @@ const Login: React.FC = () => {
                   </FormItem>
                 )}
               />
+
+              <div
+                className="cf-turnstile"
+                data-sitekey="0x4AAAAAAAQW6BNxMGjPxRxa"
+              ></div>
+
               <Button
                 type="submit"
                 className="w-full h-14 font-xl font-bold"

@@ -10,7 +10,7 @@ export const Route = createFileRoute('/register')({
     }
   },
   component: () => (
-    <div className=" flex justify-center w-full items-center h-[100vh]">
+    <div className="overflow-auto flex justify-center w-full items-center h-[100vh] md:bg-gradient-to-tr from-cyan-100 to-sky-50">
       {' '}
       <Register />
     </div>

@@ -14,7 +14,7 @@ import {
   Input,
   useToast,
 } from '@customer/components/index';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -23,6 +23,9 @@ import { z } from 'zod';
 import { addArea, getAreasById, updateArea } from '../api';
 import { areaSchema } from './Area.zod';
 import { useShippingStore } from './shippingStore';
+import { Turnstile } from '@marsidev/react-turnstile';
+import { ReloadIcon } from '@radix-ui/react-icons';
+import useTurnStileHook from '@customer/hooks/turnstile';
 
 const AddArea: React.FC = () => {
   const form = useForm<z.infer<typeof areaSchema>>({
@@ -32,6 +35,7 @@ const AddArea: React.FC = () => {
       Area: 'Dhaka',
     },
   });
+
   const isModalOpen = useShippingStore((state) => state.isModalOpen);
   const toggleModal = useShippingStore((state) => state.toggleModal);
   const clearParams = useShippingStore(
@@ -109,12 +113,43 @@ const AddArea: React.FC = () => {
   });
 
   function onSubmit(values: z.infer<typeof areaSchema>) {
+    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
     if (update) {
-      handleUpdateArea({ Id: areaId, ...values });
+      handleUpdateArea({
+        Id: areaId,
+        ...values,
+        'cf-turnstile-response': turnstileResponse,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any);
     } else {
-      handleAddArea(values);
+      handleAddArea({
+        ...values,
+        'cf-turnstile-response': turnstileResponse,
+      } as z.infer<typeof areaSchema>);
     }
   }
+
+  const forceUpdate = () => {
+    window.location.reload();
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFormWrapper = (e: any) => {
+    e.preventDefault();
+    try {
+      const tRes = e.target['cf-turnstile-response'].value;
+
+      if (!tRes) return;
+
+      localStorage.setItem('cf-turnstile-in-storage', tRes);
+
+      form.handleSubmit(onSubmit)(e);
+    } catch (error) {
+      forceUpdate();
+    }
+  };
+
+  const [turnstileLoaded] = useTurnStileHook();
 
   return (
     <Dialog
@@ -134,7 +169,7 @@ const AddArea: React.FC = () => {
       <DialogContent className="my-3">
         <h1>{!update ? 'Add' : 'Update'} area/zone</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={handleFormWrapper} className="space-y-8">
             <FormField
               control={form.control}
               name="Area"
@@ -163,6 +198,9 @@ const AddArea: React.FC = () => {
                 </FormItem>
               )}
             />
+
+            <Turnstile className="hidden" siteKey="0x4AAAAAAAQW6BNxMGjPxRxa" />
+
             <div className="flex gap-[8px]">
               <DialogClose className="w-full" ref={closeBtn}>
                 <Button
@@ -178,15 +216,26 @@ const AddArea: React.FC = () => {
                   Cancel
                 </Button>
               </DialogClose>
+
               <Button
                 variant={'defaultGradiant'}
                 className="w-full"
                 type="submit"
-                disabled={isPending || isUpdating}
+                disabled={isPending || isUpdating || !turnstileLoaded}
               >
-                {isPending || isUpdating
-                  ? `${update ? 'Updating' : 'Adding'} Area..`
-                  : `${update ? 'Update' : 'Add'} This Area`}
+                {!turnstileLoaded && (
+                  <>
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    wait a few moment..
+                  </>
+                )}
+                {turnstileLoaded && (
+                  <span>
+                    {isPending || isUpdating
+                      ? `${update ? 'Updating' : 'Adding'} Area..`
+                      : `${update ? 'Update' : 'Add'} This Area`}
+                  </span>
+                )}
               </Button>
             </div>
           </form>

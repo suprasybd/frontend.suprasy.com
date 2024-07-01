@@ -10,16 +10,17 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
   useToast,
   Card,
-  CardHeader,
   CardContent,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  Form,
 } from '@customer/components/index';
-import { Link, useParams, useStableCallback } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Category,
@@ -28,12 +29,35 @@ import {
   removeCategory,
   updateCategory,
 } from './api';
-import { FilePenLine } from 'lucide-react';
+import useTurnStileHook from '@customer/hooks/turnstile';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Turnstile } from '@marsidev/react-turnstile';
+import { ReloadIcon } from '@radix-ui/react-icons';
+
+const formSchema = z.object({
+  CategoryName: z.string().min(2).max(50),
+});
 
 const Categories = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
 
-  const [category, setCategory] = useState<string>('');
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      CategoryName: '',
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
+    handleAddCategory({
+      ...values,
+      'cf-turnstile-response': turnstileResponse,
+    });
+  }
 
   const { toast } = useToast();
 
@@ -44,7 +68,7 @@ const Categories = () => {
 
   const categories = categoryResponse?.Data;
 
-  const { mutate: handleAddCategory } = useMutation({
+  const { mutate: handleAddCategory, isPending } = useMutation({
     mutationFn: addCategory,
     onSuccess: () => {
       refetch();
@@ -53,7 +77,9 @@ const Categories = () => {
         description: 'category create successfull',
         variant: 'default',
       });
-      setCategory('');
+
+      form.reset();
+      forceUpdate();
     },
     onError: () => {
       toast({
@@ -63,6 +89,28 @@ const Categories = () => {
       });
     },
   });
+
+  const forceUpdate = () => {
+    window.location.reload();
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFormWrapper = (e: any) => {
+    e.preventDefault();
+    try {
+      const tRes = e.target['cf-turnstile-response'].value;
+
+      if (!tRes) return;
+
+      localStorage.setItem('cf-turnstile-in-storage', tRes);
+
+      form.handleSubmit(onSubmit)(e);
+    } catch (error) {
+      forceUpdate();
+    }
+  };
+
+  const [turnstileLoaded] = useTurnStileHook();
 
   return (
     <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -91,24 +139,41 @@ const Categories = () => {
       <Card>
         <CardContent>
           <div className="my-2 mt-4">
-            <h1>Add Category</h1>
-            <Input
-              onChange={(e) => {
-                setCategory(e.target.value);
-              }}
-              value={category}
-              className="my-3"
-              placeholder="category name"
-            />
-            <Button
-              onClick={() => {
-                if (category) {
-                  handleAddCategory(category);
-                }
-              }}
-            >
-              Add Category
-            </Button>
+            <Form {...form}>
+              <form onSubmit={handleFormWrapper} className="space-y-8">
+                <FormField
+                  control={form.control}
+                  name="CategoryName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Add Category</FormLabel>
+                      <FormControl>
+                        <Input placeholder="category" {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Turnstile
+                  className="hidden"
+                  siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
+                />
+
+                <Button type="submit" disabled={!turnstileLoaded}>
+                  {!turnstileLoaded && (
+                    <>
+                      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                      wait a few moment..
+                    </>
+                  )}
+                  {turnstileLoaded && (
+                    <span>{isPending ? 'Addding..' : 'Add Category'}</span>
+                  )}
+                </Button>
+              </form>
+            </Form>
           </div>
         </CardContent>
       </Card>
@@ -145,14 +210,32 @@ const Categories = () => {
   );
 };
 
+const formSchemaUpdate = z.object({
+  CategoryName: z.string().min(2, {
+    message: 'Username must be at least 2 characters.',
+  }),
+});
+
 const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
   const { toast } = useToast();
 
-  const [categoryState, setCategory] = useState<string>(category.Name);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      CategoryName: category.Name,
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchemaUpdate>) {
+    handleUpdateCategory({
+      id: category.Id,
+      data: { ...values },
+    });
+  }
 
   const queryClient = useQueryClient();
 
-  const { mutate: handleUpdateCategory } = useMutation({
+  const { mutate: handleUpdateCategory, isPending } = useMutation({
     mutationFn: updateCategory,
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ['getCategories'] });
@@ -189,17 +272,48 @@ const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
       });
     },
   });
+
   return (
     <div className="border border-gray-300 rounded-md p-3 w-fit">
-      <Input
-        onChange={(e) => {
-          setCategory(e.target.value);
-        }}
-        value={categoryState}
-      />
-
       <h1 className="mt-3">Category Id: {category.Id}</h1>
-      <div className="flex justify-between gap-[3px]">
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="CategoryName"
+            render={({ field }) => (
+              <FormItem className="mb-0">
+                <FormControl>
+                  <Input placeholder="Category" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex justify-between gap-[3px]">
+            <Button type="submit" variant={'outline'} className="w-full">
+              <span>{isPending ? 'Updating..' : 'Update'}</span>
+            </Button>
+
+            <Button
+              className="w-full"
+              variant={'gradiantT'}
+              onClick={(e) => {
+                e.preventDefault();
+                handleRemove({ id: category.Id });
+              }}
+            >
+              Remove
+            </Button>
+          </div>
+        </form>
+      </Form>
+
+      {/* <div className="flex justify-between gap-[3px]">
+        <Turnstile className="hidden" siteKey="0x4AAAAAAAQW6BNxMGjPxRxa" />
         <Button
           variant={'outline'}
           className="my-2 mt-5 w-full"
@@ -222,7 +336,7 @@ const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
         >
           Remove
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };

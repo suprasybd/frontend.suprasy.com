@@ -6,14 +6,6 @@ import {
   BreadcrumbSeparator,
   Button,
   Input,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -26,7 +18,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
   RichTextEditor,
@@ -37,14 +28,13 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@customer/components/index';
 
-import { Link, useParams } from '@tanstack/react-router';
+import { Link, useParams, useRouter } from '@tanstack/react-router';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -61,6 +51,9 @@ import {
 import { useModalStore } from '@customer/store/modalStore';
 import { useProductSelectionStore } from '@customer/store/productSelection';
 import { ProductCard } from '@customer/components/Modals/ProductSelection/ProductSelection';
+import useTurnStileHook from '@customer/hooks/turnstile';
+import { Turnstile } from '@marsidev/react-turnstile';
+import { ReloadIcon } from '@radix-ui/react-icons';
 
 export const formSchemaHomesection = z.object({
   Title: z.string().min(2).max(50),
@@ -125,7 +118,7 @@ const StoreHome = () => {
     }
   }, [section, sectionProducts]);
 
-  const { mutate: handleCreateSection } = useMutation({
+  const { mutate: handleCreateSection, isPending: loadingOne } = useMutation({
     mutationFn: createSectionPost,
     onSuccess: () => {
       refetch();
@@ -135,6 +128,7 @@ const StoreHome = () => {
         description: 'home section create successfull',
         variant: 'default',
       });
+      forceUpdate();
     },
     onError: () => {
       toast({
@@ -145,7 +139,7 @@ const StoreHome = () => {
     },
   });
 
-  const { mutate: handleUpdateSection } = useMutation({
+  const { mutate: handleUpdateSection, isPending: loadingTwo } = useMutation({
     mutationFn: updateSectionPost,
     onSuccess: () => {
       refetch();
@@ -157,6 +151,7 @@ const StoreHome = () => {
         description: 'home section update successfull',
         variant: 'default',
       });
+      forceUpdate();
     },
     onError: () => {
       toast({
@@ -202,17 +197,27 @@ const StoreHome = () => {
   function onSubmit(values: z.infer<typeof formSchemaHomesection>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
+
     const formatedProducts = values.Products.map(
       (product) => product.ProductId
     );
 
     if (!isUpdating) {
-      handleCreateSection({ ...values, Products: formatedProducts });
+      handleCreateSection({
+        ...values,
+        Products: formatedProducts,
+        'cf-turnstile-response': turnstileResponse,
+      });
     }
     if (isUpdating) {
       handleUpdateSection({
         sectionId,
-        data: { ...values, Products: formatedProducts },
+        data: {
+          ...values,
+          Products: formatedProducts,
+          'cf-turnstile-response': turnstileResponse,
+        },
       });
     }
   }
@@ -220,6 +225,29 @@ const StoreHome = () => {
   const products = form.getValues('Products');
 
   const { errors } = form.formState;
+
+  const forceUpdate = () => {
+    window.location.reload();
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFormWrapper = (e: any) => {
+    e.preventDefault();
+    try {
+      const tRes = e.target['cf-turnstile-response'].value;
+
+      if (!tRes) return;
+
+      localStorage.setItem('cf-turnstile-in-storage', tRes);
+
+      form.handleSubmit(onSubmit)(e);
+    } catch (error) {
+      forceUpdate();
+    }
+  };
+  const [turnstileLoaded] = useTurnStileHook();
+
+  const isPending = loadingOne || loadingTwo;
 
   return (
     <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -252,7 +280,7 @@ const StoreHome = () => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={handleFormWrapper} className="space-y-8">
               <FormField
                 control={form.control}
                 name="Title"
@@ -330,8 +358,31 @@ const StoreHome = () => {
               </Card>
 
               <br></br>
-              <Button className="w-full" type="submit">
-                {isUpdating ? 'Update Section' : '    Create Section'}
+
+              <Turnstile
+                className="hidden"
+                siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
+              />
+
+              <Button
+                className="w-full"
+                type="submit"
+                disabled={!turnstileLoaded}
+              >
+                {!turnstileLoaded && (
+                  <>
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    wait a few moment..
+                  </>
+                )}
+
+                {turnstileLoaded && (
+                  <span>
+                    {isUpdating && !isPending && 'Update Section'}
+                    {!isUpdating && !isPending && 'Create Section'}
+                    {isPending && 'Processing..'}
+                  </span>
+                )}
               </Button>
             </form>
           </Form>

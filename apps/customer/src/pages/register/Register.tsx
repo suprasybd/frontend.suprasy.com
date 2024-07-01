@@ -21,6 +21,8 @@ import { register } from './api';
 import { ReloadIcon } from '@radix-ui/react-icons';
 
 import logo from '../login/assets/lg-full-blacks.png';
+import useTurnStileHook from '@customer/hooks/turnstile';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const Register: React.FC = () => {
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -54,10 +56,36 @@ const Register: React.FC = () => {
   });
 
   function onSubmit(values: z.infer<typeof registerSchema>) {
-    registerMutation(values);
+    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    registerMutation({
+      ...values,
+      'cf-turnstile-response': turnstileResponse,
+    } as any);
   }
 
   const usersEmail = form.watch('Email');
+
+  const forceUpdate = () => {
+    window.location.reload();
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFormWrapper = (e: any) => {
+    e.preventDefault();
+    try {
+      const tRes = e.target['cf-turnstile-response'].value;
+
+      if (!tRes) return;
+
+      localStorage.setItem('cf-turnstile-in-storage', tRes);
+
+      form.handleSubmit(onSubmit)(e);
+    } catch (error) {
+      forceUpdate();
+    }
+  };
+  const [turnstileLoaded] = useTurnStileHook();
 
   return (
     <div className="flex min-h-full mt-20 md:mt-0 flex-col justify-center px-6 py-12 lg:px-8">
@@ -76,10 +104,7 @@ const Register: React.FC = () => {
 
             <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
               <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8"
-                >
+                <form onSubmit={handleFormWrapper} className="space-y-8">
                   <FormField
                     control={form.control}
                     name="FirstName"
@@ -157,18 +182,36 @@ const Register: React.FC = () => {
                       </FormItem>
                     )}
                   />
+
+                  <Turnstile
+                    className="hidden"
+                    siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
+                  />
+
                   <Button
                     type="submit"
                     className="w-full h-11"
                     variant={'defaultGradiant'}
+                    disabled={!turnstileLoaded}
                   >
-                    {isPending && (
+                    {!turnstileLoaded && (
                       <>
                         <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                        Registering..
+                        wait a few moment..
                       </>
                     )}
-                    {!isPending && <>Register</>}
+
+                    {turnstileLoaded && (
+                      <>
+                        {isPending && (
+                          <>
+                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                            Registering..
+                          </>
+                        )}
+                        {!isPending && <>Register</>}
+                      </>
+                    )}
                   </Button>
                 </form>
               </Form>

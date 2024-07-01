@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from '@tanstack/react-router';
-import React, { useReducer } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { loginSchema } from './zod/loginSchema';
@@ -22,6 +22,7 @@ import { ReloadIcon } from '@radix-ui/react-icons';
 
 import logo from './assets/lg-full-blacks.png';
 import useTurnStileHook from '@customer/hooks/turnstile';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const Login: React.FC = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -137,11 +138,10 @@ const Login: React.FC = () => {
                 )}
               />
 
-              <div
-                id="suprasy-turnstile"
-                className="cf-turnstile"
-                data-sitekey="0x4AAAAAAAQW6BNxMGjPxRxa"
-              ></div>
+              <Turnstile
+                className="hidden"
+                siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
+              />
 
               <Button
                 type="submit"

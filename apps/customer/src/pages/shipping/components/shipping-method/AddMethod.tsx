@@ -23,6 +23,9 @@ import { z } from 'zod';
 import { addMethod, getMethodById, updateMethod } from '../../api';
 import { methodSchema } from './Method.zod';
 import { useShippingStoreMethod } from './shippingStore';
+import useTurnStileHook from '@customer/hooks/turnstile';
+import { Turnstile } from '@marsidev/react-turnstile';
+import { ReloadIcon } from '@radix-ui/react-icons';
 
 const AddMethod: React.FC = () => {
   const form = useForm<z.infer<typeof methodSchema>>({
@@ -113,12 +116,41 @@ const AddMethod: React.FC = () => {
   });
 
   function onSubmit(values: z.infer<typeof methodSchema>) {
+    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
     if (update) {
-      handleUpdateMethod({ Id: methodId, ...values });
+      handleUpdateMethod({
+        Id: methodId,
+        ...values,
+        'cf-turnstile-response': turnstileResponse,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any);
     } else {
-      handleAddMethod(values);
+      handleAddMethod({
+        ...values,
+        'cf-turnstile-response': turnstileResponse,
+      } as z.infer<typeof methodSchema>);
     }
   }
+  const forceUpdate = () => {
+    window.location.reload();
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFormWrapper = (e: any) => {
+    e.preventDefault();
+    try {
+      const tRes = e.target['cf-turnstile-response'].value;
+
+      if (!tRes) return;
+
+      localStorage.setItem('cf-turnstile-in-storage', tRes);
+
+      form.handleSubmit(onSubmit)(e);
+    } catch (error) {
+      forceUpdate();
+    }
+  };
+  const [turnstileLoaded] = useTurnStileHook();
 
   return (
     <Dialog
@@ -138,7 +170,7 @@ const AddMethod: React.FC = () => {
       <DialogContent className="my-3">
         <h1>{!update ? 'Add' : 'Update'} Delivery Method</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={handleFormWrapper} className="space-y-8">
             <FormField
               control={form.control}
               name="DeliveryMethod"
@@ -169,6 +201,9 @@ const AddMethod: React.FC = () => {
                 </FormItem>
               )}
             />
+
+            <Turnstile className="hidden" siteKey="0x4AAAAAAAQW6BNxMGjPxRxa" />
+
             <div className="flex gap-[8px]">
               <DialogClose className="w-full" ref={closeBtn}>
                 <Button
@@ -185,14 +220,24 @@ const AddMethod: React.FC = () => {
                 </Button>
               </DialogClose>
               <Button
-                variant={'gradiantT'}
+                variant={'defaultGradiant'}
                 className="w-full"
                 type="submit"
-                disabled={isPending || isUpdating}
+                disabled={isPending || isUpdating || !turnstileLoaded}
               >
-                {isPending || isUpdating
-                  ? `${update ? 'Updating' : 'Adding'} Area..`
-                  : `${update ? 'Update' : 'Add'} This Area`}
+                {!turnstileLoaded && (
+                  <>
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    wait a few moment..
+                  </>
+                )}
+                {turnstileLoaded && (
+                  <span>
+                    {isPending || isUpdating
+                      ? `${update ? 'Updating' : 'Adding'} Method..`
+                      : `${update ? 'Update' : 'Add'} This Method`}
+                  </span>
+                )}
               </Button>
             </div>
           </form>

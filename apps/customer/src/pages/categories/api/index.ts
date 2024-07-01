@@ -14,26 +14,20 @@ export interface Category {
   UpdatedAt: string;
 }
 
-export const addCategory = async (
-  categoryName: string
-): Promise<ResponseType<string>> => {
-  const response = await ApiClient.post('/categories/add', {
-    CategoryName: categoryName,
-  });
+export const addCategory = async (data: any): Promise<ResponseType<string>> => {
+  const response = await ApiClient.post('/categories/add', data);
 
   return response.data;
 };
 
 export const updateCategory = async ({
-  categoryName,
+  data,
   id,
 }: {
-  categoryName: string;
+  data: any;
   id: number;
 }): Promise<ResponseType<string>> => {
-  const response = await ApiClient.put('/categories/update/' + id, {
-    CategoryName: categoryName,
-  });
+  const response = await ApiClient.put('/categories/update/' + id, data);
 
   return response.data;
 };

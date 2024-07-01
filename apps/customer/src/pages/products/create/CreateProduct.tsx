@@ -26,22 +26,9 @@ import {
   SelectTrigger,
   SelectValue,
   Switch,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  cn,
-  useFormField,
   useToast,
 } from '@customer/components/index';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Star,
-  Trash,
-  Trash2,
-  Upload,
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, Star, Trash2, Upload } from 'lucide-react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReloadIcon } from '@radix-ui/react-icons';
@@ -56,7 +43,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import ApiClient from '../../../libs/ApiClient';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 import {
   createStoresProduct,
@@ -64,16 +50,14 @@ import {
   getProductSku,
   getProductsDetails,
   getProductsImages,
-  getProductsMultipleVariants,
   getProductsVariantsDetails,
-  getProudcctsOptions,
   updateStoresProduct,
 } from '../api';
-import { StorefrontVariants } from '../api/types';
-import { useCreateCountStore } from './store';
 import { productSchema } from './zod/productSchema';
 import { useModalStore } from '@customer/store/modalStore';
 import { useMediaFormStore } from '@customer/store/mediaFormStore';
+import useTurnStileHook from '@customer/hooks/turnstile';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -298,7 +282,7 @@ const CreateProduct: React.FC = () => {
   });
 
   function onSubmit(values: z.infer<typeof productSchema>) {
-    console.log(values);
+    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
     const formatedImages = values.Images.map(
       (value: { ImageUrl: string }) => value.ImageUrl
     );
@@ -312,9 +296,20 @@ const CreateProduct: React.FC = () => {
     };
 
     if (!isUpdating) {
-      createProduct(finalProduct as any);
+      createProduct({
+        ...finalProduct,
+        'cf-turnstile-response': turnstileResponse,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any);
     } else {
-      updateProduct({ data: finalProduct as any, productId: productId });
+      updateProduct({
+        data: {
+          ...finalProduct,
+          'cf-turnstile-response': turnstileResponse,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any,
+        productId: productId,
+      });
     }
   }
 
@@ -341,6 +336,27 @@ const CreateProduct: React.FC = () => {
   const productSummary = useMemo(() => {
     return productDetails?.Summary;
   }, [productDetails]);
+
+  const forceUpdate = () => {
+    window.location.reload();
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFormWrapper = (e: any) => {
+    e.preventDefault();
+    try {
+      const tRes = e.target['cf-turnstile-response'].value;
+
+      if (!tRes) return;
+
+      localStorage.setItem('cf-turnstile-in-storage', tRes);
+
+      form.handleSubmit(onSubmit)(e);
+    } catch (error) {
+      forceUpdate();
+    }
+  };
+  const [turnstileLoaded] = useTurnStileHook();
 
   return (
     <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -373,7 +389,7 @@ const CreateProduct: React.FC = () => {
       </Breadcrumb>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={handleFormWrapper} className="space-y-8">
           <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
             {/* left */}
             <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
@@ -919,6 +935,8 @@ const CreateProduct: React.FC = () => {
               )}
             </div>
 
+            <Turnstile className="hidden" siteKey="0x4AAAAAAAQW6BNxMGjPxRxa" />
+
             {/* right */}
             <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
               <Card>
@@ -977,18 +995,31 @@ const CreateProduct: React.FC = () => {
                 </CardContent>
               </Card>
               <Button
-                disabled={updateProductLoading || isPending}
+                disabled={updateProductLoading || isPending || !turnstileLoaded}
                 type="submit"
                 className="w-full "
                 variant={'defaultGradiant'}
               >
-                {(isPending || updateProductLoading) && (
+                {!turnstileLoaded && (
                   <>
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                    Processing
+                    wait a few moment..
                   </>
                 )}
-                {!isPending && isUpdating ? 'Update Product' : 'Create Product'}
+
+                {turnstileLoaded && (
+                  <>
+                    {(isPending || updateProductLoading) && (
+                      <>
+                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                        Processing
+                      </>
+                    )}
+                    {!isPending && isUpdating
+                      ? 'Update Product'
+                      : 'Create Product'}
+                  </>
+                )}
               </Button>
             </div>
           </div>

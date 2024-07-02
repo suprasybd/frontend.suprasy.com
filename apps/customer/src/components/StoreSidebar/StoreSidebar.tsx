@@ -3,6 +3,7 @@ import { Link, useParams } from '@tanstack/react-router';
 import {
   BarChartHorizontal,
   Bell,
+  BrickWall,
   Container,
   Home,
   Package,
@@ -147,6 +148,20 @@ const StoreSidebar = () => {
             >
               <Container className="h-4 w-4" />
               Shipping
+            </Link>
+
+            <Link
+              to="/store/$storeKey/turnstile"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <BrickWall className="h-4 w-4" />
+              Trunstile
             </Link>
             {/* <Link
               to="/store/$storeKey/media"

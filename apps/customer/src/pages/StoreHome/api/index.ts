@@ -3,8 +3,6 @@ import {
   ListResponseType,
   ResponseType,
 } from '../../../libs/types/responseTypes';
-import { formSchemaHomesection } from '../StoreHome';
-import { z } from 'zod';
 
 export interface HomeSectionsTypes {
   Id: number;

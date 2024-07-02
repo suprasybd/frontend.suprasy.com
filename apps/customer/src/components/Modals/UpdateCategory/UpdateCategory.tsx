@@ -4,7 +4,6 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   useToast,
@@ -12,7 +11,6 @@ import {
 import cn from 'classnames';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
-import { updateStoresProduct } from '@customer/pages/products/api';
 import { updateProductCateogry } from './api';
 
 const UpdateCategory: React.FC = () => {

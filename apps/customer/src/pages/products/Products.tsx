@@ -31,6 +31,7 @@ const Products: React.FC = () => {
     queryKey: ['getUserStoresProductsList', storeKey, tab, page, limit],
     queryFn: () =>
       getUserStoresProductsList({ Status: tab, Page: page, Limit: limit }),
+    enabled: !!storeKey,
   });
 
   return (

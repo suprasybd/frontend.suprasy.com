@@ -62,20 +62,21 @@ const StoreHome = () => {
   const { toast } = useToast();
 
   const { data: homeSectionsResponse, refetch } = useQuery({
-    queryKey: ['getHomeSections'],
+    queryKey: ['getHomeSections', storeKey],
     queryFn: () => getHomeSections(),
+    enabled: !!storeKey,
   });
 
   const { data: sectionResponse } = useQuery({
-    queryKey: ['getSectionById', sectionId],
+    queryKey: ['getSectionById', sectionId, storeKey],
     queryFn: () => getSectionById(sectionId),
-    enabled: !!sectionId && isUpdating,
+    enabled: !!sectionId && isUpdating && !!storeKey,
   });
 
   const { data: sectionProductsResponse } = useQuery({
-    queryKey: ['getSectionProductsByIdForUpdate', sectionId],
+    queryKey: ['getSectionProductsByIdForUpdate', sectionId, storeKey],
     queryFn: () => getHomesectionsProducts(sectionId),
-    enabled: !!sectionId && isUpdating,
+    enabled: !!sectionId && isUpdating && !!storeKey,
   });
 
   const section = sectionResponse?.Data;

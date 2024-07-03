@@ -16,11 +16,17 @@ import { Link, useParams } from '@tanstack/react-router';
 import { v4 as uuidv4 } from 'uuid';
 import { formatDate } from '../../../../src/libs/helpers/formatdate';
 import { useModalStore } from '@customer/store/modalStore';
+import { useQuery } from '@tanstack/react-query';
+import { getProductsImages } from '../api';
 
 export const productsColumn: ColumnDef<ProductType>[] = [
   {
-    accessorKey: 'Id',
-    header: 'Id',
+    cell: ({ row }) => {
+      const product = row.original;
+
+      return <ProductImage product={product} />;
+    },
+    id: 'img',
   },
   {
     accessorKey: 'Title',
@@ -61,6 +67,30 @@ export const productsColumn: ColumnDef<ProductType>[] = [
     },
   },
 ];
+
+const ProductImage: React.FC<{ product: ProductType }> = ({ product }) => {
+  const { storeKey } = useParams({ strict: false }) as {
+    storeKey: string;
+  };
+  const { data: productImages } = useQuery({
+    queryKey: ['getProductImagesinTable', product.Id, storeKey],
+    queryFn: () => getProductsImages(product.Id),
+    enabled: !!product.Id && !!storeKey,
+  });
+  return (
+    <div className="ml-5 !w-[100px]">
+      {productImages?.Data[0]?.ImageUrl && (
+        <img
+          className="rounded-md h-[100px] w-[100px]"
+          alt="product"
+          height={'100px'}
+          width={'100px'}
+          src={productImages?.Data[0].ImageUrl}
+        />
+      )}
+    </div>
+  );
+};
 
 const ActionComponent: React.FC<{ product: ProductType }> = ({ product }) => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };

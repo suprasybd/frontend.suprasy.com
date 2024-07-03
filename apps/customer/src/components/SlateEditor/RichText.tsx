@@ -37,6 +37,7 @@ import Embed from './Elements/Embed/Embed';
 import withEmbeds from './Plugins/withEmbeds';
 import Image from './Elements/Embed/Image';
 import Video from './Elements/Embed/Video';
+import cn from 'classnames';
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -128,7 +129,8 @@ const RichTextEditor: React.FC<{
 
 export const RichTextRender: React.FC<{
   initialVal?: string;
-}> = ({ initialVal }) => {
+  classname?: string;
+}> = ({ initialVal, classname }) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(
@@ -142,7 +144,7 @@ export const RichTextRender: React.FC<{
     <Slate editor={editor} initialValue={initVal || initialValue}>
       <Editable
         readOnly
-        className="min-h-[200px]"
+        className={cn(classname)}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Enter some rich text…"

@@ -143,7 +143,10 @@ const StoreHome = () => {
             homeSesctions.map((section) => (
               <div className="p-5 border my-2 border-gray-300 rounded-md">
                 <h1 className="text-4xl font-medium">{section.Title}</h1>
-                <RichTextRender initialVal={section.Description} />
+                <RichTextRender
+                  initialVal={section.Description}
+                  classname="!h-fit"
+                />
 
                 <SectionProducts sectionId={section.Id} />
 

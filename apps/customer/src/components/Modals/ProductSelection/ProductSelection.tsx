@@ -71,11 +71,12 @@ const ProductSelection: React.FC = () => {
                 }}
               />
               {/* list */}
-              <div className="my-5">
+              <div className="my-5 flex flex-wrap gap-[7px]">
                 {products &&
                   products.length > 0 &&
                   products.map((product) => (
                     <div
+                      className="w-fit"
                       onClick={() => {
                         setProduct(product.Id);
                         closeModal();
@@ -93,7 +94,10 @@ const ProductSelection: React.FC = () => {
   );
 };
 
-export const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
+export const ProductCard: React.FC<{
+  ProductId: number;
+  className?: string;
+}> = ({ ProductId, className }) => {
   const { data: imagesResposne } = useQuery({
     queryFn: () => getProductsImages(ProductId),
     queryKey: ['getProductImagesForSelectionModal', ProductId],
@@ -115,17 +119,21 @@ export const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
         className="p-3 rounded-md my-2 min-h-[120px] bg-slate-800 text-white hover:bg-slate-700 cursor-pointer"
         key={ProductId}
       >
-        <p>Title: {productDetails?.Title}</p>
-        <p>Product Id: {productDetails?.Id}</p>
         {images && images.length > 0 && (
           <img
-            className="rounded-md h-[50px] w-[50px] border-2 border-white"
+            className="rounded-md h-[150px] w-[150px] border-2 border-white"
             alt="product"
             src={images[0].ImageUrl}
-            width={'50px'}
-            height={'50px'}
+            width={'150px'}
+            height={'150px'}
           />
         )}
+        <div className="my-3">
+          <p className="text-sm max-w-[150px]">
+            Title: {productDetails?.Title}
+          </p>
+          <p className="text-sm">Product Id: {productDetails?.Id}</p>
+        </div>
       </div>
     </div>
   );

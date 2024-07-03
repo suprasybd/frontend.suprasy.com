@@ -19,6 +19,7 @@ import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as StoreStoreKeyShippingImport } from './routes/store/$storeKey/shipping'
+import { Route as StoreStoreKeySectionCreateImport } from './routes/store/$storeKey/section_/create'
 import { Route as StoreStoreKeyProductsCreateImport } from './routes/store/$storeKey/products_/create'
 import { Route as StoreStoreKeyOrdersOrderIdIndexImport } from './routes/store/$storeKey/orders_/$orderId/index'
 
@@ -219,6 +220,13 @@ const StoreStoreKeyShippingRoute = StoreStoreKeyShippingImport.update({
   getParentRoute: () => StoreRoute,
 } as any)
 
+const StoreStoreKeySectionCreateRoute = StoreStoreKeySectionCreateImport.update(
+  {
+    path: '/$storeKey/section/create',
+    getParentRoute: () => StoreRoute,
+  } as any,
+)
+
 const StoreStoreKeyProductsCreateRoute =
   StoreStoreKeyProductsCreateImport.update({
     path: '/$storeKey/products/create',
@@ -337,6 +345,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreStoreKeyProductsCreateImport
       parentRoute: typeof StoreImport
     }
+    '/store/$storeKey/section/create': {
+      preLoaderRoute: typeof StoreStoreKeySectionCreateImport
+      parentRoute: typeof StoreImport
+    }
     '/store/$storeKey/products/$productId/details': {
       preLoaderRoute: typeof StoreStoreKeyProductsProductIdDetailsLazyImport
       parentRoute: typeof StoreImport
@@ -371,6 +383,7 @@ export const routeTree = rootRoute.addChildren([
     StoreStoreKeyProductsLazyRoute,
     StoreStoreKeyTurnstileLazyRoute,
     StoreStoreKeyProductsCreateRoute,
+    StoreStoreKeySectionCreateRoute,
     StoreStoreKeyProductsProductIdDetailsLazyRoute,
     StoreStoreKeyOrdersOrderIdIndexRoute,
   ]),

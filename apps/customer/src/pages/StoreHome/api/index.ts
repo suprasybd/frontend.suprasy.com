@@ -23,6 +23,13 @@ export interface SectionProductsType {
   UpdatedAt: string;
 }
 
+export interface Hero {
+  Id: number;
+  ImageLink: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
 export const createSectionPost = async (
   data: any
 ): Promise<ResponseType<string>> => {
@@ -78,6 +85,30 @@ export const deleteSection = async (
   const response = await ApiClient.delete(
     '/homesections/delete-section/' + sectionId
   );
+
+  return response.data;
+};
+
+export const getHero = async (): Promise<ListResponseType<Hero>> => {
+  const response = await ApiClient.get('/hero/get');
+
+  return response.data;
+};
+
+export const createHero = async ({
+  data,
+}: {
+  data: { Images: Array<{ ImageLink: string }> };
+}): Promise<ResponseType<string>> => {
+  const response = await ApiClient.post('/hero/add', data);
+
+  return response.data;
+};
+
+export const updateHero = async ({
+  data,
+}: any): Promise<ResponseType<string>> => {
+  const response = await ApiClient.put('/hero/update', data);
 
   return response.data;
 };

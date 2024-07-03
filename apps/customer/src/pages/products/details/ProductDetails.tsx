@@ -20,7 +20,7 @@ const ProductsDetailsMain: React.FC = () => {
           <TabsList className="mt-1">
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="images">Images</TabsTrigger>
-            <TabsTrigger value="inventory">Inventory</TabsTrigger>
+            {/* <TabsTrigger value="inventory">Inventory</TabsTrigger> */}
           </TabsList>
         </div>
 
@@ -30,9 +30,9 @@ const ProductsDetailsMain: React.FC = () => {
         <TabsContent value="images">
           <ProductImagesList />
         </TabsContent>
-        <TabsContent value="inventory">
+        {/* <TabsContent value="inventory">
           <InventoryDetails />
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </section>
   );

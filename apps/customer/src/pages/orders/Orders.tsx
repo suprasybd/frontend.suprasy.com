@@ -37,7 +37,7 @@ const Orders = () => {
   const [id, setId] = useState<string>();
 
   const { data: ordersResponse, isLoading } = useQuery({
-    queryKey: ['getStoreOrders', page, limit, tab, phone, email, id],
+    queryKey: ['getStoreOrders', storeKey, page, limit, tab, phone, email, id],
     queryFn: () =>
       getStoreOrders({
         Limit: limit,
@@ -49,6 +49,7 @@ const Orders = () => {
           { key: 'Id', value: id || '', isActive: !!id },
         ]),
       }),
+    enabled: !!storeKey,
   });
 
   const orders = ordersResponse?.Data;

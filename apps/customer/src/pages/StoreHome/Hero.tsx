@@ -1,26 +1,17 @@
 import { useMediaFormStore } from '@customer/store/mediaFormStore';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { createHero, getHero, updateHero } from './api';
 import { useModalStore } from '@customer/store/modalStore';
 
 import { Button, useToast } from '@customer/components';
 import {
   Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@customer/components';
-import { Input } from '@customer/components';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -49,6 +40,7 @@ const Hero = () => {
   const { data: heroImagesResponse, refetch } = useQuery({
     queryKey: ['getHeroImages', storeKey],
     queryFn: getHero,
+    enabled: !!storeKey,
   });
 
   const { mutate: handleCreateHero } = useMutation({

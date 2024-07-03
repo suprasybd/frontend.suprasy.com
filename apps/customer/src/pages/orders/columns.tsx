@@ -14,7 +14,6 @@ import {
 } from '@customer/components/index';
 
 import { Link, useParams } from '@tanstack/react-router';
-import { v4 as uuidv4 } from 'uuid';
 import { OrderType } from './api';
 import { useModalStore } from '@customer/store/modalStore';
 
@@ -31,9 +30,7 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
 
       return (
         <div>
-          <p>
-            {order.FirstName} {order.LastName}
-          </p>
+          <p>{order.FullName}</p>
           <p>{order.Phone}</p>
           <p>{order.Email}</p>
         </div>

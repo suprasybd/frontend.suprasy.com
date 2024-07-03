@@ -65,13 +65,8 @@ const OrderDetails = () => {
       <h1 className="font-bold my-5">Contact Information</h1>
       <div className="flex gap-[100px] flex-wrap w-full">
         <div>
-          <h1 className="text-sm font-medium">First Name</h1>
-          <h1>{order?.FirstName}</h1>
-        </div>
-
-        <div>
-          <h1 className="text-sm font-medium">Last Name</h1>
-          <h1>{order?.LastName}</h1>
+          <h1 className="text-sm font-medium">Full Name</h1>
+          <h1>{order?.FullName}</h1>
         </div>
 
         <div>

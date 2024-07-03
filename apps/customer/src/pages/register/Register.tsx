@@ -107,15 +107,15 @@ const Register: React.FC = () => {
                 <form onSubmit={handleFormWrapper} className="space-y-8">
                   <FormField
                     control={form.control}
-                    name="FirstName"
+                    name="FullName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>First Name</FormLabel>
+                        <FormLabel>Full Name</FormLabel>
                         <FormControl>
                           <Input
                             className="h-14"
-                            FormError={!!formErrors.errors.FirstName}
-                            placeholder="First Name"
+                            FormError={!!formErrors.errors.FullName}
+                            placeholder="Full Name"
                             {...field}
                           />
                         </FormControl>
@@ -124,25 +124,7 @@ const Register: React.FC = () => {
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="LastName"
-                    render={({ field }) => (
-                      <FormItem className="space-y-0 !mt-3">
-                        <FormLabel>Last Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="h-14"
-                            FormError={!!formErrors.errors.LastName}
-                            placeholder="Last Name"
-                            {...field}
-                          />
-                        </FormControl>
 
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                   <FormField
                     control={form.control}
                     name="Email"

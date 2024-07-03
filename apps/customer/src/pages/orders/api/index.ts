@@ -9,8 +9,7 @@ export interface OrderType {
   StoreKey: string;
   OrderMethod: string;
   UserId: number;
-  FirstName: string;
-  LastName: string;
+  FullName: string;
   Address: string;
   Phone: string;
   Email: string;

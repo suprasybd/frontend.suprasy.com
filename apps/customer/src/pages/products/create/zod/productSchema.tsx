@@ -98,17 +98,4 @@ export const productSchema = z
       message: 'Please add attribute name , values.',
       path: ['HasVariants'],
     }
-  )
-  .refine(
-    (schema) => {
-      if (!schema.HasVariants && !schema.Inventory) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-    {
-      message: 'Enter single product inventory',
-      path: ['Inventory'],
-    }
   );

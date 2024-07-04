@@ -43,6 +43,16 @@ const formSchema = z.object({
       message: "Store name can't have special char or numbers",
     })
     .max(150),
+
+  SubDomain: z
+    .string()
+    .min(2, {
+      message: 'Subdomain must be at least 2 characters.',
+    })
+    .regex(/^[a-zA-Z-]+$/, {
+      message: "Subdomain can't have special char or spaces",
+    })
+    .max(150),
 });
 
 const CreateStoreModal: React.FC = () => {
@@ -125,6 +135,8 @@ const CreateStoreModal: React.FC = () => {
     return false;
   }, [balance, planData]);
 
+  const subdomain = form.watch('SubDomain');
+
   return (
     <div>
       <Dialog
@@ -158,6 +170,27 @@ const CreateStoreModal: React.FC = () => {
                     </FormControl>
                     <FormDescription>
                       This is your public display name.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="SubDomain"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sub Domain</FormLabel>
+                    <FormControl>
+                      <Input
+                        FormError={!!form.formState.errors.StoreName}
+                        placeholder="Sub Domain"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Subdomain: store-{subdomain}.suprasy.com
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

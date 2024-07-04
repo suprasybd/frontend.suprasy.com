@@ -11,6 +11,7 @@ import {
   Package2,
   ShoppingCart,
   Store,
+  Tent,
   Users,
 } from 'lucide-react';
 
@@ -149,6 +150,20 @@ const StoreSidebar = () => {
             >
               <Container className="h-4 w-4" />
               Shipping
+            </Link>
+
+            <Link
+              to="/store/$storeKey/footer"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <Tent className="h-4 w-4" />
+              Pages & Footer
             </Link>
 
             <Link

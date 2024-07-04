@@ -21,6 +21,7 @@ import { Route as IndexImport } from './routes/index'
 import { Route as StoreStoreKeyShippingImport } from './routes/store/$storeKey/shipping'
 import { Route as StoreStoreKeySectionCreateImport } from './routes/store/$storeKey/section_/create'
 import { Route as StoreStoreKeyProductsCreateImport } from './routes/store/$storeKey/products_/create'
+import { Route as StoreStoreKeyFooterCreatepageImport } from './routes/store/$storeKey/footer_/createpage'
 import { Route as StoreStoreKeyOrdersOrderIdIndexImport } from './routes/store/$storeKey/orders_/$orderId/index'
 
 // Create Virtual Routes
@@ -46,6 +47,9 @@ const StoreStoreKeyInventoryLazyImport = createFileRoute(
 const StoreStoreKeyHomeLazyImport = createFileRoute('/store/$storeKey/home')()
 const StoreStoreKeyGenlinkLazyImport = createFileRoute(
   '/store/$storeKey/genlink',
+)()
+const StoreStoreKeyFooterLazyImport = createFileRoute(
+  '/store/$storeKey/footer',
 )()
 const StoreStoreKeyEmailLazyImport = createFileRoute('/store/$storeKey/email')()
 const StoreStoreKeyDomainLazyImport = createFileRoute(
@@ -169,6 +173,13 @@ const StoreStoreKeyGenlinkLazyRoute = StoreStoreKeyGenlinkLazyImport.update({
   import('./routes/store/$storeKey/genlink.lazy').then((d) => d.Route),
 )
 
+const StoreStoreKeyFooterLazyRoute = StoreStoreKeyFooterLazyImport.update({
+  path: '/$storeKey/footer',
+  getParentRoute: () => StoreRoute,
+} as any).lazy(() =>
+  import('./routes/store/$storeKey/footer.lazy').then((d) => d.Route),
+)
+
 const StoreStoreKeyEmailLazyRoute = StoreStoreKeyEmailLazyImport.update({
   path: '/$storeKey/email',
   getParentRoute: () => StoreRoute,
@@ -240,6 +251,12 @@ const StoreStoreKeySectionCreateRoute = StoreStoreKeySectionCreateImport.update(
 const StoreStoreKeyProductsCreateRoute =
   StoreStoreKeyProductsCreateImport.update({
     path: '/$storeKey/products/create',
+    getParentRoute: () => StoreRoute,
+  } as any)
+
+const StoreStoreKeyFooterCreatepageRoute =
+  StoreStoreKeyFooterCreatepageImport.update({
+    path: '/$storeKey/footer/createpage',
     getParentRoute: () => StoreRoute,
   } as any)
 
@@ -323,6 +340,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreStoreKeyEmailLazyImport
       parentRoute: typeof StoreImport
     }
+    '/store/$storeKey/footer': {
+      preLoaderRoute: typeof StoreStoreKeyFooterLazyImport
+      parentRoute: typeof StoreImport
+    }
     '/store/$storeKey/genlink': {
       preLoaderRoute: typeof StoreStoreKeyGenlinkLazyImport
       parentRoute: typeof StoreImport
@@ -353,6 +374,10 @@ declare module '@tanstack/react-router' {
     }
     '/store/$storeKey/turnstile': {
       preLoaderRoute: typeof StoreStoreKeyTurnstileLazyImport
+      parentRoute: typeof StoreImport
+    }
+    '/store/$storeKey/footer/createpage': {
+      preLoaderRoute: typeof StoreStoreKeyFooterCreatepageImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/products/create': {
@@ -389,6 +414,7 @@ export const routeTree = rootRoute.addChildren([
     StoreStoreKeyDashboardLazyRoute,
     StoreStoreKeyDomainLazyRoute,
     StoreStoreKeyEmailLazyRoute,
+    StoreStoreKeyFooterLazyRoute,
     StoreStoreKeyGenlinkLazyRoute,
     StoreStoreKeyHomeLazyRoute,
     StoreStoreKeyInventoryLazyRoute,
@@ -397,6 +423,7 @@ export const routeTree = rootRoute.addChildren([
     StoreStoreKeyPaymentsLazyRoute,
     StoreStoreKeyProductsLazyRoute,
     StoreStoreKeyTurnstileLazyRoute,
+    StoreStoreKeyFooterCreatepageRoute,
     StoreStoreKeyProductsCreateRoute,
     StoreStoreKeySectionCreateRoute,
     StoreStoreKeyProductsProductIdDetailsLazyRoute,

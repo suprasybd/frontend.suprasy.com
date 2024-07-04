@@ -935,8 +935,6 @@ const CreateProduct: React.FC = () => {
               )}
             </div>
 
-            <Turnstile className="hidden" siteKey="0x4AAAAAAAQW6BNxMGjPxRxa" />
-
             {/* right */}
             <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
               <Card>
@@ -994,6 +992,12 @@ const CreateProduct: React.FC = () => {
                   />
                 </CardContent>
               </Card>
+
+              <Turnstile
+                options={{ size: 'auto' }}
+                siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
+              />
+
               <Button
                 disabled={updateProductLoading || isPending || !turnstileLoaded}
                 type="submit"

@@ -199,7 +199,10 @@ const AddArea: React.FC = () => {
               )}
             />
 
-            <Turnstile className="hidden" siteKey="0x4AAAAAAAQW6BNxMGjPxRxa" />
+            <Turnstile
+              options={{ size: 'auto' }}
+              siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
+            />
 
             <div className="flex gap-[8px]">
               <DialogClose className="w-full" ref={closeBtn}>

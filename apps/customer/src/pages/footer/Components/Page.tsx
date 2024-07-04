@@ -33,7 +33,9 @@ const Page = () => {
 
       {isLoading && <LoaderMain />}
 
-      {!isLoading && page?.length && (
+      {!isLoading && page && page?.length === 0 && <p>Not pages found!</p>}
+
+      {!isLoading && page && page?.length > 0 && (
         <DataTable columns={pageColumns} data={page || []} />
       )}
     </div>

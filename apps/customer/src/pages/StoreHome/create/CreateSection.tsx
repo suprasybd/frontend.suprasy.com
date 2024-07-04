@@ -355,7 +355,7 @@ const CreateSection = () => {
               <br></br>
 
               <Turnstile
-                className="hidden"
+                options={{ size: 'auto' }}
                 siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
               />
 

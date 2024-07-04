@@ -129,82 +129,86 @@ const StoreHome = () => {
     <section className="w-full">
       {/* create section */}
 
+      {homeSesctions?.length === 0 && <h1>No sections found!</h1>}
+
       {/* home sections */}
-      <Card className="my-10">
-        <CardHeader>
-          <CardTitle>
-            {' '}
-            <h1 className="my-4 font-bold text-xl">Sections List</h1>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {homeSesctions &&
-            homeSesctions.length > 0 &&
-            homeSesctions.map((section) => (
-              <div className="p-5 border my-2 border-gray-300 rounded-md">
-                <h1 className="text-4xl font-medium">{section.Title}</h1>
-                <RichTextRender
-                  initialVal={section.Description}
-                  classname="!h-fit"
-                />
+      {homeSesctions && homeSesctions.length > 0 && (
+        <Card className="my-10">
+          <CardHeader>
+            <CardTitle>
+              {' '}
+              <h1 className="my-4 font-bold text-xl">Sections List</h1>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {homeSesctions &&
+              homeSesctions.length > 0 &&
+              homeSesctions.map((section) => (
+                <div className="p-5 border my-2 border-gray-300 rounded-md">
+                  <h1 className="text-4xl font-medium">{section.Title}</h1>
+                  <RichTextRender
+                    initialVal={section.Description}
+                    classname="!h-fit"
+                  />
 
-                <SectionProducts sectionId={section.Id} />
+                  <SectionProducts sectionId={section.Id} />
 
-                <AlertDialog>
-                  <AlertDialogTrigger>
-                    {' '}
-                    <Button className="my-5" variant={'destructive'}>
-                      Remove Section
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your section and remove your data from our
-                        servers.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction className="p-0">
-                        <Button
-                          className="my-5"
-                          variant={'destructive'}
-                          onClick={() => {
-                            handleDeleteSection(section.Id);
-                          }}
-                        >
-                          Confirm Remove
-                        </Button>
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      {' '}
+                      <Button className="my-5" variant={'destructive'}>
+                        Remove Section
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your section and remove your data from our
+                          servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction className="p-0">
+                          <Button
+                            className="my-5"
+                            variant={'destructive'}
+                            onClick={() => {
+                              handleDeleteSection(section.Id);
+                            }}
+                          >
+                            Confirm Remove
+                          </Button>
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
 
-                <Button
-                  className="my-5 mx-2"
-                  onClick={() => {
-                    // form.setValue('Products', []);
-                    // setSectionId(section.Id);
-                    // setIsUpdating(true);
-                  }}
-                >
-                  <Link
-                    to="/store/$storeKey/section/create"
-                    search={{ update: true, sectionId: section.Id }}
-                    params={{ storeKey }}
+                  <Button
+                    className="my-5 mx-2"
+                    onClick={() => {
+                      // form.setValue('Products', []);
+                      // setSectionId(section.Id);
+                      // setIsUpdating(true);
+                    }}
                   >
-                    Update Section
-                  </Link>
-                </Button>
-              </div>
-            ))}
-        </CardContent>
-      </Card>
+                    <Link
+                      to="/store/$storeKey/section/create"
+                      search={{ update: true, sectionId: section.Id }}
+                      params={{ storeKey }}
+                    >
+                      Update Section
+                    </Link>
+                  </Button>
+                </div>
+              ))}
+          </CardContent>
+        </Card>
+      )}
     </section>
   );
 };

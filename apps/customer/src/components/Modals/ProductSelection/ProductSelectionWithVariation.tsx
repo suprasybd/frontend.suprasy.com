@@ -8,25 +8,27 @@ import {
 } from '@customer/components/index';
 import { activeFilters } from '@customer/libs/helpers/filters';
 import {
+  getProductAttributes,
+  getProductOptions,
   getProductsDetails,
   getProductsImages,
   getUserStoresProductsList,
 } from '@customer/pages/products/api';
 import { useModalStore } from '@customer/store/modalStore';
-import { useProductSelectionStore } from '@customer/store/productSelection';
+import { useProductSelectionVariantStore } from '@customer/store/productSelectionVariant';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 
-const ProductSelection: React.FC = () => {
+const ProductSelectionWithVariation: React.FC = () => {
   const { modal, clearModalPath } = useModalStore((state) => state);
-  const { setProduct } = useProductSelectionStore((state) => state);
+  const { setProduct } = useProductSelectionVariantStore((state) => state);
   const modalName = modal.modal;
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const [Title, setTitle] = useState<string>('');
 
   useEffect(() => {
-    if (modalName === 'product-selection') {
+    if (modalName === 'product-selection-variant') {
       setModalOpen(true);
     }
   }, [modalName]);
@@ -75,14 +77,11 @@ const ProductSelection: React.FC = () => {
                 {products &&
                   products.length > 0 &&
                   products.map((product) => (
-                    <div
-                      className="w-fit"
-                      onClick={() => {
-                        setProduct(product.Id);
-                        closeModal();
-                      }}
-                    >
-                      <ProductCard ProductId={product.Id} />
+                    <div className="w-fit">
+                      <ProductCard
+                        ProductId={product.Id}
+                        closeModal={closeModal}
+                      />
                     </div>
                   ))}
               </div>
@@ -94,16 +93,18 @@ const ProductSelection: React.FC = () => {
   );
 };
 
-export const ProductCard: React.FC<{
+const ProductCard: React.FC<{
   ProductId: number;
   className?: string;
-  variant?: string;
-}> = ({ ProductId, className, variant }) => {
+  closeModal: () => void;
+}> = ({ ProductId, className, closeModal }) => {
   const { data: imagesResposne } = useQuery({
     queryFn: () => getProductsImages(ProductId),
     queryKey: ['getProductImagesForSelectionModal', ProductId],
     enabled: !!ProductId,
   });
+
+  const { setProduct } = useProductSelectionVariantStore((state) => state);
 
   const { data: productDetailsResposne } = useQuery({
     queryFn: () => getProductsDetails(ProductId),
@@ -114,8 +115,28 @@ export const ProductCard: React.FC<{
   const images = imagesResposne?.Data;
   const productDetails = productDetailsResposne?.Data;
 
+  const hasVariant = productDetails?.HasVariant;
+
+  const { data: productAttributeResponse } = useQuery({
+    queryKey: ['getProductsOptionsinModal', ProductId],
+    queryFn: () => getProductOptions(ProductId || 0),
+    enabled: !!ProductId && hasVariant,
+  });
+
+  const productAttributes = productAttributeResponse?.Data;
+
   return (
-    <div>
+    <div
+      onClick={() => {
+        if (!hasVariant && productDetails?.Id) {
+          setProduct({
+            ProductId: productDetails?.Id,
+            Variant: undefined,
+          });
+          closeModal();
+        }
+      }}
+    >
       <div
         className="p-3 rounded-md my-2 min-h-[120px] bg-slate-800 text-white hover:bg-slate-700 cursor-pointer"
         key={ProductId}
@@ -133,15 +154,30 @@ export const ProductCard: React.FC<{
           <p className="text-sm max-w-[150px]">
             Title: {productDetails?.Title}
           </p>
-          {variant ? (
-            <p className="text-sm">Variant: {variant}</p>
-          ) : (
-            <p className="text-sm">Product Id: {productDetails?.Id}</p>
-          )}
+          <p className="text-sm">Product Id: {productDetails?.Id}</p>
+
+          <div className="flex gap-[10px] items-center flex-wrap">
+            {productAttributes?.map((a) => (
+              <div
+                onClick={() => {
+                  if (hasVariant && productDetails.Id) {
+                    setProduct({
+                      ProductId: productDetails.Id,
+                      Variant: a.Value,
+                    });
+                    closeModal();
+                  }
+                }}
+                className="p-3 w-fit rounded-md hover:bg-slate-400 bg-slate-500 text-white"
+              >
+                {a.Value}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default ProductSelection;
+export default ProductSelectionWithVariation;

@@ -14,6 +14,16 @@ import {
 } from './types';
 import { productSchema } from '../create/zod/productSchema';
 
+export interface AttributeValue {
+  Id: number;
+  StoreKey: string;
+  AttributeId: number;
+  ProductId: number;
+  Value: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
 export const getUserStoresProductsList = async (Queries: {
   [key: string]: any;
   Page?: number;
@@ -73,6 +83,13 @@ export const getProductAttributes = async (
   productId: number
 ): Promise<ResponseType<ProductAttributeTypes>> => {
   const response = await ApiClient.get(`/products/attribute/${productId}`);
+
+  return response.data;
+};
+export const getProductOptions = async (
+  productId: number
+): Promise<ListResponseType<AttributeValue>> => {
+  const response = await ApiClient.get(`/products/options/${productId}`);
 
   return response.data;
 };

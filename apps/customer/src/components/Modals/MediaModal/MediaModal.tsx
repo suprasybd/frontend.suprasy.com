@@ -186,8 +186,11 @@ const MediaModal: React.FC<{
                       htmlFor="picture"
                     >
                       <div className="flex aspect-square w-[170px] h-[170px] items-center justify-center rounded-md border border-dashed">
-                        <Upload className="h-4 w-4 text-muted-foreground" />
-                        <span className="sr-only">Upload</span>
+                        <div className="w-full flex flex-col gap-[5px] justify-center items-center">
+                          <Upload className="h-4 w-4 text-muted-foreground" />
+                          <p className="sr-only">Upload</p>
+                          <p>Max Size: 5 MB</p>
+                        </div>
                       </div>
                     </Label>
                     <Input

@@ -34,6 +34,7 @@
     "classnames": "^2.5.1",
     "clsx": "^2.1.0",
     "embla-carousel-react": "^8.0.0-rc22",
+    "js-base64": "^3.7.7",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.323.0",
     "react": "18.2.0",

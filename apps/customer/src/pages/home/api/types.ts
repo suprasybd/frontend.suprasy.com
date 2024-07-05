@@ -12,6 +12,15 @@ export interface StoreType {
   UpdatedAt: string;
 }
 
+export interface SubscriptionType {
+  Id: number;
+  StoreKey: string;
+  StartDate: string;
+  EndDate: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
 export interface BalanceResponseType {
   Id: number;
   Balance: number;

@@ -61,7 +61,11 @@ const Home: React.FC = () => {
                 <div>
                   <span className="mr-2">Site Status</span>
                   {store.IsActive && <Badge variant="secondary">Active</Badge>}
-                  {!store.IsActive && <Badge variant="destructive">Down</Badge>}
+                  {!store.IsActive && (
+                    <Badge variant="destructive">
+                      Subscription Expired (Site is still active)
+                    </Badge>
+                  )}
                 </div>
               </CardDescription>
             </CardHeader>
@@ -73,20 +77,41 @@ const Home: React.FC = () => {
                   Site Link:{' '}
                   <a
                     className="underline text-blue-500"
-                    href={`https://${store.SubDomain}.suprasy.com`}
+                    href={`http://${store.SubDomain}.suprasy.com`}
                     target="__blank"
                   >{`https://${store.SubDomain}.suprasy.com`}</a>
                 </p>
               </div>
             </CardContent>
             <CardFooter>
-              <Link
-                className="underline underline-offset-4"
-                to={'/store/$storeKey/dashboard'}
-                params={{ storeKey: store.StoreKey }}
+              {store.IsActive && (
+                <Link
+                  className="underline underline-offset-4"
+                  to={'/store/$storeKey/dashboard'}
+                  params={{ storeKey: store.StoreKey }}
+                >
+                  View Dashboard ({store.StoreName})
+                </Link>
+              )}
+              {!store.IsActive && (
+                <p>
+                  Your website subscription has expired you can't view the
+                  dashboard, but your website is still actively running and
+                  functional. To gain access to dashbaord please renew
+                  subscription.
+                </p>
+              )}
+
+              <Button
+                onClick={() => {
+                  setModalPath({
+                    modal: 'renew-store',
+                    storeKey: store.StoreKey,
+                  });
+                }}
               >
-                View Dashboard ({store.StoreName})
-              </Link>
+                Renew Subscription
+              </Button>
             </CardFooter>
           </Card>
         ))}

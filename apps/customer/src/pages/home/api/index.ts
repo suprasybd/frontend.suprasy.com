@@ -3,7 +3,12 @@ import {
   ListResponseType,
   ResponseType,
 } from '../../../libs/types/responseTypes';
-import { BalanceResponseType, PlanResponseType, StoreType } from './types';
+import {
+  BalanceResponseType,
+  PlanResponseType,
+  StoreType,
+  SubscriptionType,
+} from './types';
 
 export const getUserStoresList = async (): Promise<
   ListResponseType<StoreType>
@@ -17,6 +22,20 @@ export const getStoreDetails = async (
   StoreKey: string
 ): Promise<ResponseType<StoreType>> => {
   const response = await ApiClient.get('/store/details/' + StoreKey);
+  return response.data;
+};
+
+export const getSubDetails = async (
+  StoreKey: string
+): Promise<ResponseType<SubscriptionType>> => {
+  const response = await ApiClient.get('/store/details/' + StoreKey);
+  return response.data;
+};
+
+export const renewSubscription = async (
+  StoreKey: string
+): Promise<ResponseType<StoreType>> => {
+  const response = await ApiClient.get('/store/renew/' + StoreKey);
   return response.data;
 };
 

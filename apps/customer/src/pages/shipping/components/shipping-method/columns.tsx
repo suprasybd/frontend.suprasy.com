@@ -17,10 +17,6 @@ import { useShippingStoreMethod } from './shippingStore';
 
 export const areasColumns: ColumnDef<ShippingMethodType>[] = [
   {
-    accessorKey: 'Id',
-    header: 'Id',
-  },
-  {
     accessorKey: 'DeliveryMethod',
     header: 'Delivery Method',
   },

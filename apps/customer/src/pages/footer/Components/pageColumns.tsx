@@ -18,10 +18,6 @@ import { Link } from '@tanstack/react-router';
 
 export const pageColumns: ColumnDef<Page>[] = [
   {
-    accessorKey: 'Id',
-    header: 'page Id',
-  },
-  {
     accessorKey: 'Url',
     header: 'Url',
   },

@@ -17,10 +17,6 @@ import { useShippingStore } from './shippingStore';
 
 export const areasColumns: ColumnDef<AreaType>[] = [
   {
-    accessorKey: 'Id',
-    header: 'Zone Id',
-  },
-  {
     accessorKey: 'Area',
     header: 'Zone/Area Name',
   },

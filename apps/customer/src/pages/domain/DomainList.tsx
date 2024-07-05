@@ -25,11 +25,15 @@ import { z } from 'zod';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { Terminal } from 'lucide-react';
+import { useParams } from '@tanstack/react-router';
+import { getStoreDetails } from '../home/api';
 
 const formSchema = z.object({
   DomainName: z.string().min(2).max(50),
 });
 const DomainList = () => {
+  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,6 +55,14 @@ const DomainList = () => {
     queryKey: ['getDomains'],
     queryFn: getDomains,
   });
+
+  const { data: storeDetailsResponse } = useQuery({
+    queryKey: ['getStoreDetails'],
+    queryFn: () => getStoreDetails(storeKey),
+    enabled: !!storeKey,
+  });
+
+  const storeDetails = storeDetailsResponse?.Data;
 
   const { mutate: handleAddDomain, isPending } = useMutation({
     mutationFn: addDomains,
@@ -118,8 +130,13 @@ const DomainList = () => {
                           <p>
                             Note: don't put https:// in domain only enter raw
                             domain, example: mydomain.com, xyzstore.com etc. Add
-                            cname record in dns settings in your domain register
-                            site.
+                            cname record with value pointed to '
+                            {storeDetails?.SubDomain}.suprasy.com' in dns
+                            settings in your domain register site.
+                          </p>
+                          <p className="font-bold">
+                            CNAME RECORD @ or yourdomain.com & VALUE='
+                            {storeDetails?.SubDomain}.suprasy.com'
                           </p>
                         </AlertDescription>
                       </Alert>

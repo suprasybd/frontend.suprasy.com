@@ -2,6 +2,7 @@ export interface StoreType {
   Id: number;
   StoreKey: string;
   StoreName: string;
+  SubDomain: string;
   StoreCloudName: string;
   IsActive: boolean;
   DomainName: string;

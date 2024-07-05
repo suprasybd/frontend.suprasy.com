@@ -7,6 +7,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  useToast,
 } from '@customer/components';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
@@ -15,6 +16,8 @@ import { getFooter, updateFooter } from '../api';
 const FooterComponent = () => {
   const [description, setDescription] = useState<string>();
 
+  const { toast } = useToast();
+
   const { data: footerResponse, isSuccess } = useQuery({
     queryKey: ['getFooter'],
     queryFn: getFooter,
@@ -22,6 +25,20 @@ const FooterComponent = () => {
 
   const { mutate: handleUpdateFooter } = useMutation({
     mutationFn: updateFooter,
+    onSuccess: () => {
+      toast({
+        variant: 'default',
+        title: 'done',
+        description: 'updated',
+      });
+    },
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: 'failed',
+        description: 'update failed',
+      });
+    },
   });
   const footer = footerResponse?.Data;
 

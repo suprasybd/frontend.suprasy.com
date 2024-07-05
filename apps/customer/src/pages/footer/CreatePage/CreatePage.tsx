@@ -28,7 +28,7 @@ import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { Route as CreatePageRoute } from '../../../routes/store/$storeKey/footer_/createpage';
 
 export const pageSchema = z.object({
-  Description: z.string().min(2).max(5000),
+  Description: z.string().min(2).max(40000),
   Url: z
     .string()
     .min(2, {

@@ -63,15 +63,20 @@ const Home: React.FC = () => {
                   {store.IsActive && <Badge variant="secondary">Active</Badge>}
                   {!store.IsActive && <Badge variant="destructive">Down</Badge>}
                 </div>
-                <div className="mt-2">
-                  <span className="mr-2">Deployment Status</span>
-                  <Badge variant="secondary">{store.Status}</Badge>
-                </div>
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div>
                 <p className="break-words">Store Key: {store.StoreKey}</p>
+                <p>
+                  {' '}
+                  Site Link:{' '}
+                  <a
+                    className="underline text-blue-500"
+                    href={`https://${store.SubDomain}.suprasy.com`}
+                    target="__blank"
+                  >{`https://${store.SubDomain}.suprasy.com`}</a>
+                </p>
               </div>
             </CardContent>
             <CardFooter>

@@ -104,10 +104,7 @@ const CreateStoreModal: React.FC = () => {
         description: 'Store create request sent successfully',
         variant: 'default',
       });
-
-      setTimeout(() => {
-        queryClient.refetchQueries({ queryKey: ['getUserStoresList'] });
-      }, 3000);
+      queryClient.refetchQueries({ queryKey: ['getUserStoresList'] });
 
       closeModal();
     },

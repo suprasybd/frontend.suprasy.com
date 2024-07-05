@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiClient from '../../../libs/ApiClient';
-import { ResponseType } from '../../../libs/types/responseTypes';
+import {
+  ListResponseType,
+  ResponseType,
+} from '../../../libs/types/responseTypes';
 
 export interface TurnstileType {
   Id: number;
@@ -20,6 +23,14 @@ export interface LogoType {
   UpdatedAt: string;
 }
 
+export interface DomainType {
+  Id: number;
+  StoreKey: string;
+  DomainName: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
 export const getTurnstile = async (): Promise<ResponseType<TurnstileType>> => {
   const response = await ApiClient.get(`/turnstile`);
 
@@ -30,6 +41,34 @@ export const updateTurnstile = async (
   data: any
 ): Promise<ResponseType<TurnstileType>> => {
   const response = await ApiClient.put(`/turnstile`, data);
+
+  return response.data;
+};
+
+export const getDomain = async (): Promise<ResponseType<DomainType>> => {
+  const response = await ApiClient.get(`/turnstile/domain`);
+
+  return response.data;
+};
+
+export const updateDomain = async (
+  data: any
+): Promise<ResponseType<DomainType>> => {
+  const response = await ApiClient.put(`/turnstile/domain`, data);
+
+  return response.data;
+};
+
+export const getDomains = async (): Promise<ListResponseType<DomainType>> => {
+  const response = await ApiClient.get(`/turnstile/domains`);
+
+  return response.data;
+};
+
+export const addDomains = async (
+  data: any
+): Promise<ResponseType<DomainType>> => {
+  const response = await ApiClient.post(`/turnstile/domains`, data);
 
   return response.data;
 };

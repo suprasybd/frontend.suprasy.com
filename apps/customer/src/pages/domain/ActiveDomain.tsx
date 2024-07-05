@@ -1,0 +1,146 @@
+import { useEffect } from 'react';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+  useToast,
+} from '@customer/components';
+import { Link, useParams } from '@tanstack/react-router';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { Button } from '@customer/components/index';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@customer/components/index';
+import { Input } from '@customer/components/index';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getDomain, updateDomain } from '../turnstile/api';
+import { Terminal } from 'lucide-react';
+
+const formSchema = z.object({
+  DomainName: z.string().min(2).max(100),
+});
+
+const ActiveDomain = () => {
+  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+  const { toast } = useToast();
+  const { data: domainResponse, refetch } = useQuery({
+    queryKey: ['getDomain'],
+    queryFn: getDomain,
+  });
+
+  const { mutate: handleUpdateDomain, isPending } = useMutation({
+    mutationFn: updateDomain,
+    onSuccess: () => {
+      refetch();
+      toast({
+        title: 'Domain',
+        description: 'done',
+        variant: 'default',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'domain',
+        description: 'save failed!',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const domainData = domainResponse?.Data;
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      DomainName: '',
+    },
+  });
+
+  useEffect(() => {
+    if (domainData) {
+      form.setValue('DomainName', domainData.DomainName);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [domainData]);
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    handleUpdateDomain(values);
+  }
+
+  return (
+    <section>
+      {/* breadcrumbs */}
+      <Breadcrumb className="pb-5">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <Link
+              to="/store/$storeKey/dashboard"
+              params={{ storeKey: storeKey }}
+            >
+              Home
+            </Link>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <Link
+              to="/store/$storeKey/turnstile"
+              params={{ storeKey: storeKey }}
+            >
+              Turnstile
+            </Link>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      {/* form */}
+
+      <Alert className="w-fit my-5">
+        <Terminal className="h-4 w-4" />
+        <AlertTitle>Note!</AlertTitle>
+        <AlertDescription>
+          This domain will be used when sending email from our mailling system
+          for email verification system and others.
+        </AlertDescription>
+      </Alert>
+
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8 max-w-[500px]"
+        >
+          <FormField
+            control={form.control}
+            name="DomainName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Domain </FormLabel>
+                <FormControl>
+                  <Input placeholder="Domain " {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button className="w-full" type="submit" disabled={isPending}>
+            {isPending ? 'Saving..' : 'Save'}
+          </Button>
+        </form>
+      </Form>
+    </section>
+  );
+};
+
+export default ActiveDomain;

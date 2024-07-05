@@ -177,7 +177,7 @@ const StoreSidebar = () => {
               [&.active]:hover:text-primary"
             >
               <BrickWall className="h-4 w-4" />
-              Trunstile
+              Trunstile & Logo
             </Link>
 
             <Link

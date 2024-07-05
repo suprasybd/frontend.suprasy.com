@@ -4,6 +4,10 @@ import {
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbSeparator,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   useToast,
 } from '@customer/components';
 import { Link, useParams } from '@tanstack/react-router';
@@ -22,13 +26,14 @@ import {
 import { Input } from '@customer/components/index';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getTurnstile, updateTurnstile } from './api';
+import Logo from './Logo';
 
 const formSchema = z.object({
   TurnstileKey: z.string().min(2).max(100),
   TurnstileSecret: z.string().min(2).max(100),
 });
 
-const Turnstile = () => {
+const TurnstileComponent = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
   const { toast } = useToast();
   const { data: trunstileResponse, refetch } = useQuery({
@@ -78,7 +83,7 @@ const Turnstile = () => {
   }
 
   return (
-    <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+    <section>
       {/* breadcrumbs */}
       <Breadcrumb className="pb-5">
         <BreadcrumbList>
@@ -145,6 +150,27 @@ const Turnstile = () => {
         </form>
       </Form>
     </section>
+  );
+};
+
+const Turnstile = () => {
+  return (
+    <div>
+      <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+        <Tabs defaultValue="turnstile" className="w-[400px]">
+          <TabsList>
+            <TabsTrigger value="turnstile">Turnstile</TabsTrigger>
+            <TabsTrigger value="logo">Logo</TabsTrigger>
+          </TabsList>
+          <TabsContent value="turnstile">
+            <TurnstileComponent />
+          </TabsContent>
+          <TabsContent value="logo">
+            <Logo />
+          </TabsContent>
+        </Tabs>
+      </section>
+    </div>
   );
 };
 

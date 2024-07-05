@@ -4,11 +4,13 @@ import CreateStoreModal from './CreateStore/CreateStore';
 import UpdateCategory from './UpdateCategory/UpdateCategory';
 import ProductSelection from './ProductSelection/ProductSelection';
 import UpdateOrder from './UpdateOrders/UpdateOrders';
+import RenewStore from './RenewStore/RenewStore';
 
 const Modals: React.FC = () => {
   return (
     <div>
       <CreateStoreModal />
+      <RenewStore />
       <UpdateCategory />
       <ProductSelection />
       <UpdateOrder />

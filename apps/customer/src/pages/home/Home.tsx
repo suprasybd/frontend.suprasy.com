@@ -102,16 +102,19 @@ const Home: React.FC = () => {
                 </p>
               )}
 
-              <Button
-                onClick={() => {
-                  setModalPath({
-                    modal: 'renew-store',
-                    storeKey: store.StoreKey,
-                  });
-                }}
-              >
-                Renew Subscription
-              </Button>
+              {!store.IsActive && (
+                <Button
+                  className="my-3"
+                  onClick={() => {
+                    setModalPath({
+                      modal: 'renew-store',
+                      storeKey: store.StoreKey,
+                    });
+                  }}
+                >
+                  Renew Subscription
+                </Button>
+              )}
             </CardFooter>
           </Card>
         ))}

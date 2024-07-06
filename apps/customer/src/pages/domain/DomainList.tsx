@@ -17,13 +17,10 @@ import {
   AlertDescription,
 } from '@customer/components/index';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import useTurnStileHook from '@customer/hooks/turnstile';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Turnstile } from '@marsidev/react-turnstile';
-import { ReloadIcon } from '@radix-ui/react-icons';
 import { Terminal } from 'lucide-react';
 import { useParams } from '@tanstack/react-router';
 import { getStoreDetails } from '../home/api';
@@ -75,7 +72,6 @@ const DomainList = () => {
       });
 
       form.reset();
-      forceUpdate();
     },
     onError: () => {
       toast({
@@ -86,28 +82,6 @@ const DomainList = () => {
     },
   });
 
-  const forceUpdate = () => {
-    window.location.reload();
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleFormWrapper = (e: any) => {
-    e.preventDefault();
-    try {
-      const tRes = e.target['cf-turnstile-response'].value;
-
-      if (!tRes) return;
-
-      localStorage.setItem('cf-turnstile-in-storage', tRes);
-
-      form.handleSubmit(onSubmit)(e);
-    } catch (error) {
-      forceUpdate();
-    }
-  };
-
-  const [turnstileLoaded] = useTurnStileHook();
-
   const domains = domainsResponse?.Data;
 
   return (
@@ -116,7 +90,10 @@ const DomainList = () => {
         <CardContent>
           <div className="my-2 mt-4">
             <Form {...form}>
-              <form onSubmit={handleFormWrapper} className="space-y-8">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
                 <FormField
                   control={form.control}
                   name="DomainName"
@@ -150,21 +127,8 @@ const DomainList = () => {
                   )}
                 />
 
-                <Turnstile
-                  options={{ size: 'auto' }}
-                  siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
-                />
-
-                <Button type="submit" disabled={!turnstileLoaded}>
-                  {!turnstileLoaded && (
-                    <>
-                      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                      wait a few moment..
-                    </>
-                  )}
-                  {turnstileLoaded && (
-                    <span>{isPending ? 'Addding..' : 'Add Domain'}</span>
-                  )}
+                <Button type="submit">
+                  <span>{isPending ? 'Addding..' : 'Add Domain'}</span>
                 </Button>
               </form>
             </Form>

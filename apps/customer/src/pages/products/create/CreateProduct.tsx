@@ -62,7 +62,7 @@ import { Turnstile } from '@marsidev/react-turnstile';
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
-    mode: 'onChange',
+    mode: 'all',
     defaultValues: {
       Description: '',
       Price: 99,
@@ -98,8 +98,6 @@ const CreateProduct: React.FC = () => {
     },
   });
   const [imageUpdated, setImageUpdated] = useState<number>(0);
-
-  console.log('errors', form.formState.errors);
 
   const { append: appendImage, remove: removeImage } = useFieldArray({
     control: form.control,

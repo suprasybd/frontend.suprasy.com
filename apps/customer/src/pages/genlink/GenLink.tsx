@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-has-content */
 import { Button } from '@customer/components';
 import { ProductCard } from '@customer/components/Modals/ProductSelection/ProductSelection';
 import { useModalStore } from '@customer/store/modalStore';
@@ -5,6 +6,8 @@ import { useProductSelectionVariantStore } from '@customer/store/productSelectio
 import React, { useEffect, useState } from 'react';
 
 import { encode } from 'js-base64';
+import { useQuery } from '@tanstack/react-query';
+import { getMainDomain } from '../turnstile/api';
 
 const GenLink = () => {
   const { setModalPath } = useModalStore((state) => state);
@@ -14,6 +17,13 @@ const GenLink = () => {
 
   const [prodList, setProdList] =
     useState<{ ProductId: number; Variant: string | undefined }[]>();
+
+  const { data: mainDomainResponse } = useQuery({
+    queryKey: ['getMainDomain'],
+    queryFn: getMainDomain,
+  });
+
+  const mainDomain = mainDomainResponse?.Data;
 
   useEffect(() => {
     if (Product && Product.ProductId) {
@@ -73,7 +83,15 @@ const GenLink = () => {
 
       {linkKey && (
         <p className="my-2">
-          Generated Link: yourdomain.com/checkout?products={linkKey}
+          Generated Link:
+          <a
+            target="__blank"
+            className="text-blue-600 underline"
+            href={`http://${mainDomain?.DomainName}/?products=${linkKey}`}
+          >
+            {' '}
+            {mainDomain?.DomainName}/checkout?products={linkKey}
+          </a>
         </p>
       )}
     </section>

@@ -24,7 +24,7 @@ import {
 } from '@customer/components/index';
 import { Input } from '@customer/components/index';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getDomain, updateDomain } from '../turnstile/api';
+import { getMainDomain, updateDomain } from '../turnstile/api';
 import { Terminal } from 'lucide-react';
 
 const formSchema = z.object({
@@ -36,7 +36,7 @@ const ActiveDomain = () => {
   const { toast } = useToast();
   const { data: domainResponse, refetch } = useQuery({
     queryKey: ['getDomain'],
-    queryFn: getDomain,
+    queryFn: getMainDomain,
   });
 
   const { mutate: handleUpdateDomain, isPending } = useMutation({
@@ -109,8 +109,10 @@ const ActiveDomain = () => {
         <Terminal className="h-4 w-4" />
         <AlertTitle>Note!</AlertTitle>
         <AlertDescription>
-          This domain will be used when sending email from our mailling system
-          for email verification system and others.
+          This domain name will be used when sending email from our mailling
+          system for email verification system and others. You can edit it and
+          make sure it's the current active domain of your site listed in the
+          domains tab if you added custom domain beside free subdomain.
         </AlertDescription>
       </Alert>
 

@@ -182,20 +182,6 @@ const StoreSidebar = () => {
             </Link>
 
             <Link
-              to="/store/$storeKey/domain"
-              params={{
-                storeKey: storeKey,
-              }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-            >
-              <FolderPen className="h-4 w-4" />
-              Domains
-            </Link>
-
-            <Link
               to="/store/$storeKey/genlink"
               params={{
                 storeKey: storeKey,
@@ -207,6 +193,20 @@ const StoreSidebar = () => {
             >
               <Link2 className="h-4 w-4" />
               Generate Direct Product Purchase Link
+            </Link>
+
+            <Link
+              to="/store/$storeKey/domain"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <FolderPen className="h-4 w-4" />
+              Domain Name
             </Link>
             {/* <Link
               to="/store/$storeKey/media"

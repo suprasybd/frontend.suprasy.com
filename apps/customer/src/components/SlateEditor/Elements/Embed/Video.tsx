@@ -9,6 +9,7 @@ import {
 import useResize from '../../utils/customHooks/useResize.js';
 import { Scale3D } from 'lucide-react';
 import { Transforms } from 'slate';
+import ReactPlayer from 'react-player';
 // import "./Video.css";
 
 const Video = ({ attributes, element, children }) => {
@@ -21,9 +22,9 @@ const Video = ({ attributes, element, children }) => {
 
   // Persist width and height when size changes
   React.useEffect(() => {
-    if (true) {
+    if (size) {
       const path = ReactEditor.findPath(editor, element);
-      console.log('nodes path', path);
+      // console.log('nodes path', path);
       Transforms.setNodes(
         editor,
         { width: size.width, height: size.height },
@@ -37,6 +38,7 @@ const Video = ({ attributes, element, children }) => {
       className="embed !w-full h-full"
       style={{
         display: 'flex',
+        justifyContent: 'center',
         boxShadow: selected && focused && '0 0 3px 3px lightgray',
         height: `${size.height}px`,
         maxWidth: `${size.width}px`,
@@ -69,15 +71,7 @@ const Video = ({ attributes, element, children }) => {
               video player icon
             </div>
           ) : (
-            <iframe
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-              src={url}
-              frameBorder="0"
-              title={alt}
-            />
+            <ReactPlayer width={'100%'} height={'100%'} url={url} />
           )
         }
         {true && (

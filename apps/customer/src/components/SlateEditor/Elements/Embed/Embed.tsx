@@ -8,7 +8,8 @@ import { ReactEditor } from 'slate-react';
 import MediaModal from '@customer/components/Modals/MediaModal/MediaModal';
 import './Embed.css';
 import { Clapperboard, Image } from 'lucide-react';
-import { Button } from '../../RichTextComponents/Components';
+import { Button } from '@customer/components/ui/button';
+
 const Embed = ({ editor, format }) => {
   const urlInputRef = useRef();
   const [showInput, setShowInput] = usePopup(urlInputRef);
@@ -88,19 +89,12 @@ const Embed = ({ editor, format }) => {
           )}
           <form>
             <input
+              className="border-2 border-blue-500 p-3 rounded-md"
               type="text"
-              placeholder="Enter url"
+              placeholder="Enter video url"
               value={formDataGlobal.url}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, url: e.target.value }))
-              }
-            />
-            <input
-              type="text"
-              placeholder="Enter alt"
-              value={formDataGlobal.alt}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, alt: e.target.value }))
               }
             />
 

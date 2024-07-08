@@ -1,19 +1,6 @@
-import React from 'react';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  useToast,
-} from '@customer/components';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@customer/components';
 import ActiveDomain from './ActiveDomain';
 import DomainList from './DomainList';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { useMutation } from '@tanstack/react-query';
-import { addDomains } from '../turnstile/api';
-import useTurnStileHook from '@customer/hooks/turnstile';
 
 const Domain = () => {
   return (

@@ -73,7 +73,7 @@ const DomainList = () => {
 
       form.reset();
     },
-    onError: () => {
+    onError: (data) => {
       toast({
         title: 'domain create',
         description: 'domain create failed',
@@ -111,15 +111,33 @@ const DomainList = () => {
                             {storeDetails?.SubDomain}.suprasy.com' in dns
                             settings in your domain register site.
                           </p>
-                          <p className="font-bold">
-                            CNAME RECORD @ or yourdomain.com & VALUE='
-                            {storeDetails?.SubDomain}.suprasy.com'
+                          <p className="font-bold">STEP 1:</p>
+                          <p className="">
+                            Add CNAME record{' '}
+                            <span className="font-bold">
+                              @ or yourdomain.com
+                            </span>{' '}
+                            to
+                            <span className="font-bold ml-1">
+                              {storeDetails?.SubDomain}.suprasy.com
+                            </span>
+                          </p>
+                          <p className="font-bold">STEP 2:</p>
+                          <p className="">
+                            Add your domain in the form bellow and click{' '}
+                            <span className="font-bold">"Add Domain" </span>
+                            button. If it's gives error try again in few minutes
+                            since it takes some time for DNS records to update
+                            properly.
                           </p>
                         </AlertDescription>
                       </Alert>
 
                       <FormControl>
-                        <Input placeholder="domain eg- mysite.com" {...field} />
+                        <Input
+                          placeholder="Enter Domain eg- mysite.com"
+                          {...field}
+                        />
                       </FormControl>
 
                       <FormMessage />

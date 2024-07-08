@@ -45,7 +45,7 @@ export const updateTurnstile = async (
   return response.data;
 };
 
-export const getDomain = async (): Promise<ResponseType<DomainType>> => {
+export const getMainDomain = async (): Promise<ResponseType<DomainType>> => {
   const response = await ApiClient.get(`/turnstile/domain`);
 
   return response.data;

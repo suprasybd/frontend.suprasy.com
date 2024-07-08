@@ -1,7 +1,13 @@
-import { Badge, Button } from '@customer/components/index';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Badge,
+  Button,
+} from '@customer/components/index';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import { getUserBalance, getUserStoresList } from './api';
+import { getSubDetails, getUserBalance, getUserStoresList } from './api';
 
 import {
   Card,
@@ -14,6 +20,8 @@ import {
 import { LoaderMain } from '../../components/Loader/Loader';
 import { Link } from '@tanstack/react-router';
 import { useModalStore } from '@customer/store/modalStore';
+import { StoreType } from './api/types';
+import { Terminal } from 'lucide-react';
 
 const Home: React.FC = () => {
   const { data: storeList, isLoading } = useQuery({
@@ -52,75 +60,102 @@ const Home: React.FC = () => {
       <h1 className="text-xl my-4">Stores</h1>
 
       {isLoading && <LoaderMain />}
-      <div className="grid grid-cols-1">
+      <div className="flex flex-wrap gap-[10px] justify-start items-center">
         {storeList?.Data?.map((store) => (
-          <Card key={store.Id} className="my-5">
-            <CardHeader>
-              <CardTitle>{store.StoreName}</CardTitle>
-              <CardDescription>
-                <div>
-                  <span className="mr-2">Site Status</span>
-                  {store.IsActive && <Badge variant="secondary">Active</Badge>}
-                  {!store.IsActive && (
-                    <Badge variant="destructive">
-                      Subscription Expired (Site is still active)
-                    </Badge>
-                  )}
-                </div>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div>
-                <p className="break-words">Store Key: {store.StoreKey}</p>
-                <p>
-                  {' '}
-                  Site Link:{' '}
-                  <a
-                    className="underline text-blue-500"
-                    href={`http://${store.SubDomain}.suprasy.com`}
-                    target="__blank"
-                  >{`https://${store.SubDomain}.suprasy.com`}</a>
-                </p>
-              </div>
-            </CardContent>
-            <CardFooter>
-              {store.IsActive && (
-                <Link
-                  className="underline underline-offset-4"
-                  to={'/store/$storeKey/dashboard'}
-                  params={{ storeKey: store.StoreKey }}
-                >
-                  View Dashboard ({store.StoreName})
-                </Link>
-              )}
-              {!store.IsActive && (
-                <p>
-                  Your website subscription has expired you can't view the
-                  dashboard, but your website is still actively running and
-                  functional. To gain access to dashbaord please renew
-                  subscription.
-                </p>
-              )}
-
-              {!store.IsActive && (
-                <Button
-                  className="my-3"
-                  onClick={() => {
-                    setModalPath({
-                      modal: 'renew-store',
-                      storeKey: store.StoreKey,
-                    });
-                  }}
-                >
-                  Renew Subscription
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
+          <StoreCard store={store} />
         ))}
       </div>
       {!storeList?.Data.length && <p>Not stores found!</p>}
     </section>
+  );
+};
+
+const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
+  const { data: subResponse } = useQuery({
+    queryKey: ['getStoreSub', store.StoreKey],
+    queryFn: () => getSubDetails(store.StoreKey),
+  });
+
+  const subData = subResponse?.Data;
+
+  const { setModalPath } = useModalStore((state) => state);
+
+  return (
+    <div>
+      <Card key={store.Id} className="my-5 w-full md:w-[400px] ">
+        <CardHeader>
+          <CardTitle>{store.StoreName}</CardTitle>
+          <CardDescription>
+            <div className="mt-3">
+              <span className="mr-2">Site Status</span>
+              {store.IsActive && <Badge variant="secondary">Active</Badge>}
+              {!store.IsActive && (
+                <Badge variant="destructive">
+                  Subscription Expired (Site is still active)
+                </Badge>
+              )}
+            </div>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <p className="break-words text-sm">Store Key: {store.StoreKey}</p>
+            <p className="text-sm my-2">
+              {' '}
+              Site Link:{' '}
+              <a
+                className="underline text-blue-500"
+                href={`http://${store.SubDomain}.suprasy.com`}
+                target="__blank"
+              >{`https://${store.SubDomain}.suprasy.com`}</a>
+            </p>
+            <p className="text-sm my-2">
+              Subscription Will Expire At: {subData?.EndDate}
+            </p>
+          </div>
+        </CardContent>
+        <CardFooter>
+          {store.IsActive && (
+            <Button className="w-full">
+              <Link
+                to={'/store/$storeKey/dashboard'}
+                params={{ storeKey: store.StoreKey }}
+              >
+                View Dashboard ({store.StoreName})
+              </Link>
+            </Button>
+          )}
+          <div>
+            {!store.IsActive && (
+              <Alert>
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Heads up!</AlertTitle>
+                <AlertDescription>
+                  Your website subscription has expired you can't view the
+                  dashboard, but your website is still actively running and
+                  functional. To gain access to dashboard please renew
+                  subscription.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {!store.IsActive && (
+              <Button
+                className="my-3 w-full"
+                onClick={() => {
+                  setModalPath({
+                    modal: 'renew-store',
+                    storeKey: store.StoreKey,
+                  });
+                }}
+              >
+                Renew Subscription
+              </Button>
+            )}
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 

@@ -28,7 +28,7 @@ export const getStoreDetails = async (
 export const getSubDetails = async (
   StoreKey: string
 ): Promise<ResponseType<SubscriptionType>> => {
-  const response = await ApiClient.get('/store/details/' + StoreKey);
+  const response = await ApiClient.get('/store/sub/' + StoreKey);
   return response.data;
 };
 

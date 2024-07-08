@@ -423,12 +423,10 @@ const CreateProduct: React.FC = () => {
                   />
 
                   <div className="mt-2">
+                    <FormLabel>Description</FormLabel>
                     <p className="text-sm text-red-600">
                       {errors.Description?.message}
                     </p>
-
-                    <FormLabel>Description</FormLabel>
-
                     {productDescription && isUpdating && (
                       <RichTextEditor
                         initialVal={productDescription}
@@ -449,11 +447,10 @@ const CreateProduct: React.FC = () => {
 
                   {/* summary */}
                   <div className="mt-2">
-                    <p className="text-sm text-red-600">
-                      {errors.Description?.message}
-                    </p>
-
                     <FormLabel>Summary</FormLabel>
+                    <p className="text-sm text-red-600">
+                      {errors.Summary?.message}
+                    </p>
 
                     {productSummary && isUpdating && (
                       <RichTextEditor

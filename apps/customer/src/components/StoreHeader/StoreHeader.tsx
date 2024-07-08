@@ -1,29 +1,41 @@
 import React from 'react';
 
+import { Home, Menu, Package, ShoppingCart } from 'lucide-react';
+
+import { Button } from '@customer/components/index';
+import { Sheet, SheetContent, SheetTrigger } from '@customer/components/index';
+import { Link, useParams } from '@tanstack/react-router';
+
 import {
-  CircleUser,
-  Home,
-  Menu,
-  Package,
-  Package2,
-  Search,
-  ShoppingCart,
+  BarChartHorizontal,
+  BrickWall,
+  Container,
+  FolderPen,
+  Link2,
+  Tent,
   Users,
 } from 'lucide-react';
 
 import { Badge } from '@customer/components/index';
-import { Button } from '@customer/components/index';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@customer/components/index';
-import { Input } from '@customer/components/index';
-import { Sheet, SheetContent, SheetTrigger } from '@customer/components/index';
+
+import { useQuery } from '@tanstack/react-query';
+import { getStoreOrders } from '@customer/pages/orders/api';
+import { getStoreDetails } from '@customer/pages/home/api';
 const StoreHeader: React.FC = () => {
+  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+
+  const { data: ordersResponse, isLoading } = useQuery({
+    queryKey: ['getStoreOrders', 1, 5, 'pending'],
+    queryFn: () => getStoreOrders({ Limit: 10, Page: 1, Status: 'pending' }),
+  });
+
+  const { data: storeDetailsResponse } = useQuery({
+    queryKey: ['getStoreDetails'],
+    queryFn: () => getStoreDetails(storeKey),
+  });
+
+  const storeData = storeDetailsResponse?.Data;
+
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
@@ -34,76 +46,165 @@ const StoreHeader: React.FC = () => {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
-          <nav className="grid gap-2 text-lg font-medium">
-            <a
-              href="#"
-              className="flex items-center gap-2 text-lg font-semibold"
+          <nav className="grid gap-2 text-lg font-medium overflow-y-scroll">
+            <Link
+              to="/store/$storeKey/dashboard"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
             >
-              <Package2 className="h-6 w-6" />
-              <span className="sr-only">Acme Inc</span>
-            </a>
-            <a
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Home className="h-5 w-5" />
+              <Home className="h-4 w-4" />
               Dashboard
-            </a>
-            <a
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
+            </Link>
+            <Link
+              to="/store/$storeKey/orders"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
             >
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="h-4 w-4" />
               Orders
               <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                6
+                {!isLoading && ordersResponse?.Pagination && (
+                  <>{ordersResponse.Pagination.TotalItems}</>
+                )}
               </Badge>
-            </a>
-            <a
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+            </Link>
+            <Link
+              to="/store/$storeKey/products"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
             >
-              <Package className="h-5 w-5" />
-              Products
-            </a>
-            <a
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+              <Package className="h-4 w-4" />
+              Products{' '}
+            </Link>
+            <Link
+              to="/store/$storeKey/customers"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
             >
-              <Users className="h-5 w-5" />
+              <Users className="h-4 w-4" />
               Customers
-            </a>
+            </Link>
+
+            <Link
+              to="/store/$storeKey/categories"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <BarChartHorizontal className="h-4 w-4" />
+              Categories
+            </Link>
+
+            <Link
+              to="/store/$storeKey/home"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <Home className="h-4 w-4" />
+              Home Page
+            </Link>
+
+            <Link
+              to="/store/$storeKey/shipping"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <Container className="h-4 w-4" />
+              Shipping
+            </Link>
+
+            <Link
+              to="/store/$storeKey/footer"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <Tent className="h-4 w-4" />
+              Pages & Footer
+            </Link>
+
+            <Link
+              to="/store/$storeKey/turnstile"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <BrickWall className="h-4 w-4" />
+              Trunstile & Logo
+            </Link>
+
+            <Link
+              to="/store/$storeKey/genlink"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <Link2 className="h-4 w-4" />
+              Generate Direct Product Purchase Link
+            </Link>
+
+            <Link
+              to="/store/$storeKey/domain"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <FolderPen className="h-4 w-4" />
+              Domain Name
+            </Link>
           </nav>
         </SheetContent>
       </Sheet>
-      {/* <div className="w-full flex-1">
-        <form>
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search products..."
-              className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-            />
-          </div>
-        </form>
-      </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="secondary" size="icon" className="rounded-full">
-            <CircleUser className="h-5 w-5" />
-            <span className="sr-only">Toggle user menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu> */}
     </header>
   );
 };

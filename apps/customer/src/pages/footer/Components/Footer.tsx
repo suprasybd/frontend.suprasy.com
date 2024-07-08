@@ -50,6 +50,12 @@ const FooterComponent = () => {
           <CardDescription>Update Footer Info From here</CardDescription>
         </CardHeader>
         <CardContent>
+          {description && description?.length > 3000 && (
+            <p className="text-red-500">
+              Footer description can't be more then 3000 char
+            </p>
+          )}
+
           {isSuccess && (
             <RichTextEditor
               initialVal={footer?.Description}

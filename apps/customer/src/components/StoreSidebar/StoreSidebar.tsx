@@ -1,15 +1,12 @@
-import { Button } from '@customer/components/index';
 import { Link, useParams } from '@tanstack/react-router';
 import {
   BarChartHorizontal,
-  Bell,
   BrickWall,
   Container,
   FolderPen,
   Home,
   Link2,
   Package,
-  Package2,
   ShoppingCart,
   Store,
   Tent,
@@ -208,19 +205,6 @@ const StoreSidebar = () => {
               <FolderPen className="h-4 w-4" />
               Domain Name
             </Link>
-            {/* <Link
-              to="/store/$storeKey/media"
-              params={{
-                storeKey: storeKey,
-              }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-            >
-              <GalleryVerticalEnd className="h-4 w-4" />
-              Media
-            </Link> */}
           </nav>
         </div>
       </div>

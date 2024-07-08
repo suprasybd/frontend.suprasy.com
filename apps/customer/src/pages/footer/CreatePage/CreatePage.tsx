@@ -142,6 +142,8 @@ const CreatePage = () => {
     }
   };
 
+  const { errors: formErrors } = form.formState;
+
   const [turnstileLoaded] = useTurnStileHook();
 
   const url = form.watch('Url');
@@ -169,13 +171,16 @@ const CreatePage = () => {
                       <Input placeholder="page url" {...field} />
                     </FormControl>
                     <FormDescription>yourdomain.com/page/{url}</FormDescription>
+                    <FormDescription>
+                      eg. about-us, terms-and-conditions, prvacy-policy
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
               <FormLabel className="mt-5">Page Content</FormLabel>
-
+              <p className="text-red-500">{formErrors.Description?.message}</p>
               {!isUpdating && (
                 <RichTextEditor
                   onValChange={(data) => {

@@ -20,6 +20,21 @@ export const addCategory = async (data: any): Promise<ResponseType<string>> => {
   return response.data;
 };
 
+export const addSubCategory = async ({
+  data,
+  parentCategory,
+}: {
+  data: any;
+  parentCategory: any;
+}): Promise<ResponseType<string>> => {
+  const response = await ApiClient.post(
+    `/categories/add/${parentCategory}`,
+    data
+  );
+
+  return response.data;
+};
+
 export const updateCategory = async ({
   data,
   id,
@@ -44,6 +59,14 @@ export const removeCategory = async ({
 
 export const getCategories = async (): Promise<ListResponseType<Category>> => {
   const response = await ApiClient.get('/categories');
+
+  return response.data;
+};
+
+export const getSubCategories = async (
+  parentCategory: number
+): Promise<ListResponseType<Category>> => {
+  const response = await ApiClient.get(`/categories/${parentCategory}`);
 
   return response.data;
 };

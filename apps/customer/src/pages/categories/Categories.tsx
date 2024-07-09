@@ -26,6 +26,7 @@ import {
   Category,
   addCategory,
   getCategories,
+  getSubCategories,
   removeCategory,
   updateCategory,
 } from './api';
@@ -36,6 +37,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { ReloadIcon } from '@radix-ui/react-icons';
+import { useModalStore } from '@customer/store/modalStore';
 
 const formSchema = z.object({
   CategoryName: z.string().min(2).max(50),
@@ -182,7 +184,7 @@ const Categories = () => {
         {categories &&
           categories?.length > 0 &&
           categories?.map((category) => (
-            <UpdateCategory key={category.Id} category={category} />
+            <CategoriesCard key={category.Id} category={category} />
           ))}
       </div>
 
@@ -215,6 +217,35 @@ const formSchemaUpdate = z.object({
     message: 'Username must be at least 2 characters.',
   }),
 });
+
+const CategoriesCard: React.FC<{ category: Category }> = ({ category }) => {
+  const { setModalPath } = useModalStore((state) => state);
+  const { data: subCategoriesResponse } = useQuery({
+    queryKey: ['getSubCategories', category.Id],
+    queryFn: () => getSubCategories(category.Id),
+    enabled: !!category.Id,
+  });
+
+  const subCategories = subCategoriesResponse?.Data;
+  return (
+    <div className="shadow-lg border-2 border-slate-500 rounded-md p-2">
+      <p>Parent Category</p>
+      <UpdateCategory category={category} />
+      <Button
+        onClick={() => {
+          setModalPath({ modal: 'subcategory', parentCategoryId: category.Id });
+        }}
+        className="my-2 mt-4 w-full"
+      >
+        Add Sub Category
+      </Button>
+      <p>Sub Categories</p>
+      {subCategories?.map((s) => (
+        <UpdateCategory category={s} />
+      ))}
+    </div>
+  );
+};
 
 const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
   const { toast } = useToast();
@@ -311,32 +342,6 @@ const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
           </div>
         </form>
       </Form>
-
-      {/* <div className="flex justify-between gap-[3px]">
-        <Turnstile className="hidden" siteKey="0x4AAAAAAAQW6BNxMGjPxRxa" />
-        <Button
-          variant={'outline'}
-          className="my-2 mt-5 w-full"
-          onClick={() => {
-            handleUpdateCategory({
-              id: category.Id,
-              categoryName: categoryState,
-            });
-          }}
-        >
-          Update
-        </Button>
-
-        <Button
-          className="my-2 mt-5 w-full"
-          variant={'gradiantT'}
-          onClick={() => {
-            handleRemove({ id: category.Id });
-          }}
-        >
-          Remove
-        </Button>
-      </div> */}
     </div>
   );
 };

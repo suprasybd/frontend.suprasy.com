@@ -32,6 +32,8 @@ import {
   AlertTitle,
 } from '@customer/components/index';
 import { MONTHLY_COST } from '@customer/config/api';
+import { checkSubDomain } from '@customer/pages/turnstile/api';
+import { useDebounce } from 'use-debounce';
 
 const formSchema = z.object({
   StoreName: z
@@ -65,6 +67,7 @@ const CreateStoreModal: React.FC = () => {
   const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
+    mode: 'all',
     resolver: zodResolver(formSchema),
     defaultValues: {
       StoreName: '',
@@ -117,6 +120,26 @@ const CreateStoreModal: React.FC = () => {
     },
   });
 
+  const subdomain = form.watch('SubDomain');
+
+  const [debouncdedSubdomain] = useDebounce(subdomain, 500);
+
+  const { isError } = useQuery({
+    queryKey: ['checkSubDomain', debouncdedSubdomain],
+    queryFn: () => checkSubDomain(debouncdedSubdomain),
+    retry: false,
+    enabled: !!debouncdedSubdomain,
+  });
+
+  useEffect(() => {
+    if (isError) {
+      form.setError('SubDomain', { message: 'Subdomain already taken' });
+      form.setFocus('SubDomain');
+    } else {
+      form.clearErrors('SubDomain');
+    }
+  }, [isError]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     handleCreateStore(values as any);
   }
@@ -131,8 +154,6 @@ const CreateStoreModal: React.FC = () => {
     }
     return false;
   }, [balance, planData]);
-
-  const subdomain = form.watch('SubDomain');
 
   return (
     <div>
@@ -227,7 +248,11 @@ const CreateStoreModal: React.FC = () => {
                 </div>
               )}
 
-              <Button disabled={!haveBalance} type="submit" className="w-full">
+              <Button
+                disabled={!haveBalance || isError}
+                type="submit"
+                className="w-full"
+              >
                 {isPending && 'Creating...'}
                 {!isPending && 'Create Store'}
               </Button>

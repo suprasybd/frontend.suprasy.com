@@ -51,6 +51,16 @@ export const getMainDomain = async (): Promise<ResponseType<DomainType>> => {
   return response.data;
 };
 
+export const checkSubDomain = async (
+  subDomain: string
+): Promise<ResponseType<DomainType>> => {
+  const response = await ApiClient.get(
+    `/turnstile/checksubdomain/${subDomain}`
+  );
+
+  return response.data;
+};
+
 export const updateDomain = async (
   data: any
 ): Promise<ResponseType<DomainType>> => {

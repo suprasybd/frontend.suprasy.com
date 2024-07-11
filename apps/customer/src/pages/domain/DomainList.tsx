@@ -39,10 +39,8 @@ const DomainList = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
     handleAddDomain({
       ...values,
-      'cf-turnstile-response': turnstileResponse,
     });
   }
 

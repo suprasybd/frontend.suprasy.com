@@ -99,9 +99,10 @@ const CreatePage = () => {
     }
   }, [page]);
 
-  function onSubmit(values: z.infer<typeof pageSchema>) {
-    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
-
+  function onSubmit(
+    values: z.infer<typeof pageSchema>,
+    turnstileResponse: string | null
+  ) {
     if (!isUpdating) {
       handleCreatePage({
         ...values,
@@ -134,9 +135,9 @@ const CreatePage = () => {
 
       if (!tRes) return;
 
-      localStorage.setItem('cf-turnstile-in-storage', tRes);
-
-      form.handleSubmit(onSubmit)(e);
+      form.handleSubmit((values: z.infer<typeof pageSchema>) =>
+        onSubmit(values, tRes)
+      )(e);
     } catch (error) {
       forceUpdate();
     }

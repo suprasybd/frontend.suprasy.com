@@ -48,16 +48,7 @@ const CreateSubCategory: React.FC = () => {
       forceUpdate();
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
-    handleCreateSubCateogry({
-      data: {
-        ...values,
-        'cf-turnstile-response': turnstileResponse,
-      },
-      parentCategory: parentId,
-    });
-  }
+
   useEffect(() => {
     if (modalName === 'subcategory' && parentId) {
       setModalOpen(true);
@@ -73,6 +64,19 @@ const CreateSubCategory: React.FC = () => {
     window.location.reload();
   };
 
+  function onSubmit(
+    values: z.infer<typeof formSchema>,
+    turnstileResponse: string | null
+  ) {
+    handleCreateSubCateogry({
+      data: {
+        ...values,
+        'cf-turnstile-response': turnstileResponse,
+      },
+      parentCategory: parentId,
+    });
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFormWrapper = (e: any) => {
     e.preventDefault();
@@ -81,9 +85,9 @@ const CreateSubCategory: React.FC = () => {
 
       if (!tRes) return;
 
-      localStorage.setItem('cf-turnstile-in-storage', tRes);
-
-      form.handleSubmit(onSubmit)(e);
+      form.handleSubmit((values: z.infer<typeof formSchema>) =>
+        onSubmit(values, tRes)
+      )(e);
     } catch (error) {
       forceUpdate();
     }

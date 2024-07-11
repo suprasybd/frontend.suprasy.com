@@ -53,8 +53,10 @@ const Categories = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
+  function onSubmit(
+    values: z.infer<typeof formSchema>,
+    turnstileResponse: string | null
+  ) {
     handleAddCategory({
       ...values,
       'cf-turnstile-response': turnstileResponse,
@@ -104,9 +106,9 @@ const Categories = () => {
 
       if (!tRes) return;
 
-      localStorage.setItem('cf-turnstile-in-storage', tRes);
-
-      form.handleSubmit(onSubmit)(e);
+      form.handleSubmit((values: z.infer<typeof formSchema>) =>
+        onSubmit(values, tRes)
+      )(e);
     } catch (error) {
       forceUpdate();
     }

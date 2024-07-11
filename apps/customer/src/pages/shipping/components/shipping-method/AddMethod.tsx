@@ -115,8 +115,10 @@ const AddMethod: React.FC = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof methodSchema>) {
-    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
+  function onSubmit(
+    values: z.infer<typeof methodSchema>,
+    turnstileResponse: string | null
+  ) {
     if (update) {
       handleUpdateMethod({
         Id: methodId,
@@ -143,9 +145,9 @@ const AddMethod: React.FC = () => {
 
       if (!tRes) return;
 
-      localStorage.setItem('cf-turnstile-in-storage', tRes);
-
-      form.handleSubmit(onSubmit)(e);
+      form.handleSubmit((values: z.infer<typeof methodSchema>) =>
+        onSubmit(values, tRes)
+      )(e);
     } catch (error) {
       forceUpdate();
     }

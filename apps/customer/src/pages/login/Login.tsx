@@ -53,8 +53,10 @@ const Login: React.FC = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
+  function onSubmit(
+    values: z.infer<typeof loginSchema>,
+    turnstileResponse: string | null
+  ) {
     loginMutation({
       ...values,
       'cf-turnstile-response': turnstileResponse,
@@ -73,9 +75,9 @@ const Login: React.FC = () => {
 
       if (!tRes) return;
 
-      localStorage.setItem('cf-turnstile-in-storage', tRes);
-
-      form.handleSubmit(onSubmit)(e);
+      form.handleSubmit((values: z.infer<typeof loginSchema>) =>
+        onSubmit(values, tRes)
+      )(e);
     } catch (error) {
       forceUpdate();
     }

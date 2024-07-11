@@ -112,8 +112,10 @@ const AddArea: React.FC = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof areaSchema>) {
-    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
+  function onSubmit(
+    values: z.infer<typeof areaSchema>,
+    turnstileResponse: string | null
+  ) {
     if (update) {
       handleUpdateArea({
         Id: areaId,
@@ -141,9 +143,9 @@ const AddArea: React.FC = () => {
 
       if (!tRes) return;
 
-      localStorage.setItem('cf-turnstile-in-storage', tRes);
-
-      form.handleSubmit(onSubmit)(e);
+      form.handleSubmit((values: z.infer<typeof areaSchema>) =>
+        onSubmit(values, tRes)
+      )(e);
     } catch (error) {
       forceUpdate();
     }

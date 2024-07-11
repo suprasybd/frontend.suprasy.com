@@ -279,8 +279,10 @@ const CreateProduct: React.FC = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof productSchema>) {
-    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
+  function onSubmit(
+    values: z.infer<typeof productSchema>,
+    turnstileResponse: string | null
+  ) {
     const formatedImages = values.Images.map(
       (value: { ImageUrl: string }) => value.ImageUrl
     );
@@ -347,9 +349,9 @@ const CreateProduct: React.FC = () => {
 
       if (!tRes) return;
 
-      localStorage.setItem('cf-turnstile-in-storage', tRes);
-
-      form.handleSubmit(onSubmit)(e);
+      form.handleSubmit((values: z.infer<typeof productSchema>) =>
+        onSubmit(values, tRes)
+      )(e);
     } catch (error) {
       forceUpdate();
     }

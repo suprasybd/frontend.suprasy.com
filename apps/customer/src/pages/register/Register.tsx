@@ -55,8 +55,10 @@ const Register: React.FC = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof registerSchema>) {
-    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
+  function onSubmit(
+    values: z.infer<typeof registerSchema>,
+    turnstileResponse: string | null
+  ) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     registerMutation({
       ...values,
@@ -78,9 +80,9 @@ const Register: React.FC = () => {
 
       if (!tRes) return;
 
-      localStorage.setItem('cf-turnstile-in-storage', tRes);
-
-      form.handleSubmit(onSubmit)(e);
+      form.handleSubmit((values: z.infer<typeof registerSchema>) =>
+        onSubmit(values, tRes)
+      )(e);
     } catch (error) {
       forceUpdate();
     }

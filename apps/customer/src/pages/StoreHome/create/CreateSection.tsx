@@ -186,11 +186,10 @@ const CreateSection = () => {
     // eslint-disable-next-line
   }, [Product]);
 
-  function onSubmit(values: z.infer<typeof formSchemaHomesection>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    const turnstileResponse = localStorage.getItem('cf-turnstile-in-storage');
-
+  function onSubmit(
+    values: z.infer<typeof formSchemaHomesection>,
+    turnstileResponse: string | null
+  ) {
     const formatedProducts = values.Products.map(
       (product) => product.ProductId
     );
@@ -230,9 +229,9 @@ const CreateSection = () => {
 
       if (!tRes) return;
 
-      localStorage.setItem('cf-turnstile-in-storage', tRes);
-
-      form.handleSubmit(onSubmit)(e);
+      form.handleSubmit((values: z.infer<typeof formSchemaHomesection>) =>
+        onSubmit(values, tRes)
+      )(e);
     } catch (error) {
       forceUpdate();
     }

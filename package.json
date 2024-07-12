@@ -7,6 +7,8 @@
   },
   "private": true,
   "dependencies": {
+    "@easyblocks/core": "^1.0.8",
+    "@easyblocks/editor": "^1.0.8",
     "@emotion/css": "^11.11.2",
     "@hookform/resolvers": "^3.3.4",
     "@marsidev/react-turnstile": "^0.7.1",
@@ -41,6 +43,7 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.50.1",
+    "react-image-crop": "^11.0.6",
     "react-player": "^2.16.0",
     "slate": "^0.102.0",
     "slate-history": "^0.100.0",

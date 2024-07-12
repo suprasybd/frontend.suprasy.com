@@ -13,12 +13,14 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as ViseditorImport } from './routes/viseditor'
 import { Route as TestImport } from './routes/test'
 import { Route as StoreImport } from './routes/store'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as StoreStoreKeyShippingImport } from './routes/store/$storeKey/shipping'
+import { Route as StoreStoreKeyLandingImport } from './routes/store/$storeKey/landing'
 import { Route as StoreStoreKeySectionCreateImport } from './routes/store/$storeKey/section_/create'
 import { Route as StoreStoreKeyProductsCreateImport } from './routes/store/$storeKey/products_/create'
 import { Route as StoreStoreKeyFooterCreatepageImport } from './routes/store/$storeKey/footer_/createpage'
@@ -87,6 +89,11 @@ const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
+
+const ViseditorRoute = ViseditorImport.update({
+  path: '/viseditor',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const TestRoute = TestImport.update({
   path: '/test',
@@ -241,6 +248,11 @@ const StoreStoreKeyShippingRoute = StoreStoreKeyShippingImport.update({
   getParentRoute: () => StoreRoute,
 } as any)
 
+const StoreStoreKeyLandingRoute = StoreStoreKeyLandingImport.update({
+  path: '/$storeKey/landing',
+  getParentRoute: () => StoreRoute,
+} as any)
+
 const StoreStoreKeySectionCreateRoute = StoreStoreKeySectionCreateImport.update(
   {
     path: '/$storeKey/section/create',
@@ -300,6 +312,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestImport
       parentRoute: typeof rootRoute
     }
+    '/viseditor': {
+      preLoaderRoute: typeof ViseditorImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
@@ -307,6 +323,10 @@ declare module '@tanstack/react-router' {
     '/forgotpassword': {
       preLoaderRoute: typeof ForgotpasswordLazyImport
       parentRoute: typeof rootRoute
+    }
+    '/store/$storeKey/landing': {
+      preLoaderRoute: typeof StoreStoreKeyLandingImport
+      parentRoute: typeof StoreImport
     }
     '/store/$storeKey/shipping': {
       preLoaderRoute: typeof StoreStoreKeyShippingImport
@@ -406,6 +426,7 @@ export const routeTree = rootRoute.addChildren([
   LoginRoute,
   RegisterRoute,
   StoreRoute.addChildren([
+    StoreStoreKeyLandingRoute,
     StoreStoreKeyShippingRoute,
     StoreStoreKeyAnalyticsLazyRoute,
     StoreStoreKeyBillingLazyRoute,
@@ -430,6 +451,7 @@ export const routeTree = rootRoute.addChildren([
     StoreStoreKeyOrdersOrderIdIndexRoute,
   ]),
   TestRoute,
+  ViseditorRoute,
   AboutLazyRoute,
   ForgotpasswordLazyRoute,
 ])

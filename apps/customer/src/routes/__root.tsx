@@ -22,7 +22,6 @@ const RootComponent: React.FC = () => {
         <Outlet />
       </div>
       <ScrollRestoration />
-
       {/* <TanStackRouterDevtools /> */}
     </>
   );

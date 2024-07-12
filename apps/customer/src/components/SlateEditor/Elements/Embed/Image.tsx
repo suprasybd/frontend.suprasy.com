@@ -33,7 +33,7 @@ const Image = ({ attributes, element, children }) => {
   return (
     <div
       {...attributes}
-      className="embed"
+      className=" w-full flex justify-center items-center"
       style={{
         display: 'flex',
         boxShadow: selected && focused && '0 0 3px 3px lightgray',
@@ -41,11 +41,12 @@ const Image = ({ attributes, element, children }) => {
       {...element.attr}
     >
       <div
+        className="relative"
         contentEditable={false}
         style={{
           maxWidth: `${size.width}px`,
           maxHeight: `${size.height}px`,
-          overflow: 'hidden',
+          // overflow: 'hidden',
         }}
       >
         <img
@@ -56,9 +57,10 @@ const Image = ({ attributes, element, children }) => {
           alt={alt}
           src={url}
         />
-        {width} -{height}
+
         {true && (
           <button
+            className="absolute right-0 bottom-0 p-2 "
             onClick={(e) => e.preventDefault()}
             onMouseDown={onMouseDown}
             style={{
@@ -68,7 +70,7 @@ const Image = ({ attributes, element, children }) => {
               background: 'transparent',
             }}
           >
-            <Scale3D />
+            <Scale3D className="!text-white bg-blue-500 rounded-sm" />
           </button>
         )}
       </div>

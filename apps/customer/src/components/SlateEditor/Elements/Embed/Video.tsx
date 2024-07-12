@@ -35,18 +35,18 @@ const Video = ({ attributes, element, children }) => {
   return (
     <div
       {...attributes}
-      className="embed !w-full h-full"
+      className="w-full h-full flex justify-center items-center"
       style={{
         display: 'flex',
         justifyContent: 'center',
         boxShadow: selected && focused && '0 0 3px 3px lightgray',
         height: `${size.height}px`,
-        maxWidth: `${size.width}px`,
       }}
       {...element.attr}
     >
       <div
         contentEditable={false}
+        className="relative"
         style={{
           maxWidth: `${size.width}px`,
           maxHeight: `${size.height}px`,
@@ -76,6 +76,7 @@ const Video = ({ attributes, element, children }) => {
         }
         {true && (
           <button
+            className="absolute right-0 bottom-0 p-2 "
             onClick={(e) => {
               e.preventDefault();
             }}
@@ -84,10 +85,9 @@ const Video = ({ attributes, element, children }) => {
               width: '15px',
               height: '15px',
               opacity: 1,
-              background: 'transparent',
             }}
           >
-            <Scale3D className="text-red-500" />
+            <Scale3D className="!text-white bg-blue-500 rounded-sm" />
           </button>
         )}
       </div>

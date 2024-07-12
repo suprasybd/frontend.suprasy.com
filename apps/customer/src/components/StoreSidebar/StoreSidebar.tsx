@@ -50,7 +50,7 @@ const StoreSidebar = () => {
         </div>
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-            <Link
+            {/* <Link
               to="/store/$storeKey/dashboard"
               params={{
                 storeKey: storeKey,
@@ -62,7 +62,7 @@ const StoreSidebar = () => {
             >
               <Home className="h-4 w-4" />
               Dashboard
-            </Link>
+            </Link> */}
             <Link
               to="/store/$storeKey/orders"
               params={{

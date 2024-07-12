@@ -47,7 +47,7 @@ const StoreHeader: React.FC = () => {
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
           <nav className="grid gap-2 text-lg font-medium overflow-y-scroll">
-            <Link
+            {/* <Link
               to="/store/$storeKey/dashboard"
               params={{
                 storeKey: storeKey,
@@ -59,7 +59,7 @@ const StoreHeader: React.FC = () => {
             >
               <Home className="h-4 w-4" />
               Dashboard
-            </Link>
+            </Link> */}
             <Link
               to="/store/$storeKey/orders"
               params={{

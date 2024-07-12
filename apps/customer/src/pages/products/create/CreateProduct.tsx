@@ -356,6 +356,7 @@ const CreateProduct: React.FC = () => {
       forceUpdate();
     }
   };
+
   const [turnstileLoaded] = useTurnStileHook();
 
   return (
@@ -543,7 +544,7 @@ const CreateProduct: React.FC = () => {
                     onClick={(e) => {
                       // set modal here
                       e.preventDefault();
-                      setModalPath({ modal: 'media' });
+                      setModalPath({ modal: 'media', aspect: 1 });
                     }}
                     className="flex aspect-square mt-10 w-[200px] h-[160px] items-center justify-center rounded-md border border-dashed"
                   >

@@ -42,16 +42,23 @@ const MediaModal: React.FC<{
 }> = ({ Editor, Open, setFormData, ModalImageSubmit }) => {
   const { modal, clearModalPath } = useModalStore((state) => state);
   const modalName = modal.modal;
+  const defaultAspect = (modal.aspect as number) || 16 / 9;
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [tab, setTab] = useState<string>('browse');
   const [selectedImages, setSelectedImages] = useState<string[]>();
-  const [aspect, setAspect] = useState<number | undefined>(16 / 9);
+  const [aspect, setAspect] = useState<number | undefined>(defaultAspect);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (defaultAspect) {
+      setAspect(defaultAspect);
+    }
+  }, [defaultAspect]);
 
   const { setImagesList } = useMediaFormStore((state) => state);
   const [crop, setCrop] = useState<Crop | undefined>({
@@ -75,6 +82,7 @@ const MediaModal: React.FC<{
   }, [Open]);
 
   const closeModal = () => {
+    setImgSrc('');
     setModalOpen(false);
     clearModalPath();
   };

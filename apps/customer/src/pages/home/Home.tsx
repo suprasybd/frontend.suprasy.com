@@ -22,6 +22,7 @@ import { Link } from '@tanstack/react-router';
 import { useModalStore } from '@customer/store/modalStore';
 import { StoreType } from './api/types';
 import { Terminal } from 'lucide-react';
+import cn from 'classnames';
 
 const Home: React.FC = () => {
   const { data: storeList, isLoading } = useQuery({
@@ -60,7 +61,7 @@ const Home: React.FC = () => {
       <h1 className="text-xl my-4">Stores</h1>
 
       {isLoading && <LoaderMain />}
-      <div className="flex flex-wrap gap-[10px] justify-start items-center">
+      <div className="flex flex-wrap gap-[10px] justify-start items-start">
         {storeList?.Data?.map((store) => (
           <StoreCard store={store} />
         ))}
@@ -82,7 +83,13 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
 
   return (
     <div>
-      <Card key={store.Id} className="my-5 w-full md:w-[400px] ">
+      <Card
+        key={store.Id}
+        className={cn(
+          'my-5 w-full md:w-[400px] ',
+          store.IsActive && 'h-[300px]'
+        )}
+      >
         <CardHeader>
           <CardTitle>{store.StoreName}</CardTitle>
           <CardDescription>
@@ -97,7 +104,7 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
             </div>
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-5">
           <div>
             <p className="break-words text-sm">Store Key: {store.StoreKey}</p>
             <p className="text-sm my-2">
@@ -115,16 +122,19 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
           </div>
         </CardContent>
         <CardFooter>
-          {store.IsActive && (
-            <Button className="w-full">
-              <Link
-                to={'/store/$storeKey/dashboard'}
-                params={{ storeKey: store.StoreKey }}
-              >
-                View Dashboard ({store.StoreName})
-              </Link>
-            </Button>
-          )}
+          <div>
+            {store.IsActive && (
+              <Button className="w-full">
+                <Link
+                  to={'/store/$storeKey/dashboard'}
+                  params={{ storeKey: store.StoreKey }}
+                >
+                  View Dashboard ({store.StoreName})
+                </Link>
+              </Button>
+            )}
+          </div>
+
           <div>
             {!store.IsActive && (
               <Alert>

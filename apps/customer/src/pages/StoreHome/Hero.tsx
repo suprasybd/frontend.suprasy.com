@@ -126,7 +126,7 @@ const Hero = () => {
       <Button
         className="my-3"
         onClick={() => {
-          setModalPath({ modal: 'media' });
+          setModalPath({ modal: 'media', aspect: 3 });
         }}
       >
         Add Hero Image

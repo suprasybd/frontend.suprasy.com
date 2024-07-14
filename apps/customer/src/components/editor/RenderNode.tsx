@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 
-import { ArrowUp01, DeleteIcon, Move3D } from 'lucide-react';
+import { ArrowUp01, Move, Trash } from 'lucide-react';
 
 const IndicatorDiv = styled.div`
   height: 30px;
@@ -111,7 +111,7 @@ export const RenderNode = ({ render }) => {
               <h2 className="flex-1 mr-4">{name}</h2>
               {moveable ? (
                 <Btn className="mr-2 cursor-move" ref={drag}>
-                  <Move3D />
+                  <Move />
                 </Btn>
               ) : null}
               {id !== ROOT_NODE && (
@@ -132,7 +132,7 @@ export const RenderNode = ({ render }) => {
                     actions.delete(id);
                   }}
                 >
-                  <DeleteIcon />
+                  <Trash color="red" />
                 </Btn>
               ) : null}
             </IndicatorDiv>,

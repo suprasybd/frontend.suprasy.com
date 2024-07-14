@@ -145,7 +145,7 @@ export const Sidebar = () => {
     <SidebarDiv enabled={enabled} className="sidebar transition bg-white w-2">
       <div className="flex flex-col h-full">
         <SidebarItem
-          icon={<BanIcon />}
+          icon={<BanIcon className="text-white" />}
           title="Customize"
           height={!layersVisible ? 'full' : '55%'}
           visible={toolbarVisible}
@@ -154,7 +154,7 @@ export const Sidebar = () => {
           <Toolbar />
         </SidebarItem>
         <SidebarItem
-          icon={<Layers2 />}
+          icon={<Layers2 className="text-white" />}
           title="Layers"
           height={!toolbarVisible ? 'full' : '45%'}
           visible={layersVisible}

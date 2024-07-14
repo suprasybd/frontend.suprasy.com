@@ -20,7 +20,6 @@ import { Video } from '@customer/components/selectors/Video';
 const Landing = () => {
   return (
     <div className="h-screen w-screen fixed top-0 left-0 bg-white">
-      Landing
       <CraftEditor />
     </div>
   );

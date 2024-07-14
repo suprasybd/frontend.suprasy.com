@@ -56,12 +56,11 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
         }`}
       >
         <div className="flex-1 flex items-center">
-          {/* {React.createElement(icon, { className: 'w-4 h-4 mr-2' })} */}
           {icon}
           <h2 className="text-xs uppercase">{title}</h2>
         </div>
         <Chevron visible={visible}>
-          <ArrowDown />
+          <ArrowDown className="text-white" />
         </Chevron>
       </HeaderDiv>
       {visible ? (

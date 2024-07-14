@@ -1,10 +1,9 @@
 import { useEditor } from '@craftjs/core';
 import { Tooltip } from '@material-ui/core';
 import cx from 'classnames';
-import React from 'react';
 import styled from 'styled-components';
 
-import { Check, CupSoda, Redo, Undo } from 'lucide-react';
+import { Check, CupSoda, Redo2, Undo2 } from 'lucide-react';
 
 const HeaderDiv = styled.div`
   width: 100%;
@@ -62,12 +61,12 @@ export const Header = () => {
           <div className="flex-1 flex">
             <Tooltip title="Undo" placement="bottom">
               <Item disabled={!canUndo} onClick={() => actions.history.undo()}>
-                <Undo />
+                <Undo2 className="text-black bg-transparent" />
               </Item>
             </Tooltip>
             <Tooltip title="Redo" placement="bottom">
               <Item disabled={!canRedo} onClick={() => actions.history.redo()}>
-                <Redo />
+                <Redo2 className="text-black" />
               </Item>
             </Tooltip>
           </div>

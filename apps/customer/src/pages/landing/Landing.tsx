@@ -64,7 +64,7 @@ function CraftEditor() {
               <Element
                 canvas
                 is={Container}
-                width="800px"
+                width="100%"
                 height="auto"
                 background={{ r: 255, g: 255, b: 255, a: 1 }}
                 padding={['40', '40', '40', '40']}

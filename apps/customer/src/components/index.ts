@@ -27,4 +27,5 @@ export * from './ui/toaster';
 export * from './ui/use-toast';
 export * from './ui/sheet';
 export * from './ui/breadcrumb';
+export * from './ui/scroll-area';
 export * from './SlateEditor/RichText';

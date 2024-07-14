@@ -205,6 +205,19 @@ const StoreSidebar = () => {
               <FolderPen className="h-4 w-4" />
               Domain Name
             </Link>
+            <Link
+              to="/store/$storeKey/themes"
+              params={{
+                storeKey: storeKey,
+              }}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
+              [&.active]:text-primary
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+            >
+              <FolderPen className="h-4 w-4" />
+              Themes
+            </Link>
           </nav>
         </div>
       </div>

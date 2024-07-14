@@ -12,6 +12,7 @@ export type TextProps = {
   bgColor: Record<'r' | 'g' | 'b' | 'a', string>;
   borderRadius: number;
   shadow: number;
+  padding: number;
   text: string;
   margin: [string, string, string, string];
 };
@@ -26,6 +27,7 @@ export const Text = ({
   margin,
   bgColor,
   borderRadius,
+  padding,
 }: Partial<TextProps>) => {
   const {
     connectors: { connect },
@@ -53,6 +55,7 @@ export const Text = ({
         textShadow: `0px 0px 2px rgba(0,0,0,${(shadow || 0) / 100})`,
         fontWeight,
         textAlign,
+        padding: `${padding}px` || '0px',
       }}
     />
   );
@@ -70,6 +73,7 @@ Text.craft = {
     text: 'Text',
     bgColor: 'white',
     borderRadius: 2,
+    padding: 3,
   },
   related: {
     toolbar: TextSettings,

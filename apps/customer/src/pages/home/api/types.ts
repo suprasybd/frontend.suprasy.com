@@ -7,6 +7,8 @@ export interface StoreType {
   IsActive: boolean;
   DomainName: string;
   UserId: number;
+  ThemeId: number;
+  ThemeVersionId: number;
   CreatedAt: string;
   Status: string;
   UpdatedAt: string;

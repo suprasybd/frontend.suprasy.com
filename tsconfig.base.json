@@ -15,8 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@customer/*": ["apps/customer/src/*"],
-      "@public/*": ["apps/customer/public/*"]
+      "@customer/*": ["apps/customer/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

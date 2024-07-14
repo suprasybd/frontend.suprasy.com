@@ -88,6 +88,13 @@ export const TextSettings = () => {
           type="slider"
           label="Rounded Corner"
         />
+        <ToolbarItem
+          propKey="padding"
+          index={0}
+          full={true}
+          type="slider"
+          label="Padding"
+        />
       </ToolbarSection>
     </React.Fragment>
   );

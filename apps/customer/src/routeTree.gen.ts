@@ -18,6 +18,7 @@ import { Route as StoreImport } from './routes/store'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
+import { Route as StoreStoreKeyThemesImport } from './routes/store/$storeKey/themes'
 import { Route as StoreStoreKeyShippingImport } from './routes/store/$storeKey/shipping'
 import { Route as StoreStoreKeyLandingImport } from './routes/store/$storeKey/landing'
 import { Route as StoreStoreKeySectionCreateImport } from './routes/store/$storeKey/section_/create'
@@ -237,6 +238,11 @@ const StoreStoreKeyAnalyticsLazyRoute = StoreStoreKeyAnalyticsLazyImport.update(
   import('./routes/store/$storeKey/analytics.lazy').then((d) => d.Route),
 )
 
+const StoreStoreKeyThemesRoute = StoreStoreKeyThemesImport.update({
+  path: '/$storeKey/themes',
+  getParentRoute: () => StoreRoute,
+} as any)
+
 const StoreStoreKeyShippingRoute = StoreStoreKeyShippingImport.update({
   path: '/$storeKey/shipping',
   getParentRoute: () => StoreRoute,
@@ -347,6 +353,13 @@ declare module '@tanstack/react-router' {
       path: '/$storeKey/shipping'
       fullPath: '/store/$storeKey/shipping'
       preLoaderRoute: typeof StoreStoreKeyShippingImport
+      parentRoute: typeof StoreImport
+    }
+    '/store/$storeKey/themes': {
+      id: '/store/$storeKey/themes'
+      path: '/$storeKey/themes'
+      fullPath: '/store/$storeKey/themes'
+      preLoaderRoute: typeof StoreStoreKeyThemesImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/analytics': {
@@ -508,6 +521,7 @@ export const routeTree = rootRoute.addChildren({
   StoreRoute: StoreRoute.addChildren({
     StoreStoreKeyLandingRoute,
     StoreStoreKeyShippingRoute,
+    StoreStoreKeyThemesRoute,
     StoreStoreKeyAnalyticsLazyRoute,
     StoreStoreKeyBillingLazyRoute,
     StoreStoreKeyCategoriesLazyRoute,
@@ -566,6 +580,7 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/store/$storeKey/landing",
         "/store/$storeKey/shipping",
+        "/store/$storeKey/themes",
         "/store/$storeKey/analytics",
         "/store/$storeKey/billing",
         "/store/$storeKey/categories",
@@ -604,6 +619,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/store/$storeKey/shipping": {
       "filePath": "store/$storeKey/shipping.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/themes": {
+      "filePath": "store/$storeKey/themes.tsx",
       "parent": "/store"
     },
     "/store/$storeKey/analytics": {

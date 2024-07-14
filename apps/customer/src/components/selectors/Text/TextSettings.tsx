@@ -49,14 +49,16 @@ export const TextSettings = () => {
       </ToolbarSection>
       <ToolbarSection
         title="Appearance"
-        props={['color', 'shadow']}
-        summary={({ color, shadow }: any) => {
+        props={['color', 'shadow', 'bgColor', 'borderRadius']}
+        summary={({ color, shadow, bgColor, borderRadius }: any) => {
           return (
             <div className="fletext-right">
               <p
                 style={{
                   color: color && `rgba(${Object.values(color)})`,
+                  borderRadius: `${borderRadius}px` || '0px',
                   textShadow: `0px 0px 2px rgba(0, 0, 0, ${shadow / 100})`,
+                  backgroundColor: bgColor && `rgba(${Object.values(bgColor)})`,
                 }}
                 className="text-white text-right"
               >
@@ -72,6 +74,19 @@ export const TextSettings = () => {
           propKey="shadow"
           type="slider"
           label="Shadow"
+        />
+        <ToolbarItem
+          full={true}
+          propKey="bgColor"
+          type="color"
+          label="Text Background"
+        />
+        <ToolbarItem
+          propKey="borderRadius"
+          index={0}
+          full={true}
+          type="slider"
+          label="Rounded Corner"
         />
       </ToolbarSection>
     </React.Fragment>

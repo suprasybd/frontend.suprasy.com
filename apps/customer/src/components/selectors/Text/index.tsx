@@ -9,6 +9,8 @@ export type TextProps = {
   textAlign: string;
   fontWeight: string;
   color: Record<'r' | 'g' | 'b' | 'a', string>;
+  bgColor: Record<'r' | 'g' | 'b' | 'a', string>;
+  borderRadius: number;
   shadow: number;
   text: string;
   margin: [string, string, string, string];
@@ -22,6 +24,8 @@ export const Text = ({
   shadow,
   text,
   margin,
+  bgColor,
+  borderRadius,
 }: Partial<TextProps>) => {
   const {
     connectors: { connect },
@@ -41,6 +45,8 @@ export const Text = ({
       tagName="h2" // Use a custom HTML tag (uses a div by default)
       style={{
         width: '100%',
+        backgroundColor: `rgba(${Object.values(bgColor)})`,
+        borderRadius: `${borderRadius}px` || `0px`,
         margin: `${margin[0]}px ${margin[1]}px ${margin[2]}px ${margin[3]}px`,
         color: `rgba(${Object.values(color)})`,
         fontSize: `${fontSize}px`,
@@ -62,6 +68,8 @@ Text.craft = {
     margin: [0, 0, 0, 0],
     shadow: 0,
     text: 'Text',
+    bgColor: 'white',
+    borderRadius: 2,
   },
   related: {
     toolbar: TextSettings,

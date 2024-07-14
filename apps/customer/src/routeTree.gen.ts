@@ -287,122 +287,212 @@ const StoreStoreKeyProductsProductIdDetailsLazyRoute =
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
     '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
     '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
     '/store': {
+      id: '/store'
+      path: '/store'
+      fullPath: '/store'
       preLoaderRoute: typeof StoreImport
       parentRoute: typeof rootRoute
     }
     '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
       preLoaderRoute: typeof TestImport
       parentRoute: typeof rootRoute
     }
     '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
     '/forgotpassword': {
+      id: '/forgotpassword'
+      path: '/forgotpassword'
+      fullPath: '/forgotpassword'
       preLoaderRoute: typeof ForgotpasswordLazyImport
       parentRoute: typeof rootRoute
     }
     '/store/$storeKey/landing': {
+      id: '/store/$storeKey/landing'
+      path: '/$storeKey/landing'
+      fullPath: '/store/$storeKey/landing'
       preLoaderRoute: typeof StoreStoreKeyLandingImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/shipping': {
+      id: '/store/$storeKey/shipping'
+      path: '/$storeKey/shipping'
+      fullPath: '/store/$storeKey/shipping'
       preLoaderRoute: typeof StoreStoreKeyShippingImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/analytics': {
+      id: '/store/$storeKey/analytics'
+      path: '/$storeKey/analytics'
+      fullPath: '/store/$storeKey/analytics'
       preLoaderRoute: typeof StoreStoreKeyAnalyticsLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/billing': {
+      id: '/store/$storeKey/billing'
+      path: '/$storeKey/billing'
+      fullPath: '/store/$storeKey/billing'
       preLoaderRoute: typeof StoreStoreKeyBillingLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/categories': {
+      id: '/store/$storeKey/categories'
+      path: '/$storeKey/categories'
+      fullPath: '/store/$storeKey/categories'
       preLoaderRoute: typeof StoreStoreKeyCategoriesLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/customers': {
+      id: '/store/$storeKey/customers'
+      path: '/$storeKey/customers'
+      fullPath: '/store/$storeKey/customers'
       preLoaderRoute: typeof StoreStoreKeyCustomersLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/dashboard': {
+      id: '/store/$storeKey/dashboard'
+      path: '/$storeKey/dashboard'
+      fullPath: '/store/$storeKey/dashboard'
       preLoaderRoute: typeof StoreStoreKeyDashboardLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/domain': {
+      id: '/store/$storeKey/domain'
+      path: '/$storeKey/domain'
+      fullPath: '/store/$storeKey/domain'
       preLoaderRoute: typeof StoreStoreKeyDomainLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/email': {
+      id: '/store/$storeKey/email'
+      path: '/$storeKey/email'
+      fullPath: '/store/$storeKey/email'
       preLoaderRoute: typeof StoreStoreKeyEmailLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/footer': {
+      id: '/store/$storeKey/footer'
+      path: '/$storeKey/footer'
+      fullPath: '/store/$storeKey/footer'
       preLoaderRoute: typeof StoreStoreKeyFooterLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/genlink': {
+      id: '/store/$storeKey/genlink'
+      path: '/$storeKey/genlink'
+      fullPath: '/store/$storeKey/genlink'
       preLoaderRoute: typeof StoreStoreKeyGenlinkLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/home': {
+      id: '/store/$storeKey/home'
+      path: '/$storeKey/home'
+      fullPath: '/store/$storeKey/home'
       preLoaderRoute: typeof StoreStoreKeyHomeLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/inventory': {
+      id: '/store/$storeKey/inventory'
+      path: '/$storeKey/inventory'
+      fullPath: '/store/$storeKey/inventory'
       preLoaderRoute: typeof StoreStoreKeyInventoryLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/media': {
+      id: '/store/$storeKey/media'
+      path: '/$storeKey/media'
+      fullPath: '/store/$storeKey/media'
       preLoaderRoute: typeof StoreStoreKeyMediaLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/orders': {
+      id: '/store/$storeKey/orders'
+      path: '/$storeKey/orders'
+      fullPath: '/store/$storeKey/orders'
       preLoaderRoute: typeof StoreStoreKeyOrdersLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/payments': {
+      id: '/store/$storeKey/payments'
+      path: '/$storeKey/payments'
+      fullPath: '/store/$storeKey/payments'
       preLoaderRoute: typeof StoreStoreKeyPaymentsLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/products': {
+      id: '/store/$storeKey/products'
+      path: '/$storeKey/products'
+      fullPath: '/store/$storeKey/products'
       preLoaderRoute: typeof StoreStoreKeyProductsLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/turnstile': {
+      id: '/store/$storeKey/turnstile'
+      path: '/$storeKey/turnstile'
+      fullPath: '/store/$storeKey/turnstile'
       preLoaderRoute: typeof StoreStoreKeyTurnstileLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/footer/createpage': {
+      id: '/store/$storeKey/footer/createpage'
+      path: '/$storeKey/footer/createpage'
+      fullPath: '/store/$storeKey/footer/createpage'
       preLoaderRoute: typeof StoreStoreKeyFooterCreatepageImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/products/create': {
+      id: '/store/$storeKey/products/create'
+      path: '/$storeKey/products/create'
+      fullPath: '/store/$storeKey/products/create'
       preLoaderRoute: typeof StoreStoreKeyProductsCreateImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/section/create': {
+      id: '/store/$storeKey/section/create'
+      path: '/$storeKey/section/create'
+      fullPath: '/store/$storeKey/section/create'
       preLoaderRoute: typeof StoreStoreKeySectionCreateImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/products/$productId/details': {
+      id: '/store/$storeKey/products/$productId/details'
+      path: '/$storeKey/products/$productId/details'
+      fullPath: '/store/$storeKey/products/$productId/details'
       preLoaderRoute: typeof StoreStoreKeyProductsProductIdDetailsLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/orders/$orderId/': {
+      id: '/store/$storeKey/orders/$orderId/'
+      path: '/$storeKey/orders/$orderId'
+      fullPath: '/store/$storeKey/orders/$orderId'
       preLoaderRoute: typeof StoreStoreKeyOrdersOrderIdIndexImport
       parentRoute: typeof StoreImport
     }
@@ -411,11 +501,11 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren([
+export const routeTree = rootRoute.addChildren({
   IndexRoute,
   LoginRoute,
   RegisterRoute,
-  StoreRoute.addChildren([
+  StoreRoute: StoreRoute.addChildren({
     StoreStoreKeyLandingRoute,
     StoreStoreKeyShippingRoute,
     StoreStoreKeyAnalyticsLazyRoute,
@@ -439,10 +529,167 @@ export const routeTree = rootRoute.addChildren([
     StoreStoreKeySectionCreateRoute,
     StoreStoreKeyProductsProductIdDetailsLazyRoute,
     StoreStoreKeyOrdersOrderIdIndexRoute,
-  ]),
+  }),
   TestRoute,
   AboutLazyRoute,
   ForgotpasswordLazyRoute,
-])
+})
 
 /* prettier-ignore-end */
+
+/* ROUTE_MANIFEST_START
+{
+  "routes": {
+    "__root__": {
+      "filePath": "__root.tsx",
+      "children": [
+        "/",
+        "/login",
+        "/register",
+        "/store",
+        "/test",
+        "/about",
+        "/forgotpassword"
+      ]
+    },
+    "/": {
+      "filePath": "index.tsx"
+    },
+    "/login": {
+      "filePath": "login.tsx"
+    },
+    "/register": {
+      "filePath": "register.tsx"
+    },
+    "/store": {
+      "filePath": "store.tsx",
+      "children": [
+        "/store/$storeKey/landing",
+        "/store/$storeKey/shipping",
+        "/store/$storeKey/analytics",
+        "/store/$storeKey/billing",
+        "/store/$storeKey/categories",
+        "/store/$storeKey/customers",
+        "/store/$storeKey/dashboard",
+        "/store/$storeKey/domain",
+        "/store/$storeKey/email",
+        "/store/$storeKey/footer",
+        "/store/$storeKey/genlink",
+        "/store/$storeKey/home",
+        "/store/$storeKey/inventory",
+        "/store/$storeKey/media",
+        "/store/$storeKey/orders",
+        "/store/$storeKey/payments",
+        "/store/$storeKey/products",
+        "/store/$storeKey/turnstile",
+        "/store/$storeKey/footer/createpage",
+        "/store/$storeKey/products/create",
+        "/store/$storeKey/section/create",
+        "/store/$storeKey/products/$productId/details",
+        "/store/$storeKey/orders/$orderId/"
+      ]
+    },
+    "/test": {
+      "filePath": "test.tsx"
+    },
+    "/about": {
+      "filePath": "about.lazy.tsx"
+    },
+    "/forgotpassword": {
+      "filePath": "forgotpassword.lazy.tsx"
+    },
+    "/store/$storeKey/landing": {
+      "filePath": "store/$storeKey/landing.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/shipping": {
+      "filePath": "store/$storeKey/shipping.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/analytics": {
+      "filePath": "store/$storeKey/analytics.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/billing": {
+      "filePath": "store/$storeKey/billing.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/categories": {
+      "filePath": "store/$storeKey/categories.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/customers": {
+      "filePath": "store/$storeKey/customers.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/dashboard": {
+      "filePath": "store/$storeKey/dashboard.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/domain": {
+      "filePath": "store/$storeKey/domain.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/email": {
+      "filePath": "store/$storeKey/email.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/footer": {
+      "filePath": "store/$storeKey/footer.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/genlink": {
+      "filePath": "store/$storeKey/genlink.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/home": {
+      "filePath": "store/$storeKey/home.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/inventory": {
+      "filePath": "store/$storeKey/inventory.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/media": {
+      "filePath": "store/$storeKey/media.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/orders": {
+      "filePath": "store/$storeKey/orders.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/payments": {
+      "filePath": "store/$storeKey/payments.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/products": {
+      "filePath": "store/$storeKey/products.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/turnstile": {
+      "filePath": "store/$storeKey/turnstile.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/footer/createpage": {
+      "filePath": "store/$storeKey/footer_/createpage.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/products/create": {
+      "filePath": "store/$storeKey/products_/create.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/section/create": {
+      "filePath": "store/$storeKey/section_/create.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/products/$productId/details": {
+      "filePath": "store/$storeKey/products_/$productId/details.lazy.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/orders/$orderId/": {
+      "filePath": "store/$storeKey/orders_/$orderId/index.tsx",
+      "parent": "/store"
+    }
+  }
+}
+ROUTE_MANIFEST_END */

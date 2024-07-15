@@ -2,6 +2,7 @@ import { Element, useEditor } from '@craftjs/core';
 import { Tooltip } from '@material-ui/core';
 import React from 'react';
 import styled from 'styled-components';
+import { Card } from '@material-ui/core';
 
 import { Button } from '../../selectors/Button';
 import { Container } from '../../selectors/Container';
@@ -39,9 +40,9 @@ export const Toolbox = () => {
   return (
     <ToolboxDiv
       enabled={enabled && enabled}
-      className="toolbox transition w-12 h-full flex flex-col bg-white"
+      className="toolbox transition w-[400px] h-full flex p-4 flex-col bg-white"
     >
-      <div className="flex flex-1 flex-col items-center pt-3">
+      <div className="flex justify-around flex-wrap pt-3 gap-[9px]">
         <div
           ref={(ref) =>
             create(
@@ -57,36 +58,60 @@ export const Toolbox = () => {
             )
           }
         >
-          <Tooltip title="Container" placement="right">
-            <Item className="m-2 pb-2 cursor-pointer block" move>
-              <Square />
-            </Item>
-          </Tooltip>
+          <Card className="w-[150px] h-[150px] flex justify-center items-center">
+            <Tooltip title="Container" placement="right">
+              <Item
+                className="m-2 pb-2 flex flex-col justify-center items-center cursor-pointer text-center"
+                move
+              >
+                <Square />
+                Container
+              </Item>
+            </Tooltip>
+          </Card>
         </div>
         <div
           ref={(ref) =>
             create(ref, <Text fontSize="12" textAlign="left" text="Hi there" />)
           }
         >
-          <Tooltip title="Text" placement="right">
-            <Item className="m-2 pb-2 cursor-pointer block" move>
-              <Type />
-            </Item>
-          </Tooltip>
+          <Card className="w-[150px] h-[150px] flex justify-center items-center">
+            <Tooltip title="Text" placement="right">
+              <Item
+                className="m-2 pb-2 flex flex-col justify-center items-center cursor-pointer text-center"
+                move
+              >
+                <Type />
+                Text
+              </Item>
+            </Tooltip>
+          </Card>
         </div>
         <div ref={(ref) => create(ref, <Button />)}>
-          <Tooltip title="Button" placement="right">
-            <Item className="m-2 pb-2 cursor-pointer block" move>
-              <BoxIcon />
-            </Item>
-          </Tooltip>
+          <Card className="w-[150px] h-[150px] flex justify-center items-center">
+            <Tooltip title="Button" placement="right">
+              <Item
+                className="m-2 pb-2 flex flex-col justify-center items-center cursor-pointer text-center"
+                move
+              >
+                <BoxIcon />
+                Button
+              </Item>
+            </Tooltip>
+          </Card>
         </div>
         <div ref={(ref) => create(ref, <Video />)}>
-          <Tooltip title="Video" placement="right">
-            <Item className="m-2 pb-2 cursor-pointer block" move>
-              <TvIcon />
-            </Item>
-          </Tooltip>
+          <Card className="w-[150px] h-[150px] flex justify-center items-center">
+            <Tooltip title="Video" placement="right">
+              <Item
+                className="m-2 pb-2 flex flex-col justify-center items-center cursor-pointer text-center"
+                move
+              >
+                <TvIcon />
+                Video
+              </Item>
+            </Tooltip>
+          </Card>
         </div>
       </div>
     </ToolboxDiv>

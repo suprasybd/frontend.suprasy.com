@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNode } from '@craftjs/core';
 import RadioGroup from '@mui/material/RadioGroup';
 import Slider from '@mui/material/Slider';
@@ -39,9 +40,9 @@ export const ToolbarItem = ({
     actions: { setProp },
     propValue,
   } = useNode((node) => ({
-    propValue: node.data.props[propKey],
+    propValue: node.data.props[propKey as any],
   }));
-  const value = Array.isArray(propValue) ? propValue[index] : propValue;
+  const value = Array.isArray(propValue) ? propValue[index as any] : propValue;
 
   return (
     <Grid item xs={full ? 12 : 6}>
@@ -54,9 +55,11 @@ export const ToolbarItem = ({
             onChange={(value) => {
               setProp((props: any) => {
                 if (Array.isArray(propValue)) {
-                  props[propKey][index] = onChange ? onChange(value) : value;
+                  props[propKey as any][index as any] = onChange
+                    ? onChange(value)
+                    : value;
                 } else {
-                  props[propKey] = onChange ? onChange(value) : value;
+                  props[propKey as any] = onChange ? onChange(value) : value;
                 }
               }, 500);
             }}
@@ -69,14 +72,16 @@ export const ToolbarItem = ({
             <SliderStyled
               value={parseInt(value) || 0}
               onChange={
-                ((_, value: number) => {
+                ((_: any, value: number) => {
                   setProp((props: any) => {
                     if (Array.isArray(propValue)) {
-                      props[propKey][index] = onChange
+                      props[propKey as any][index as any] = onChange
                         ? onChange(value)
                         : value;
                     } else {
-                      props[propKey] = onChange ? onChange(value) : value;
+                      props[propKey as any] = onChange
+                        ? onChange(value)
+                        : value;
                     }
                   }, 1000);
                 }) as any
@@ -93,7 +98,7 @@ export const ToolbarItem = ({
               onChange={(e) => {
                 const value = e.target.value;
                 setProp((props: any) => {
-                  props[propKey] = onChange ? onChange(value) : value;
+                  props[propKey as any] = onChange ? onChange(value) : value;
                 });
               }}
             >
@@ -103,10 +108,10 @@ export const ToolbarItem = ({
         ) : type === 'select' ? (
           <ToolbarDropdown
             value={value || ''}
-            onChange={(value) =>
+            onChange={(value: any) =>
               setProp(
                 (props: any) =>
-                  (props[propKey] = onChange ? onChange(value) : value)
+                  (props[propKey as any] = onChange ? onChange(value) : value)
               )
             }
             {...props}

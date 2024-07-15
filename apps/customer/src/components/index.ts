@@ -29,3 +29,4 @@ export * from './ui/sheet';
 export * from './ui/breadcrumb';
 export * from './ui/scroll-area';
 export * from './SlateEditor/RichText';
+export * from './ui/separator';

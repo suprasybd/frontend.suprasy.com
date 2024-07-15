@@ -1,5 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
-import { Button } from '@customer/components';
+import {
+  Button,
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@customer/components';
 import { ProductCard } from '@customer/components/Modals/ProductSelection/ProductSelection';
 import { useModalStore } from '@customer/store/modalStore';
 import { useProductSelectionVariantStore } from '@customer/store/productSelectionVariant';
@@ -8,6 +13,7 @@ import React, { useEffect, useState } from 'react';
 import { encode } from 'js-base64';
 import { useQuery } from '@tanstack/react-query';
 import { getMainDomain } from '../turnstile/api';
+import { Terminal } from 'lucide-react';
 
 const GenLink = () => {
   const { setModalPath } = useModalStore((state) => state);
@@ -45,6 +51,17 @@ const GenLink = () => {
         Generate Purchase Link For Direct Funnel
       </h1>
 
+      <Alert className="my-3">
+        <Terminal className="h-4 w-4" />
+        <AlertTitle>Heads up!</AlertTitle>
+        <AlertDescription>
+          You can generate direct purchase link for specific products by adding
+          those product bellow and generating a link, when a customer visit's
+          that link they will be straight in checkout page with those product
+          added in their cart ready for order.
+        </AlertDescription>
+      </Alert>
+
       <Button
         onClick={() => {
           setModalPath({
@@ -65,6 +82,12 @@ const GenLink = () => {
             />
           </div>
         ))}
+
+        {!prodList && (
+          <p className="my-3">
+            Not product found, please add product to generate a link
+          </p>
+        )}
       </div>
 
       {prodList && prodList.length > 0 && (

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEditor } from '@craftjs/core';
 import cx from 'classnames';
 import React, { useEffect } from 'react';
@@ -54,7 +55,12 @@ export const Viewport: React.FC<{ children?: React.ReactNode }> = ({
                 'bg-renderer-gray': enabled,
               },
             ])}
-            ref={(ref) => connectors.select(connectors.hover(ref, null), null)}
+            ref={(ref) =>
+              connectors.select(
+                connectors.hover(ref as any, null as any),
+                null as any
+              )
+            }
           >
             <div className="relative flex-col flex items-center pt-8">
               {children}

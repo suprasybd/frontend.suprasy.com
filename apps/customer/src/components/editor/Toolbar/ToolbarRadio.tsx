@@ -1,7 +1,8 @@
-import { FormControlLabel, Radio } from '@mui/material';
+import { FormControlLabel, Radio, RadioProps } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import classnames from 'classnames';
 import React from 'react';
+import { JSX } from 'react/jsx-runtime';
 
 const useStyles = makeStyles({
   icon: {
@@ -29,7 +30,7 @@ const useStyles = makeStyles({
 });
 
 // Inspired by blueprintjs
-function StyledRadio(props) {
+function StyledRadio(props: JSX.IntrinsicAttributes & RadioProps) {
   const classes = useStyles({});
 
   return (

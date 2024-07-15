@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNode, useEditor } from '@craftjs/core';
 import { ROOT_NODE } from '@craftjs/utils';
 import React, { useEffect, useRef, useCallback } from 'react';
@@ -31,7 +32,9 @@ const Btn = styled.a`
   }
 `;
 
-export const RenderNode = ({ render }) => {
+export const RenderNode: React.ComponentType<{
+  render: React.ReactElement;
+}> = ({ render }) => {
   const { id } = useNode();
   const { actions, query, isActive } = useEditor((_, query) => ({
     isActive: query.getEvent('selected').contains(id),
@@ -78,7 +81,8 @@ export const RenderNode = ({ render }) => {
     const { current: currentDOM } = currentRef;
 
     if (!currentDOM) return;
-    const { top, left } = getPos(dom);
+
+    const { top, left } = getPos(dom as any);
     currentDOM.style.top = top;
     currentDOM.style.left = left;
   }, [dom, getPos]);
@@ -86,12 +90,12 @@ export const RenderNode = ({ render }) => {
   useEffect(() => {
     document
       .querySelector('.craftjs-renderer')
-      .addEventListener('scroll', scroll);
+      ?.addEventListener('scroll', scroll);
 
     return () => {
       document
         .querySelector('.craftjs-renderer')
-        .removeEventListener('scroll', scroll);
+        ?.removeEventListener('scroll', scroll);
     };
   }, [scroll]);
 
@@ -100,17 +104,17 @@ export const RenderNode = ({ render }) => {
       {isHover || isActive
         ? ReactDOM.createPortal(
             <IndicatorDiv
-              ref={currentRef}
+              ref={currentRef as any}
               className="px-2 py-2 border-2 border-green-400 text-white bg-primary fixed flex items-center"
               style={{
-                left: getPos(dom).left,
-                top: getPos(dom).top,
+                left: getPos(dom as any).left,
+                top: getPos(dom as any).top,
                 zIndex: 9999,
               }}
             >
               <h2 className="flex-1 mr-4">{name}</h2>
               {moveable ? (
-                <Btn className="mr-2 cursor-move" ref={drag}>
+                <Btn className="mr-2 cursor-move" ref={drag as any}>
                   <Move />
                 </Btn>
               ) : null}
@@ -118,7 +122,7 @@ export const RenderNode = ({ render }) => {
                 <Btn
                   className="mr-2 cursor-pointer"
                   onClick={() => {
-                    actions.selectNode(parent);
+                    actions.selectNode(parent as any);
                   }}
                 >
                   <ArrowUp01 />
@@ -136,7 +140,7 @@ export const RenderNode = ({ render }) => {
                 </Btn>
               ) : null}
             </IndicatorDiv>,
-            document.querySelector('.page-container')
+            document.querySelector('.page-container') as any
           )
         : null}
       {render}

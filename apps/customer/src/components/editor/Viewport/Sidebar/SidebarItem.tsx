@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArrowDown } from 'lucide-react';
 import React from 'react';
 import styled from 'styled-components';
@@ -59,7 +60,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
           {icon}
           <h2 className="text-xs uppercase">{title}</h2>
         </div>
-        <Chevron visible={visible}>
+        <Chevron visible={visible as any}>
           <ArrowDown className="text-white" />
         </Chevron>
       </HeaderDiv>

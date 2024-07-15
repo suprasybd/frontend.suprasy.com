@@ -5,6 +5,7 @@ import {
   useEditor,
   ReactEditor,
   useSlateStatic,
+  useReadOnly,
 } from 'slate-react';
 import { Transforms } from 'slate';
 import useResize from '../../utils/customHooks/useResize.ts';
@@ -16,6 +17,8 @@ const Image = ({ attributes, element, children }) => {
   const focused = useFocused();
   const [size, onMouseDown] = useResize(width, height);
   const editor = useSlateStatic();
+
+  const isReadonly = useReadOnly();
 
   // Persist width and height when size changes
   React.useEffect(() => {
@@ -58,7 +61,7 @@ const Image = ({ attributes, element, children }) => {
           src={url}
         />
 
-        {true && (
+        {!isReadonly && (
           <button
             className="absolute right-0 bottom-0 p-2 "
             onClick={(e) => e.preventDefault()}

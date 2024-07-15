@@ -19,6 +19,7 @@ import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as ForgotpasswordImport } from './routes/forgotpassword'
 import { Route as IndexImport } from './routes/index'
+import { Route as RenderProductionDescriptionImport } from './routes/render/productionDescription'
 import { Route as PasswordresetCodeIndexImport } from './routes/passwordreset/$code/index'
 import { Route as StoreStoreKeyThemesImport } from './routes/store/$storeKey/themes'
 import { Route as StoreStoreKeyShippingImport } from './routes/store/$storeKey/shipping'
@@ -113,6 +114,12 @@ const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any)
+
+const RenderProductionDescriptionRoute =
+  RenderProductionDescriptionImport.update({
+    path: '/render/productionDescription',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 const PasswordresetCodeIndexRoute = PasswordresetCodeIndexImport.update({
   path: '/passwordreset/$code/',
@@ -345,6 +352,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
+    '/render/productionDescription': {
+      id: '/render/productionDescription'
+      path: '/render/productionDescription'
+      fullPath: '/render/productionDescription'
+      preLoaderRoute: typeof RenderProductionDescriptionImport
+      parentRoute: typeof rootRoute
+    }
     '/store/$storeKey/landing': {
       id: '/store/$storeKey/landing'
       path: '/$storeKey/landing'
@@ -558,6 +572,7 @@ export const routeTree = rootRoute.addChildren({
   }),
   TestRoute,
   AboutLazyRoute,
+  RenderProductionDescriptionRoute,
   PasswordresetCodeIndexRoute,
 })
 
@@ -576,6 +591,7 @@ export const routeTree = rootRoute.addChildren({
         "/store",
         "/test",
         "/about",
+        "/render/productionDescription",
         "/passwordreset/$code/"
       ]
     },
@@ -625,6 +641,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/about": {
       "filePath": "about.lazy.tsx"
+    },
+    "/render/productionDescription": {
+      "filePath": "render/productionDescription.tsx"
     },
     "/store/$storeKey/landing": {
       "filePath": "store/$storeKey/landing.tsx",

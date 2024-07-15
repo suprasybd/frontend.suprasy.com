@@ -4,6 +4,7 @@ import {
   useFocused,
   ReactEditor,
   useSlateStatic,
+  useReadOnly,
 } from 'slate-react';
 
 import useResize from '../../utils/customHooks/useResize.js';
@@ -19,6 +20,7 @@ const Video = ({ attributes, element, children }) => {
   const focused = useFocused();
 
   const editor = useSlateStatic();
+  const isReadonly = useReadOnly();
 
   // Persist width and height when size changes
   React.useEffect(() => {
@@ -74,7 +76,7 @@ const Video = ({ attributes, element, children }) => {
             <ReactPlayer width={'100%'} height={'100%'} url={url} />
           )
         }
-        {true && (
+        {!isReadonly && (
           <button
             className="absolute right-0 bottom-0 p-2 "
             onClick={(e) => {

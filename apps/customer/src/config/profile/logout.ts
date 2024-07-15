@@ -6,4 +6,5 @@ export const logoutUser = () => {
   useAuthStore.getState().logout();
   cleanRemoveTokens();
   router.history.push('/login');
+  window.location.reload();
 };

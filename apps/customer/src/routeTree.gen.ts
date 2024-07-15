@@ -17,6 +17,7 @@ import { Route as TestImport } from './routes/test'
 import { Route as StoreImport } from './routes/store'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
+import { Route as ForgotpasswordImport } from './routes/forgotpassword'
 import { Route as IndexImport } from './routes/index'
 import { Route as PasswordresetCodeIndexImport } from './routes/passwordreset/$code/index'
 import { Route as StoreStoreKeyThemesImport } from './routes/store/$storeKey/themes'
@@ -29,7 +30,6 @@ import { Route as StoreStoreKeyOrdersOrderIdIndexImport } from './routes/store/$
 
 // Create Virtual Routes
 
-const ForgotpasswordLazyImport = createFileRoute('/forgotpassword')()
 const AboutLazyImport = createFileRoute('/about')()
 const StoreStoreKeyTurnstileLazyImport = createFileRoute(
   '/store/$storeKey/turnstile',
@@ -79,13 +79,6 @@ const StoreStoreKeyProductsProductIdDetailsLazyImport = createFileRoute(
 
 // Create/Update Routes
 
-const ForgotpasswordLazyRoute = ForgotpasswordLazyImport.update({
-  path: '/forgotpassword',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/forgotpassword.lazy').then((d) => d.Route),
-)
-
 const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
   getParentRoute: () => rootRoute,
@@ -108,6 +101,11 @@ const RegisterRoute = RegisterImport.update({
 
 const LoginRoute = LoginImport.update({
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ForgotpasswordRoute = ForgotpasswordImport.update({
+  path: '/forgotpassword',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -305,6 +303,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/forgotpassword': {
+      id: '/forgotpassword'
+      path: '/forgotpassword'
+      fullPath: '/forgotpassword'
+      preLoaderRoute: typeof ForgotpasswordImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -338,13 +343,6 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/forgotpassword': {
-      id: '/forgotpassword'
-      path: '/forgotpassword'
-      fullPath: '/forgotpassword'
-      preLoaderRoute: typeof ForgotpasswordLazyImport
       parentRoute: typeof rootRoute
     }
     '/store/$storeKey/landing': {
@@ -529,6 +527,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
+  ForgotpasswordRoute,
   LoginRoute,
   RegisterRoute,
   StoreRoute: StoreRoute.addChildren({
@@ -559,7 +558,6 @@ export const routeTree = rootRoute.addChildren({
   }),
   TestRoute,
   AboutLazyRoute,
-  ForgotpasswordLazyRoute,
   PasswordresetCodeIndexRoute,
 })
 
@@ -572,17 +570,20 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/forgotpassword",
         "/login",
         "/register",
         "/store",
         "/test",
         "/about",
-        "/forgotpassword",
         "/passwordreset/$code/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/forgotpassword": {
+      "filePath": "forgotpassword.tsx"
     },
     "/login": {
       "filePath": "login.tsx"
@@ -624,9 +625,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/about": {
       "filePath": "about.lazy.tsx"
-    },
-    "/forgotpassword": {
-      "filePath": "forgotpassword.lazy.tsx"
     },
     "/store/$storeKey/landing": {
       "filePath": "store/$storeKey/landing.tsx",

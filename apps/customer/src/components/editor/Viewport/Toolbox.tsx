@@ -1,8 +1,8 @@
 import { Element, useEditor } from '@craftjs/core';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 import React from 'react';
 import styled from 'styled-components';
-import { Card } from '@material-ui/core';
+import { Card } from '@mui/material';
 
 import { Button } from '../../selectors/Button';
 import { Container } from '../../selectors/Container';

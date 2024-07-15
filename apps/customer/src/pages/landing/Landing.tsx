@@ -1,7 +1,7 @@
 import React from 'react';
 import { Editor, Frame, Element } from '@craftjs/core';
-import { createMuiTheme } from '@material-ui/core';
-import { ThemeProvider } from '@material-ui/core/styles';
+import { createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 
 import { Viewport, RenderNode } from '@customer/components/editor';
 import { Container, Text } from '@customer/components/selectors';
@@ -27,7 +27,7 @@ const Landing = () => {
 
 export default Landing;
 
-const theme = createMuiTheme({
+const theme = createTheme({
   typography: {
     fontFamily: [
       'acumin-pro',

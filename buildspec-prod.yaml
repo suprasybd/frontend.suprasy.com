@@ -8,7 +8,7 @@ phases:
       - npm install -g wrangler
   pre_build:
     commands:
-      - npm install
+      - npm install --force
   build:
     commands:
       - npx nx run-many -t build

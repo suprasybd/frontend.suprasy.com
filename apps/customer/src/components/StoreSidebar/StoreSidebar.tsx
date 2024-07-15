@@ -7,6 +7,7 @@ import {
   Home,
   Link2,
   Package,
+  Palette,
   ShoppingCart,
   Store,
   Tent,
@@ -215,7 +216,7 @@ const StoreSidebar = () => {
               [&.active]:transition-all
               [&.active]:hover:text-primary"
             >
-              <FolderPen className="h-4 w-4" />
+              <Palette className="h-4 w-4" />
               Themes
             </Link>
           </nav>

@@ -1,9 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link } from '@tanstack/react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { registerSchema } from './zod/registerSchema';
+import { resetPasswordSchema } from './zod/passwordResetSchema';
 
 import {
   Button,
@@ -17,56 +16,57 @@ import {
   useToast,
 } from '@customer/components/index';
 import { useMutation } from '@tanstack/react-query';
-import { register } from './api';
+import { resetCompletePassword } from './api';
 import { ReloadIcon } from '@radix-ui/react-icons';
 
 import logo from '../login/assets/lg-full-blacks.png';
 import useTurnStileHook from '@customer/hooks/turnstile';
 import { Turnstile } from '@marsidev/react-turnstile';
+import { useParams } from '@tanstack/react-router';
 
-const Register: React.FC = () => {
-  const form = useForm<z.infer<typeof registerSchema>>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: { Password: '', Email: '' },
+const PasswordReset: React.FC = () => {
+  const { code } = useParams({ strict: false }) as { code: string };
+  const form = useForm<z.infer<typeof resetPasswordSchema>>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: { Password: '' },
   });
 
   const { toast } = useToast();
   const formErrors = form.formState;
 
   const {
-    mutate: registerMutation,
+    mutate: completePasswordReset,
     isPending,
     isSuccess,
   } = useMutation({
-    mutationFn: register,
+    mutationFn: resetCompletePassword,
     onSuccess: (data) => {
       toast({
-        title: 'Registration succecssfull',
-        description: 'We have sent you an verification email!',
+        title: 'password reset complete',
+        description: 'password reset complete',
         variant: 'default',
       });
     },
     onError: (data) => {
       toast({
-        title: 'Register Failed',
-        description: 'Incorrect credintial provided!',
+        title: 'Reset Failed',
+        description: 'Code not found!',
         variant: 'destructive',
       });
     },
   });
 
   function onSubmit(
-    values: z.infer<typeof registerSchema>,
+    values: z.infer<typeof resetPasswordSchema>,
     turnstileResponse: string | null
   ) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    registerMutation({
+    completePasswordReset({
       ...values,
       'cf-turnstile-response': turnstileResponse,
+      Code: code,
     } as any);
   }
-
-  const usersEmail = form.watch('Email');
 
   const forceUpdate = () => {
     window.location.reload();
@@ -80,7 +80,7 @@ const Register: React.FC = () => {
 
       if (!tRes) return;
 
-      form.handleSubmit((values: z.infer<typeof registerSchema>) =>
+      form.handleSubmit((values: z.infer<typeof resetPasswordSchema>) =>
         onSubmit(values, tRes)
       )(e);
     } catch (error) {
@@ -99,9 +99,9 @@ const Register: React.FC = () => {
                 <img width={'250px'} height={'auto'} src={logo} alt="logo" />
               </div>
               <h2 className="mt-10  text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                Create an account
+                Password Reset
               </h2>
-              <p>Launch your ecommerce site with suprasy under 1 minute. </p>
+              <p>Reset your password form here. </p>
             </div>
 
             <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -109,55 +109,15 @@ const Register: React.FC = () => {
                 <form onSubmit={handleFormWrapper} className="space-y-8">
                   <FormField
                     control={form.control}
-                    name="FullName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="h-14"
-                            FormError={!!formErrors.errors.FullName}
-                            placeholder="Full Name"
-                            {...field}
-                          />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="Email"
-                    render={({ field }) => (
-                      <FormItem className="space-y-0 !mt-3">
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="h-14"
-                            FormError={!!formErrors.errors.Email}
-                            placeholder="Enter Email"
-                            {...field}
-                          />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
                     name="Password"
                     render={({ field }) => (
-                      <FormItem className="space-y-0 !mt-3">
-                        <FormLabel>Password</FormLabel>
+                      <FormItem>
+                        <FormLabel>New Password</FormLabel>
                         <FormControl>
                           <Input
                             className="h-14"
                             FormError={!!formErrors.errors.Password}
-                            type="password"
-                            placeholder="***********"
+                            placeholder="New Password"
                             {...field}
                           />
                         </FormControl>
@@ -190,10 +150,10 @@ const Register: React.FC = () => {
                         {isPending && (
                           <>
                             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                            Registering..
+                            Emailing Reset Link..
                           </>
                         )}
-                        {!isPending && <>Register</>}
+                        {!isPending && <>Reset Password</>}
                       </>
                     )}
                   </Button>
@@ -209,15 +169,6 @@ const Register: React.FC = () => {
                   Click here to signin
                 </a>
               </p>
-              <p className="mt-3 text-center text-sm text-gray-500 ">
-                Forgot Password?
-                <Link
-                  to="/forgotpassword"
-                  className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 pl-2"
-                >
-                  Click here to reset
-                </Link>
-              </p>
             </div>
           </div>
         )}
@@ -225,21 +176,16 @@ const Register: React.FC = () => {
           <div className="relative flex flex-col items-center justify-center overflow-hidden py-6 sm:py-12 bg-white">
             <div className="max-w-xl px-5 text-center">
               <h2 className="mb-2 text-[42px] font-bold text-zinc-800">
-                Verification Email Sent
+                Password Reset Complete
               </h2>
               <p className="mb-2 text-lg text-zinc-500">
-                We are glad, that you’re with us ? We’ve sent you a verification
-                link to the email address{' '}
-                <span className="font-medium text-indigo-500">
-                  {usersEmail}
-                </span>
-                .
+                Password reset complete, you can login with new password .
               </p>
               <a
                 href="/login"
                 className="mt-3 inline-block w-96 rounded bg-indigo-600 px-5 py-3 font-medium text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-700"
               >
-                Continue →
+                Continue To Login →
               </a>
             </div>
           </div>
@@ -249,4 +195,4 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register;
+export default PasswordReset;

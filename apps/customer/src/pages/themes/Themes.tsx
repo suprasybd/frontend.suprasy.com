@@ -25,9 +25,15 @@ const Themes = () => {
 
   return (
     <section className="p-9">
+      <h1 className="mb-5 text-3xl">Explore Themes</h1>
       {themesData?.map((theme) => (
         <div className="p-2 w-[400px]  rounded-md bg-slate-100">
-          <img width={'400px'} height={'400px'} src={theme.Thumbnail} />
+          <img
+            width={'400px'}
+            height={'400px'}
+            src={theme.Thumbnail}
+            alt="theme "
+          />
           <div className="my-4">
             <h1 className="font-bold text-lg text-slate-800">{theme.Name}</h1>
             <p>{theme.Description}</p>

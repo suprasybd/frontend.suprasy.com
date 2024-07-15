@@ -50,6 +50,7 @@ const Login: React.FC = () => {
         description: 'Incorrect credintial provided!',
         variant: 'destructive',
       });
+      forceUpdate();
     },
   });
 
@@ -174,6 +175,16 @@ const Login: React.FC = () => {
           </Form>
 
           <p className="mt-10 text-center text-sm text-gray-500 ">
+            Forgot Password?
+            <Link
+              to="/forgotpassword"
+              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 pl-2"
+            >
+              Click here to reset
+            </Link>
+          </p>
+
+          <p className="mt-2 text-center text-sm text-gray-500 ">
             Not a member?
             <Link
               to="/register"

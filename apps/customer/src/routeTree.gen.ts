@@ -18,6 +18,7 @@ import { Route as StoreImport } from './routes/store'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
+import { Route as PasswordresetCodeIndexImport } from './routes/passwordreset/$code/index'
 import { Route as StoreStoreKeyThemesImport } from './routes/store/$storeKey/themes'
 import { Route as StoreStoreKeyShippingImport } from './routes/store/$storeKey/shipping'
 import { Route as StoreStoreKeyLandingImport } from './routes/store/$storeKey/landing'
@@ -112,6 +113,11 @@ const LoginRoute = LoginImport.update({
 
 const IndexRoute = IndexImport.update({
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PasswordresetCodeIndexRoute = PasswordresetCodeIndexImport.update({
+  path: '/passwordreset/$code/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -474,6 +480,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreStoreKeyTurnstileLazyImport
       parentRoute: typeof StoreImport
     }
+    '/passwordreset/$code/': {
+      id: '/passwordreset/$code/'
+      path: '/passwordreset/$code'
+      fullPath: '/passwordreset/$code'
+      preLoaderRoute: typeof PasswordresetCodeIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/store/$storeKey/footer/createpage': {
       id: '/store/$storeKey/footer/createpage'
       path: '/$storeKey/footer/createpage'
@@ -547,6 +560,7 @@ export const routeTree = rootRoute.addChildren({
   TestRoute,
   AboutLazyRoute,
   ForgotpasswordLazyRoute,
+  PasswordresetCodeIndexRoute,
 })
 
 /* prettier-ignore-end */
@@ -563,7 +577,8 @@ export const routeTree = rootRoute.addChildren({
         "/store",
         "/test",
         "/about",
-        "/forgotpassword"
+        "/forgotpassword",
+        "/passwordreset/$code/"
       ]
     },
     "/": {
@@ -688,6 +703,9 @@ export const routeTree = rootRoute.addChildren({
     "/store/$storeKey/turnstile": {
       "filePath": "store/$storeKey/turnstile.lazy.tsx",
       "parent": "/store"
+    },
+    "/passwordreset/$code/": {
+      "filePath": "passwordreset/$code/index.tsx"
     },
     "/store/$storeKey/footer/createpage": {
       "filePath": "store/$storeKey/footer_/createpage.tsx",

@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter&family=Lato&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,6 +7,36 @@
 body {
   font-family: 'Inter', sans-serif;
   overflow: hidden;
+}
+
+.hind-siliguri-light {
+  font-family: 'Hind Siliguri', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.hind-siliguri-regular {
+  font-family: 'Hind Siliguri', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.hind-siliguri-medium {
+  font-family: 'Hind Siliguri', sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.hind-siliguri-semibold {
+  font-family: 'Hind Siliguri', sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.hind-siliguri-bold {
+  font-family: 'Hind Siliguri', sans-serif;
+  font-weight: 700;
+  font-style: normal;
 }
 
 .disable-tailwind {

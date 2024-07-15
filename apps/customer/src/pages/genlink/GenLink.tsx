@@ -50,7 +50,6 @@ const GenLink = () => {
       <h1 className="text-xl font-bold my-5">
         Generate Purchase Link For Direct Funnel
       </h1>
-
       <Alert className="my-3">
         <Terminal className="h-4 w-4" />
         <AlertTitle>Heads up!</AlertTitle>
@@ -71,7 +70,6 @@ const GenLink = () => {
       >
         Add Produdct
       </Button>
-
       <div className="flex flex-wrap gap-[7px]">
         {prodList?.map((p) => (
           <div>
@@ -89,7 +87,6 @@ const GenLink = () => {
           </p>
         )}
       </div>
-
       {prodList && prodList.length > 0 && (
         <Button
           className="my-2"
@@ -103,7 +100,6 @@ const GenLink = () => {
           Generate Link
         </Button>
       )}
-
       {linkKey && (
         <p className="my-2">
           Generated Link:

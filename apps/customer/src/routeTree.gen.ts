@@ -15,6 +15,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as TestImport } from './routes/test'
 import { Route as StoreImport } from './routes/store'
+import { Route as RenderImport } from './routes/render'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as ForgotpasswordImport } from './routes/forgotpassword'
@@ -95,6 +96,11 @@ const StoreRoute = StoreImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const RenderRoute = RenderImport.update({
+  path: '/render',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const RegisterRoute = RegisterImport.update({
   path: '/register',
   getParentRoute: () => rootRoute,
@@ -117,8 +123,8 @@ const IndexRoute = IndexImport.update({
 
 const RenderProductionDescriptionRoute =
   RenderProductionDescriptionImport.update({
-    path: '/render/productionDescription',
-    getParentRoute: () => rootRoute,
+    path: '/productionDescription',
+    getParentRoute: () => RenderRoute,
   } as any)
 
 const PasswordresetCodeIndexRoute = PasswordresetCodeIndexImport.update({
@@ -331,6 +337,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/render': {
+      id: '/render'
+      path: '/render'
+      fullPath: '/render'
+      preLoaderRoute: typeof RenderImport
+      parentRoute: typeof rootRoute
+    }
     '/store': {
       id: '/store'
       path: '/store'
@@ -354,10 +367,10 @@ declare module '@tanstack/react-router' {
     }
     '/render/productionDescription': {
       id: '/render/productionDescription'
-      path: '/render/productionDescription'
+      path: '/productionDescription'
       fullPath: '/render/productionDescription'
       preLoaderRoute: typeof RenderProductionDescriptionImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof RenderImport
     }
     '/store/$storeKey/landing': {
       id: '/store/$storeKey/landing'
@@ -544,6 +557,7 @@ export const routeTree = rootRoute.addChildren({
   ForgotpasswordRoute,
   LoginRoute,
   RegisterRoute,
+  RenderRoute: RenderRoute.addChildren({ RenderProductionDescriptionRoute }),
   StoreRoute: StoreRoute.addChildren({
     StoreStoreKeyLandingRoute,
     StoreStoreKeyShippingRoute,
@@ -572,7 +586,6 @@ export const routeTree = rootRoute.addChildren({
   }),
   TestRoute,
   AboutLazyRoute,
-  RenderProductionDescriptionRoute,
   PasswordresetCodeIndexRoute,
 })
 
@@ -588,10 +601,10 @@ export const routeTree = rootRoute.addChildren({
         "/forgotpassword",
         "/login",
         "/register",
+        "/render",
         "/store",
         "/test",
         "/about",
-        "/render/productionDescription",
         "/passwordreset/$code/"
       ]
     },
@@ -606,6 +619,12 @@ export const routeTree = rootRoute.addChildren({
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/render": {
+      "filePath": "render.tsx",
+      "children": [
+        "/render/productionDescription"
+      ]
     },
     "/store": {
       "filePath": "store.tsx",
@@ -643,7 +662,8 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "about.lazy.tsx"
     },
     "/render/productionDescription": {
-      "filePath": "render/productionDescription.tsx"
+      "filePath": "render/productionDescription.tsx",
+      "parent": "/render"
     },
     "/store/$storeKey/landing": {
       "filePath": "store/$storeKey/landing.tsx",

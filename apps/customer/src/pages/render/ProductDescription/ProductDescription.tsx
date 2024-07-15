@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { getSFProductsDetailsById } from '../api';
 import { RichTextRender } from '@customer/components';
 import { Route as RenderDescriptionRoute } from '@customer/routes/render/productionDescription';
@@ -18,6 +18,10 @@ const ProductDescription = () => {
       }),
     enabled: !!storeKey && !!productId,
   });
+
+  useEffect(() => {
+    localStorage.setItem('iframesdata', 'hi');
+  }, []);
 
   const productData = productDetailsResponse?.Data;
   return (

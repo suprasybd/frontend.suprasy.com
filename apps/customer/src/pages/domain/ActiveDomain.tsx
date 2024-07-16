@@ -7,6 +7,12 @@ import {
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbSeparator,
+  FormDescription,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   useToast,
 } from '@customer/components';
 import { Link, useParams } from '@tanstack/react-router';
@@ -24,7 +30,7 @@ import {
 } from '@customer/components/index';
 import { Input } from '@customer/components/index';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getMainDomain, updateDomain } from '../turnstile/api';
+import { getDomains, getMainDomain, updateDomain } from '../turnstile/api';
 import { Terminal } from 'lucide-react';
 
 const formSchema = z.object({
@@ -38,6 +44,13 @@ const ActiveDomain = () => {
     queryKey: ['getDomain'],
     queryFn: getMainDomain,
   });
+
+  const { data: domainsResponse } = useQuery({
+    queryKey: ['getDomains'],
+    queryFn: getDomains,
+  });
+
+  const domains = domainsResponse?.Data;
 
   const { mutate: handleUpdateDomain, isPending } = useMutation({
     mutationFn: updateDomain,
@@ -77,6 +90,8 @@ const ActiveDomain = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     handleUpdateDomain(values);
   }
+
+  const watchValue = form.watch('DomainName');
 
   return (
     <section>
@@ -121,20 +136,38 @@ const ActiveDomain = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 max-w-[500px]"
         >
-          <FormField
-            control={form.control}
-            name="DomainName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Domain </FormLabel>
-                <FormControl>
-                  <Input placeholder="Domain " {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {domains && watchValue && domains.length > 0 && (
+            <FormField
+              control={form.control}
+              name="DomainName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Currently Active Domain</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a domain" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {domains.map((d) => (
+                        <SelectItem value={d.DomainName}>
+                          {d.DomainName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    You can select a domain that's avaliable in the domains list
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <Button className="w-full" type="submit" disabled={isPending}>
             {isPending ? 'Saving..' : 'Save'}

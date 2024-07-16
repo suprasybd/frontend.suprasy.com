@@ -67,7 +67,6 @@ const UpdateOrder: React.FC = () => {
       });
       closeModal();
       queryClient.refetchQueries({ queryKey: ['getStoreOrders'] });
-      window.location.reload();
     },
     onError: (response: { response: { data: { Message: string } } }) => {
       toast({

@@ -63,6 +63,14 @@ export const getCategories = async (): Promise<ListResponseType<Category>> => {
   return response.data;
 };
 
+export const getAllCategories = async (): Promise<
+  ListResponseType<Category>
+> => {
+  const response = await ApiClient.get('/categories/all');
+
+  return response.data;
+};
+
 export const getSubCategories = async (
   parentCategory: number
 ): Promise<ListResponseType<Category>> => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,10 +6,6 @@ import {
   BreadcrumbSeparator,
   Button,
   Input,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   useToast,
   Card,
   CardContent,
@@ -117,7 +113,7 @@ const Categories = () => {
   const [turnstileLoaded] = useTurnStileHook();
 
   return (
-    <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+    <section>
       <Breadcrumb className="pb-5">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -189,27 +185,6 @@ const Categories = () => {
             <CategoriesCard key={category.Id} category={category} />
           ))}
       </div>
-
-      {/* prodcuts for categories */}
-      {categories && categories.length > 0 && (
-        <Tabs
-          defaultValue={categories && categories[0].Id.toString()}
-          className="w-[400px]"
-        >
-          <TabsList>
-            {categories?.map((category) => (
-              <TabsTrigger value={category.Id.toString()}>
-                {category.Name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {categories?.map((category) => (
-            <TabsContent value={category.Id.toString()}>
-              Make changes to your account here. {category.Name}
-            </TabsContent>
-          ))}
-        </Tabs>
-      )}
     </section>
   );
 };

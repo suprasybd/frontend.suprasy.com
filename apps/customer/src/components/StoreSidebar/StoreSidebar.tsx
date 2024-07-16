@@ -59,26 +59,26 @@ const StoreSidebar = () => {
         </div>
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-            {/* <Link
+            <Link
               to="/store/$storeKey/dashboard"
               params={{
                 storeKey: storeKey,
               }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
             >
               <Home className="h-4 w-4" />
               Dashboard
-            </Link> */}
+            </Link>
             <Link
               to="/store/$storeKey/orders"
               params={{
                 storeKey: storeKey,
               }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
             >
@@ -123,8 +123,8 @@ const StoreSidebar = () => {
                   params={{
                     storeKey: storeKey,
                   }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
                 >
@@ -138,8 +138,8 @@ const StoreSidebar = () => {
                   params={{
                     storeKey: storeKey,
                   }}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
                 >
@@ -151,8 +151,8 @@ const StoreSidebar = () => {
                   params={{
                     storeKey: storeKey,
                   }}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
                 >
@@ -167,8 +167,8 @@ const StoreSidebar = () => {
               params={{
                 storeKey: storeKey,
               }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
             >
@@ -181,8 +181,8 @@ const StoreSidebar = () => {
               params={{
                 storeKey: storeKey,
               }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
             >
@@ -195,8 +195,8 @@ const StoreSidebar = () => {
               params={{
                 storeKey: storeKey,
               }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
             >
@@ -209,8 +209,8 @@ const StoreSidebar = () => {
               params={{
                 storeKey: storeKey,
               }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
             >
@@ -249,8 +249,8 @@ const StoreSidebar = () => {
                 }}
               >
                 <div
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
                 >
@@ -264,8 +264,8 @@ const StoreSidebar = () => {
                   params={{
                     storeKey: storeKey,
                   }}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
                 >
@@ -277,8 +277,8 @@ const StoreSidebar = () => {
                   params={{
                     storeKey: storeKey,
                   }}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
                 >
@@ -290,8 +290,8 @@ const StoreSidebar = () => {
                   params={{
                     storeKey: storeKey,
                   }}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary [&.active]:bg-muted
-              [&.active]:text-primary
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
               [&.active]:transition-all
               [&.active]:hover:text-primary"
                 >

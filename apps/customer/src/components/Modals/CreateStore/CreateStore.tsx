@@ -111,10 +111,10 @@ const CreateStoreModal: React.FC = () => {
 
       closeModal();
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'Store Create',
-        description: 'Store create failed! Please reach out to admins!',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

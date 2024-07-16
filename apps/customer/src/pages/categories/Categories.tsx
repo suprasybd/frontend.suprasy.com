@@ -85,10 +85,10 @@ const Categories = () => {
       form.reset();
       forceUpdate();
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Category create',
-        description: 'category create failed',
+        title: 'Category Update',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },
@@ -278,10 +278,10 @@ const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Category update',
-        description: 'category update failed',
+        title: 'Category Update',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },
@@ -297,10 +297,10 @@ const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Category removed',
-        description: 'category removed failed',
+        title: 'Category Removed',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

@@ -69,10 +69,10 @@ const UpdateOrder: React.FC = () => {
       queryClient.refetchQueries({ queryKey: ['getStoreOrders'] });
       window.location.reload();
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Order update',
-        description: 'Order update failed!',
+        title: 'Order Update',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

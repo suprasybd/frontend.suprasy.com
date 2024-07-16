@@ -107,10 +107,10 @@ const StoreHome = () => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'home section delete',
-        description: 'home section delete failed',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

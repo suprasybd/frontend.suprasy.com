@@ -44,10 +44,10 @@ const UpdateCategory: React.FC = () => {
       });
       closeModal();
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Category update',
-        description: 'category update failed',
+        title: 'Category Update',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

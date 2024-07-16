@@ -126,10 +126,10 @@ const CreateSection = () => {
       });
       navigate({ to: '/store/$storeKey/home', params: { storeKey } });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'home section create',
-        description: 'home section create failed',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },
@@ -148,10 +148,10 @@ const CreateSection = () => {
       });
       navigate({ to: '/store/$storeKey/home', params: { storeKey } });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'home section update',
-        description: 'home section update failed',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },
@@ -166,10 +166,10 @@ const CreateSection = () => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'home section delete',
-        description: 'home section delete failed',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

@@ -49,10 +49,10 @@ const ActiveDomain = () => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'domain',
-        description: 'save failed!',
+        title: 'Domain',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

@@ -108,10 +108,10 @@ const MediaModal: React.FC<{
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'Image Upload',
-        description: 'image upload failed!',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

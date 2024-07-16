@@ -247,10 +247,10 @@ const CreateProduct: React.FC = () => {
           },
         });
       },
-      onError: () => {
+      onError: (response: { response: { data: { Message: string } } }) => {
         toast({
-          title: 'Product update',
-          description: 'Product update Failed Due To Server Error.',
+          title: 'Product Update',
+          description: response.response.data.Message,
           variant: 'destructive',
         });
       },
@@ -270,10 +270,10 @@ const CreateProduct: React.FC = () => {
         },
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'Product Create',
-        description: 'Product Create Failed Due To Server Error.',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

@@ -46,10 +46,10 @@ const Register: React.FC = () => {
         variant: 'default',
       });
     },
-    onError: (data) => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'Register Failed',
-        description: 'Incorrect credintial provided!',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

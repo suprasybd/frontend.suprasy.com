@@ -70,10 +70,10 @@ const RenewStore: React.FC = () => {
 
       closeModal();
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'store renew',
-        description: 'store renew failed! Please reach out to admins!',
+        title: 'Renew Subscription',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

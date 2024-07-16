@@ -79,10 +79,10 @@ const AddArea: React.FC = () => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'Add Area',
-        description: 'Add Area failed!',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },
@@ -103,10 +103,10 @@ const AddArea: React.FC = () => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'Update Area',
-        description: 'Update Area failed!',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

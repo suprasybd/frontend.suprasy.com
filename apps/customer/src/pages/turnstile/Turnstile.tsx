@@ -51,10 +51,10 @@ const TurnstileComponent = () => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Trunstile',
-        description: 'save failed!',
+        title: 'Turnstile',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

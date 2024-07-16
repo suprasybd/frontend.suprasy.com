@@ -52,10 +52,10 @@ const Hero = () => {
       });
       refetch();
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'hero failed',
-        description: 'hero failed.',
+        title: 'Hero Create',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },
@@ -68,10 +68,10 @@ const Hero = () => {
         description: 'done',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'hero failed',
-        description: 'hero failed.',
+        title: 'Hero Update',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

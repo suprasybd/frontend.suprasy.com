@@ -25,14 +25,14 @@ const DeleteAreaModal: React.FC<{ methodId: number }> = ({ methodId }) => {
     onSuccess: (response) => {
       queryClient.refetchQueries({ queryKey: ['getStoreShipingMethodsList'] });
       toast({
-        title: 'Product Delete',
+        title: 'Method Delete',
         description: response.Message,
         variant: 'default',
       });
     },
     onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Product Delete',
+        title: 'Method Delete',
         description: response.response.data.Message,
         variant: 'destructive',
       });

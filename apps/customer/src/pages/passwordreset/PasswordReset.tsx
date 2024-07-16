@@ -47,10 +47,10 @@ const PasswordReset: React.FC = () => {
         variant: 'default',
       });
     },
-    onError: (data) => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Reset Failed',
-        description: 'Code not found!',
+        title: 'Password Reset',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

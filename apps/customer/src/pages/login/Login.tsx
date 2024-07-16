@@ -44,10 +44,10 @@ const Login: React.FC = () => {
         to: '/',
       });
     },
-    onError: (data) => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'Login Failed',
-        description: 'Incorrect credintial provided!',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
       forceUpdate();

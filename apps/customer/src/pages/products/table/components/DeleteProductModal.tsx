@@ -30,10 +30,10 @@ const DeleteProductModal: React.FC<{ productId: number }> = ({ productId }) => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'Product Delete',
-        description: 'Product delete failed!',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

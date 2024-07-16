@@ -45,10 +45,10 @@ const ForgotPassword: React.FC = () => {
         variant: 'default',
       });
     },
-    onError: (data) => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Reset Failed',
-        description: 'Email not found!',
+        title: 'Password reset',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

@@ -80,10 +80,10 @@ const AddMethod: React.FC = () => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'Add method',
-        description: 'Add method failed!',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },
@@ -106,10 +106,10 @@ const AddMethod: React.FC = () => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
         title: 'Update Method',
-        description: 'Update Method failed!',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

@@ -75,10 +75,10 @@ const Version: React.FC<{ ThemeId: number }> = ({ ThemeId }) => {
         variant: 'default',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Theme Change Failed',
-        description: 'Theme Switch Failed.',
+        title: 'Theme change',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

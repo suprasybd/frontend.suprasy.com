@@ -71,10 +71,10 @@ const DomainList = () => {
 
       form.reset();
     },
-    onError: (data) => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'domain create',
-        description: 'domain create failed',
+        title: 'Domain Create',
+        description: response.response.data.Message,
         variant: 'destructive',
       });
     },

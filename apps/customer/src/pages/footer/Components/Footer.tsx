@@ -32,11 +32,11 @@ const FooterComponent = () => {
         description: 'updated',
       });
     },
-    onError: () => {
+    onError: (response: { response: { data: { Message: string } } }) => {
       toast({
+        title: 'Footer Update',
+        description: response.response.data.Message,
         variant: 'destructive',
-        title: 'failed',
-        description: 'update failed',
       });
     },
   });

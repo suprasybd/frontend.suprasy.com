@@ -5,7 +5,10 @@ import {
 } from '@customer/components/index';
 import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
-import { formatDate } from '../../../libs/helpers/formatdate';
+import {
+  formatDate,
+  formatDateToMinutes,
+} from '../../../libs/helpers/formatdate';
 import { Page } from '../api';
 import {
   DropdownMenuContent,
@@ -26,7 +29,7 @@ export const pageColumns: ColumnDef<Page>[] = [
     accessorKey: 'CreatedAt',
     header: 'Created At',
     cell: ({ row }) => {
-      return formatDate(row.original.CreatedAt);
+      return formatDateToMinutes(row.original.CreatedAt);
     },
   },
 

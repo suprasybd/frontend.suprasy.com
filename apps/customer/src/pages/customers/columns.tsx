@@ -16,6 +16,7 @@ import {
 import { Link, useParams } from '@tanstack/react-router';
 import { CustomerType } from './api';
 import { useModalStore } from '@customer/store/modalStore';
+import { formatDateToMinutes } from '@customer/libs/helpers/formatdate';
 
 export const customersColumn: ColumnDef<CustomerType>[] = [
   {
@@ -47,6 +48,9 @@ export const customersColumn: ColumnDef<CustomerType>[] = [
   {
     accessorKey: 'CreatedAt',
     header: 'Registration Time',
+    cell: ({ row }) => {
+      return formatDateToMinutes(row.original.CreatedAt);
+    },
   },
   {
     id: 'actions',

@@ -7,4 +7,4 @@ export const SUPRASY_API_URL = 'http://localhost:3000';
 export const SITE_URL = window.location.hostname;
 
 export const SUPRASY_CF_API = 'https://app-develop.suprasy.com';
-export const MONTHLY_COST = 999;
+export const MONTHLY_COST = 1500;

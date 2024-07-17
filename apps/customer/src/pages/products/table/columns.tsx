@@ -14,7 +14,10 @@ import {
 import DeleteProductModal from './components/DeleteProductModal';
 import { Link, useParams } from '@tanstack/react-router';
 import { v4 as uuidv4 } from 'uuid';
-import { formatDate } from '../../../../src/libs/helpers/formatdate';
+import {
+  formatDate,
+  formatDateToMinutes,
+} from '../../../../src/libs/helpers/formatdate';
 import { useModalStore } from '@customer/store/modalStore';
 import { useQuery } from '@tanstack/react-query';
 import { getProductsImages } from '../api';
@@ -46,7 +49,7 @@ export const productsColumn: ColumnDef<ProductType>[] = [
     cell: ({ row }) => {
       const product = row.original;
 
-      return formatDate(product.UpdatedAt);
+      return formatDateToMinutes(product.UpdatedAt);
     },
   },
   {
@@ -55,7 +58,7 @@ export const productsColumn: ColumnDef<ProductType>[] = [
     cell: ({ row }) => {
       const product = row.original;
 
-      return formatDate(product.CreatedAt);
+      return formatDateToMinutes(product.CreatedAt);
     },
   },
   {

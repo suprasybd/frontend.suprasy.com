@@ -1,6 +1,13 @@
 import { ColumnDef } from '@tanstack/react-table';
 
-import { MoreHorizontal } from 'lucide-react';
+import {
+  BookUser,
+  CircleUser,
+  Globe,
+  Mails,
+  MoreHorizontal,
+  PhoneCall,
+} from 'lucide-react';
 
 import { Button } from '@customer/components/index';
 import {
@@ -16,6 +23,10 @@ import {
 import { Link, useParams } from '@tanstack/react-router';
 import { OrderType } from './api';
 import { useModalStore } from '@customer/store/modalStore';
+import {
+  formatDate,
+  formatDateToMinutes,
+} from '@customer/libs/helpers/formatdate';
 
 export const ordersColumn: ColumnDef<OrderType>[] = [
   {
@@ -24,20 +35,51 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
   },
   {
     id: 'contact',
-    header: 'Contact',
+    header: 'Contact Information',
     cell: ({ row }) => {
       const order = row.original;
 
       return (
-        <div>
-          <p>{order.FullName}</p>
-          <p>{order.Phone}</p>
-          <p>{order.Email}</p>
+        <div className="p-3 bg-slate-100 rounded-md w-fit">
+          <p className="mb-2 font-bold flex gap-[5px] items-center">
+            <CircleUser className="h-[16px] w-[16px]" />
+            {order.FullName}
+          </p>
+          <p className="mb-2 font-bold flex gap-[5px] items-center">
+            <PhoneCall className="h-[16px] w-[16px]" />
+            {order.Phone}
+          </p>
+          <p className="mb-2 font-bold flex gap-[5px] items-center">
+            <Mails className="h-[16px] w-[16px]" />
+            {order.Email}
+          </p>
         </div>
       );
     },
   },
+  {
+    id: 'address',
+    header: 'Delivery Address',
+    cell: ({ row }) => {
+      const order = row.original;
 
+      return (
+        <p className="mb-2 font-bold flex gap-[5px] items-center">
+          <BookUser className="h-[16px] w-[16px]" />
+          {order.Address}
+        </p>
+      );
+    },
+  },
+  {
+    id: 'note',
+    header: 'Note',
+    cell: ({ row }) => {
+      const order = row.original;
+
+      return <p>{order.Note}</p>;
+    },
+  },
   {
     accessorKey: 'ShippingMethod',
     header: 'Shipping',
@@ -45,7 +87,6 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
       return (
         <div>
           <p className="">{row.original.ShippingMethod.slice(0, 30) + '...'}</p>
-          {Boolean(row.original.Note) && <p>Note: {row.original.Note}</p>}
         </div>
       );
     },
@@ -60,6 +101,9 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
   {
     accessorKey: 'CreatedAt',
     header: 'Order Time',
+    cell: ({ row }) => {
+      return formatDateToMinutes(row.original.CreatedAt);
+    },
   },
   {
     id: 'actions',

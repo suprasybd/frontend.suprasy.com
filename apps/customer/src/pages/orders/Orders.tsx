@@ -14,6 +14,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Label,
 } from '@customer/components/index';
 import { Link, useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -76,7 +77,7 @@ const Orders = () => {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <Accordion type="single" collapsible>
+      <Accordion type="single" collapsible defaultChecked defaultValue="item-1">
         <AccordionItem className="border-b-0" value="item-1">
           <AccordionTrigger className="hover:no-underline border-b-0">
             <Button variant={'defaultGradiant'}>
@@ -84,23 +85,36 @@ const Orders = () => {
             </Button>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex flex-col gap-[10px]">
-              <Input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Filter using phone"
-              />
-              <Input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Filter using email"
-              />
-              <Input
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-                type="number"
-                placeholder="Filter using id"
-              />
+            <div className="flex flex-wrap gap-[10px]">
+              <div className="w-[300px]">
+                <Label className="my-2">Filter Phone</Label>
+                <Input
+                  className="my-2"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Filter using phone"
+                />
+              </div>
+
+              <div className="w-[300px]">
+                <Label className="my-2">Filter Email</Label>
+                <Input
+                  className="my-2"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Filter using email"
+                />
+              </div>
+              <div className="w-[300px]">
+                <Label className="my-2">Filter Order Id</Label>
+                <Input
+                  className="my-2"
+                  value={id}
+                  onChange={(e) => setId(e.target.value)}
+                  type="number"
+                  placeholder="Filter using id"
+                />
+              </div>
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -115,6 +129,7 @@ const Orders = () => {
       >
         <TabsList className="mb-5">
           <TabsTrigger value="pending">Pending</TabsTrigger>
+          <TabsTrigger value="unverified">Unverified</TabsTrigger>
           <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
           <TabsTrigger value="shipped">Shipped</TabsTrigger>
           <TabsTrigger value="completed">Completed</TabsTrigger>

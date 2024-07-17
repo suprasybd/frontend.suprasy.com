@@ -32,9 +32,12 @@ const formSchema = z.object({
   Status: z
     .string()
     .min(2)
-    .regex(/^(pending|confirmed|shipped|completed|cancled|returned)$/, {
-      message: 'Invalid status',
-    })
+    .regex(
+      /^(pending|unverified|confirmed|shipped|completed|cancled|returned)$/,
+      {
+        message: 'Invalid status',
+      }
+    )
     .max(150),
   Note: z.string().optional(),
 });
@@ -142,7 +145,8 @@ const UpdateOrder: React.FC = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="pending">Pending</SelectItem>{' '}
+                          <SelectItem value="unverified">Unverified</SelectItem>
                           <SelectItem value="confirmed">Confirmed</SelectItem>
                           <SelectItem value="shipped">Shipped</SelectItem>
                           <SelectItem value="completed">Completed</SelectItem>

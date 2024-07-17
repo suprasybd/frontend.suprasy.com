@@ -14,6 +14,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Label,
 } from '@customer/components/index';
 import { Link, useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -87,17 +88,21 @@ const CustomersPage = () => {
             </Button>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex flex-col gap-[10px]">
+            <div className="flex flex-wrap gap-[10px]">
               {/* <Input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Filter using phone"
               /> */}
-              <Input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Filter using email"
-              />
+              <div className="w-[300px]">
+                <Label className="my-2">Filter Email</Label>
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Filter using email"
+                />
+              </div>
+
               {/* <Input
                 value={id}
                 onChange={(e) => setId(e.target.value)}

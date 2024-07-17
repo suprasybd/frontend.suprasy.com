@@ -10,7 +10,10 @@ import {
 import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import React from 'react';
-import { formatDate } from '../../../libs/helpers/formatdate';
+import {
+  formatDate,
+  formatDateToMinutes,
+} from '../../../libs/helpers/formatdate';
 import { AreaType } from '../api';
 import DeleteAreaModal from './DeleteAreaModal';
 import { useShippingStore } from './shippingStore';
@@ -28,7 +31,7 @@ export const areasColumns: ColumnDef<AreaType>[] = [
     accessorKey: 'CreatedAt',
     header: 'Created At',
     cell: ({ row }) => {
-      return formatDate(row.original.CreatedAt);
+      return formatDateToMinutes(row.original.CreatedAt);
     },
   },
 

@@ -30,3 +30,4 @@ export * from './ui/breadcrumb';
 export * from './ui/scroll-area';
 export * from './SlateEditor/RichText';
 export * from './ui/separator';
+export * from './ui/command';

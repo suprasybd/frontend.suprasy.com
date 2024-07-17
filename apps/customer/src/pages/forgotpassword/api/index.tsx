@@ -6,7 +6,10 @@ import { resetSchema } from '../zod/passwordResetSchema';
 export const resetPassword = async (
   data: z.infer<typeof resetSchema>
 ): Promise<SingleResposeType> => {
-  const response = await ApiClient.post(`/auth/passwordreset/${data.Email}`);
+  const response = await ApiClient.post(
+    `/auth/passwordreset/${data.Email}`,
+    data
+  );
 
   return response.data;
 };

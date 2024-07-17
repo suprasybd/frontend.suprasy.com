@@ -33,7 +33,7 @@ const ForgotPassword: React.FC = () => {
   const formErrors = form.formState;
 
   const {
-    mutate: registerMutation,
+    mutate: resetMutation,
     isPending,
     isSuccess,
   } = useMutation({
@@ -59,7 +59,7 @@ const ForgotPassword: React.FC = () => {
     turnstileResponse: string | null
   ) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    registerMutation({
+    resetMutation({
       ...values,
       'cf-turnstile-response': turnstileResponse,
     } as any);

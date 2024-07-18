@@ -16,6 +16,7 @@ import {
   Custom3BtnDrop,
 } from '@customer/components/selectors/Custom3';
 import { Video } from '@customer/components/selectors/Video';
+import { Details } from '@customer/components/selectors/Details1';
 
 const Landing = () => {
   return (
@@ -47,6 +48,7 @@ function CraftEditor() {
           resolver={{
             Container,
             Text,
+            Details,
             Custom1,
             Custom2,
             Custom2VideoDrop,

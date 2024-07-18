@@ -136,7 +136,11 @@ const TurnstileComponent = () => {
               <FormItem>
                 <FormLabel>Turnstile Secret</FormLabel>
                 <FormControl>
-                  <Input placeholder="Turnstile Secret" {...field} />
+                  <Input
+                    type="text"
+                    placeholder="Turnstile Secret"
+                    {...field}
+                  />
                 </FormControl>
 
                 <FormMessage />

@@ -9,6 +9,8 @@ import { Container } from '../../selectors/Container';
 import { Text } from '../../selectors/Text';
 import { Video } from '../../selectors/Video';
 import { BoxIcon, Square, TvIcon, Type } from 'lucide-react';
+import { Details } from '@customer/components/selectors/Details1';
+import { Custom1 } from '@customer/components/selectors/Custom1';
 
 const ToolboxDiv = styled.div<{ enabled: boolean }>`
   transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
@@ -43,6 +45,7 @@ export const Toolbox = () => {
       className="toolbox transition w-[400px] h-full flex p-4 flex-col bg-white"
     >
       <div className="flex justify-around flex-wrap pt-3 gap-[9px]">
+        {/* container */}
         <div
           ref={(ref) =>
             create(
@@ -66,6 +69,20 @@ export const Toolbox = () => {
               >
                 <Square />
                 Container
+              </Item>
+            </Tooltip>
+          </Card>
+        </div>
+        {/* details */}
+        <div ref={(ref) => create(ref, <Custom1 />)}>
+          <Card className="w-[150px] h-[150px] flex justify-center items-center">
+            <Tooltip title="Details1" placement="right">
+              <Item
+                className="m-2 pb-2 flex flex-col justify-center items-center cursor-pointer text-center"
+                move
+              >
+                <Square />
+                Details1
               </Item>
             </Tooltip>
           </Card>

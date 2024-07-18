@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Button } from '../Button';
 import { Container } from '../Container';
+import { Text } from '../Text';
 
 export const OnlyButtons = ({ children, ...props }) => {
   const {
@@ -24,11 +25,13 @@ OnlyButtons.craft = {
 export const Custom1 = (props: any) => {
   return (
     <Container {...props}>
-      <h2 className="text-lg px-10 py-5 text-white">
-        I'm a component that only accepts
-        <br /> buttons.
-      </h2>
       <Element canvas id="wow" is={OnlyButtons}>
+        <Text
+          fontSize="23"
+          fontWeight="400"
+          text="Craft.js is a React framework for building powerful &amp; feature-rich drag-n-drop page editors."
+        />
+
         <Button />
         <Button
           buttonStyle="outline"

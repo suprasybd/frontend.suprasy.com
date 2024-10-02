@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -51,6 +52,7 @@ import {
   getProductsDetails,
   getProductsImages,
   getProductsVariantsDetails,
+  getVariations,
   updateStoresProduct,
 } from '../api';
 import { productSchema } from './zod/productSchema';
@@ -130,6 +132,18 @@ const CreateProduct: React.FC = () => {
     queryFn: () => getProductsImages(productId || 0),
     enabled: !!productId && update,
   });
+
+  const { data: variationsDataResponse } = useQuery({
+    queryKey: ['getVarination', productId],
+    queryFn: () => getVariations(productId || 0),
+    enabled: !!productId && update,
+  });
+
+  useEffect(() => {
+    if (variationsDataResponse) {
+      form.setValue('ProductVariations', variationsDataResponse.Data as any);
+    }
+  }, [variationsDataResponse, form]);
 
   const productDetails = productDetailsResponse?.Data;
   const productImagesData = productImagesResponse?.Data;
@@ -430,10 +444,10 @@ const CreateProduct: React.FC = () => {
                     return (
                       <div
                         key={option.id}
-                        className=" border my-2 border-gray-600 p-3 rounded-md"
+                        className="border shadow-lg my-2 border-gray-300 p-3 rounded-md"
                       >
                         <VariationImage fieldIndex={index} form={form} />
-                        <div className="flex flex-wrap gap-[3px]">
+                        <div className="flex flex-wrap justify-start items-end gap-[10px]">
                           <FormField
                             control={form.control}
                             name={`ProductVariations.${index}.ChoiceName`}
@@ -562,10 +576,12 @@ const CreateProduct: React.FC = () => {
                             )}
                           />
 
-                          <Trash2
-                            onClick={() => remove(index)}
-                            className="hover:cursor-pointer"
-                          />
+                          <div className="h-full flex items-end">
+                            <Trash2
+                              onClick={() => remove(index)}
+                              className="hover:cursor-pointer"
+                            />
+                          </div>
                         </div>
                       </div>
                     );

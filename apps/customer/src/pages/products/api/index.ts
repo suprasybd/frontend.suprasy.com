@@ -79,6 +79,14 @@ export const getProductsImages = async (
   return response.data;
 };
 
+export const getVariations = async (
+  productId: number
+): Promise<ListResponseType<ProductImagesTypes>> => {
+  const response = await ApiClient.get(`/products/variations/${productId}`);
+
+  return response.data;
+};
+
 export const getProductAttributes = async (
   productId: number
 ): Promise<ResponseType<ProductAttributeTypes>> => {

@@ -58,6 +58,7 @@ import { useModalStore } from '@customer/store/modalStore';
 import { useMediaFormStore } from '@customer/store/mediaFormStore';
 import useTurnStileHook from '@customer/hooks/turnstile';
 import { Turnstile } from '@marsidev/react-turnstile';
+import VariationImage from './components/VariationImage';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -65,63 +66,23 @@ const CreateProduct: React.FC = () => {
     mode: 'all',
     defaultValues: {
       Description: '',
-      Price: 99,
       Slug: '',
       Title: '',
       Type: '',
-      Inventory: 2,
-      HasVariants: false,
       Status: 'draft',
-      ShowCompareAtPrice: true,
-      CompareAtPrice: 190,
-      AttributeName: 'Size',
-      AttributeValue: [
+      ProductVariations: [
         {
-          Inventory: 99,
-          Price: 190,
+          Inventory: 0,
+          Price: 0,
+          ChoiceName: 'default',
           Sku: 'SF-34526KP',
-          Value: 'xl',
-          CompareAtPrice: 190,
-          ShowCompareAtPrice: true,
-        },
-      ],
-      Images: [
-        {
-          ImageUrl:
-            'https://static.suprasy.com/2470df57-b2e3-46e3-a7d3-2ee62ecb976d20240216012436',
-        },
-        {
-          ImageUrl:
-            'https://static.suprasy.com/130c440e-a52c-4383-bb45-f8b22486488720240216012427',
         },
       ],
     },
   });
-  const [imageUpdated, setImageUpdated] = useState<number>(0);
-
-  const { append: appendImage, remove: removeImage } = useFieldArray({
-    control: form.control,
-    name: 'Images',
-  });
-
-  // set form into form store
-  const { imagesList, setImagesList } = useMediaFormStore((state) => state);
-
-  useEffect(() => {
-    if (imagesList && imagesList.length) {
-      const formatedImagesList = imagesList.map((image) => ({
-        ImageUrl: image,
-      }));
-      appendImage(formatedImagesList);
-      setImagesList([]);
-    }
-    console.log('run');
-    // eslint-disable-next-line
-  }, [imagesList]);
 
   const { errors: formErrors } = form.formState;
 
-  const { setModalPath } = useModalStore((state) => state);
   const { toast } = useToast();
   const { storeKey } = useParams({ strict: false }) as {
     storeKey: string;
@@ -174,9 +135,6 @@ const CreateProduct: React.FC = () => {
   const productImagesData = productImagesResponse?.Data;
   const productAttributes = productAttributeResponse?.Data;
   const productSku = productSkuResponse?.Data;
-  const hasVariants = form.watch('HasVariants');
-
-  const productImages = form.watch('Images');
 
   // Pre fill previous values for update
 
@@ -186,30 +144,8 @@ const CreateProduct: React.FC = () => {
       form.setValue('Description', productDetails.Description);
       form.setValue('Summary', productDetails.Summary);
       form.setValue('Slug', productDetails.Slug);
-      form.setValue('HasVariants', productDetails.HasVariant);
+
       form.setValue('Status', productDetails.Status);
-    }
-
-    if (productAttributes && productDetails?.HasVariant) {
-      const mappedAttributesValues = productAttributes.Values.map((value) => ({
-        Inventory: value.sku.Inventory,
-        Price: value.sku.Price,
-        Sku: value.sku.Sku,
-        Value: value.attributeValue.Value,
-        ShowCompareAtPrice: value.sku.ShowCompareAtPrice,
-        CompareAtPrice: value.sku.CompareAtPrice,
-      }));
-
-      form.setValue('AttributeName', productAttributes.Name.Name);
-      form.setValue('AttributeValue', mappedAttributesValues);
-    }
-
-    if (productSku) {
-      form.setValue('Sku', productSku.Sku);
-      form.setValue('Price', productSku.Price);
-      form.setValue('ShowCompareAtPrice', productSku.ShowCompareAtPrice);
-      form.setValue('CompareAtPrice', productSku.CompareAtPrice);
-      form.setValue('Inventory', productSku.Inventory);
     }
 
     if (productImagesData) {
@@ -217,9 +153,9 @@ const CreateProduct: React.FC = () => {
         ImageUrl: image.ImageUrl,
       }));
       console.log(productImagesFormatted);
-      form.setValue('Images', productImagesFormatted);
+      // form.setValue('Images', productImagesFormatted);
 
-      setImageUpdated((prev) => prev + 1);
+      // setImageUpdated((prev) => prev + 1);
     }
   }, [
     productDetails,
@@ -283,16 +219,19 @@ const CreateProduct: React.FC = () => {
     values: z.infer<typeof productSchema>,
     turnstileResponse: string | null
   ) {
-    const formatedImages = values.Images.map(
-      (value: { ImageUrl: string }) => value.ImageUrl
-    );
+    const imageFormatedVariations = values.ProductVariations.map((v) => {
+      if (v.Images && v.Images.length > 0) {
+        return {
+          ...v,
+          Images: v.Images.map((i) => i.ImageUrl),
+        };
+      }
+      return v;
+    });
+
     const finalProduct = {
       ...values,
-      Images: formatedImages,
-      Attribute: hasVariants && {
-        Name: values.AttributeName,
-        Values: values.AttributeValue,
-      },
+      ProductVariations: imageFormatedVariations,
     };
 
     if (!isUpdating) {
@@ -316,17 +255,17 @@ const CreateProduct: React.FC = () => {
   const { errors } = form.formState;
 
   const {
-    fields: attributeValues,
-    append: appendAttributeValue,
+    fields: variationsFields,
+    append: appendVariation,
     remove,
   } = useFieldArray({
     control: form.control,
-    name: 'AttributeValue',
+    name: 'ProductVariations',
   });
 
   const { move: moveImage } = useFieldArray({
     control: form.control,
-    name: 'Images',
+    name: 'ProductVariations',
   });
 
   const productDescription = useMemo(() => {
@@ -473,87 +412,6 @@ const CreateProduct: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card className="overflow-hidden">
-                <CardHeader>
-                  <CardTitle>Product Images</CardTitle>
-                  <CardDescription>
-                    Select images and order them bellow
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-[10px]">
-                    {productImages.map((image, index) => {
-                      return (
-                        <div className="rounded-sm relative  border-gray-300 border-2">
-                          <div className="relative h-[160px] w-[200px] rounded-sm border broder-b-4 border-blue-400">
-                            <img
-                              src={image.ImageUrl}
-                              alt="product"
-                              className="object-cover w-full h-full "
-                            />
-                          </div>
-                          {index === 0 && (
-                            <div className="absolute top-[-10px] left-[-10px] bg-yellow-300 text-red-600 rounded-lg p-1">
-                              {' '}
-                              <Star />
-                            </div>
-                          )}
-                          <div className="flex w-full ">
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                if (index !== 0) {
-                                  moveImage(index, index - 1);
-                                } else {
-                                  moveImage(index, productImages.length - 1);
-                                }
-                              }}
-                              className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2 "
-                            >
-                              <ArrowLeft />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                if (index !== productImages.length - 1) {
-                                  moveImage(index, index + 1);
-                                } else {
-                                  moveImage(index, 0);
-                                }
-                              }}
-                              className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2 "
-                            >
-                              <ArrowRight />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                removeImage(index);
-                              }}
-                              className="w-full flex justify-center hover:bg-slate-300 p-2 "
-                            >
-                              <Trash2 />
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <button
-                    onClick={(e) => {
-                      // set modal here
-                      e.preventDefault();
-                      setModalPath({ modal: 'media', aspect: 1 });
-                    }}
-                    className="flex aspect-square mt-10 w-[200px] h-[160px] items-center justify-center rounded-md border border-dashed"
-                  >
-                    <Upload className="h-4 w-4 text-muted-foreground" />
-                    <span className="sr-only">Upload</span>
-                  </button>
-                </CardContent>
-              </Card>
-
               {updateInventory && (
                 <h1 className="text-xl font-bold my-3">
                   Update Variants & Inventory (Stock)
@@ -568,369 +426,167 @@ const CreateProduct: React.FC = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div>
-                    <div className="space-y-4">
-                      {!hasVariants && (
-                        <FormField
-                          control={form.control}
-                          name={'Sku'}
-                          render={({ field }) => (
-                            <FormItem className=" rounded-lg pt-3">
-                              <div className="space-y-0.5">
-                                <FormLabel>Product Sku</FormLabel>
-                                <FormDescription></FormDescription>
-                              </div>
-                              <div className="flex gap-[7px] items-center">
-                                <FormControl>
-                                  <Input
-                                    defaultValue={'SKU-234512'}
-                                    placeholder="Sku"
-                                    {...field}
-                                  />
-                                </FormControl>
-                              </div>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-
-                      <FormField
-                        control={form.control}
-                        name="HasVariants"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                            <div className="space-y-0.5">
-                              <FormLabel>Product has variants</FormLabel>
-                              <FormDescription>
-                                Check here if this product has options and
-                                variants.
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    {hasVariants && (
-                      <div className="mt-3">
-                        <FormField
-                          control={form.control}
-                          name={`AttributeName`}
-                          render={({ field }) => (
-                            <FormItem className=" rounded-lg pt-3">
-                              <div className="space-y-0.5">
-                                <FormLabel>Attribute Name</FormLabel>
-                                <FormDescription></FormDescription>
-                              </div>
-                              <div className="flex gap-[7px] items-center">
-                                <FormControl>
-                                  <Input
-                                    placeholder="Attribute Name"
-                                    {...field}
-                                  />
-                                </FormControl>
-                              </div>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <Card className="mt-3">
-                          <CardHeader>
-                            <CardTitle>Attribute Values List</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            {attributeValues.map((option, index) => {
-                              return (
-                                <div
-                                  key={option.id}
-                                  className="flex flex-wrap gap-[3px] border my-2 border-gray-600 p-3 rounded-md"
-                                >
-                                  <FormField
-                                    control={form.control}
-                                    name={`AttributeValue.${index}.Value`}
-                                    render={({ field }) => (
-                                      <FormItem className=" rounded-lg pt-3">
-                                        <div className="space-y-0.5">
-                                          <FormLabel>Value</FormLabel>
-                                          <FormDescription></FormDescription>
-                                        </div>
-                                        <div className="flex gap-[7px] items-center">
-                                          <FormControl>
-                                            <Input
-                                              FormError={
-                                                !!formErrors?.AttributeValue?.[
-                                                  index
-                                                ]?.Value
-                                              }
-                                              placeholder="Value"
-                                              {...field}
-                                            />
-                                          </FormControl>
-                                        </div>
-
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                  <FormField
-                                    control={form.control}
-                                    name={`AttributeValue.${index}.Sku`}
-                                    render={({ field }) => (
-                                      <FormItem className=" rounded-lg pt-3">
-                                        <div className="space-y-0.5">
-                                          <FormLabel>Sku</FormLabel>
-                                          <FormDescription></FormDescription>
-                                        </div>
-                                        <div className="flex gap-[7px] items-center">
-                                          <FormControl>
-                                            <Input
-                                              FormError={
-                                                !!formErrors?.AttributeValue?.[
-                                                  index
-                                                ]?.Sku
-                                              }
-                                              placeholder="Sku"
-                                              {...field}
-                                            />
-                                          </FormControl>
-                                        </div>
-
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                  <FormField
-                                    control={form.control}
-                                    name={`AttributeValue.${index}.Inventory`}
-                                    render={({ field }) => (
-                                      <FormItem className=" rounded-lg pt-3">
-                                        <div className="space-y-0.5">
-                                          <FormLabel>Inventory</FormLabel>
-                                          <FormDescription></FormDescription>
-                                        </div>
-                                        <div className="flex gap-[7px] items-center">
-                                          <FormControl>
-                                            <Input
-                                              FormError={
-                                                !!formErrors?.AttributeValue?.[
-                                                  index
-                                                ]?.Inventory
-                                              }
-                                              placeholder="Inventory"
-                                              {...field}
-                                            />
-                                          </FormControl>
-                                        </div>
-
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-
-                                  <FormField
-                                    control={form.control}
-                                    name={`AttributeValue.${index}.CompareAtPrice`}
-                                    render={({ field }) => (
-                                      <FormItem className="space-y-0 !mt-3">
-                                        <FormLabel>
-                                          Compare At Price (BDT/৳){' '}
-                                        </FormLabel>
-                                        <FormControl>
-                                          <Input
-                                            FormError={
-                                              !!formErrors?.AttributeValue?.[
-                                                index
-                                              ]?.CompareAtPrice
-                                            }
-                                            placeholder="Compare At Price"
-                                            {...field}
-                                          />
-                                        </FormControl>
-
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-
-                                  <FormField
-                                    control={form.control}
-                                    name={`AttributeValue.${index}.ShowCompareAtPrice`}
-                                    render={({ field }) => (
-                                      <FormItem className=" mt-3 mx-3 px-3 flex-row items-center justify-between rounded-lg border shadow-sm">
-                                        <div className="space-y-0.5">
-                                          <FormLabel>
-                                            Show compare at price
-                                          </FormLabel>
-                                        </div>
-                                        <FormControl>
-                                          <Switch
-                                            className="p-0"
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                  <FormField
-                                    control={form.control}
-                                    name={`AttributeValue.${index}.Price`}
-                                    render={({ field }) => (
-                                      <FormItem className=" rounded-lg pt-3 ">
-                                        <div className="space-y-0.5">
-                                          <FormLabel>Price BDT</FormLabel>
-                                          <FormDescription></FormDescription>
-                                        </div>
-                                        <div className="flex gap-[7px] items-center">
-                                          <FormControl>
-                                            <Input
-                                              FormError={
-                                                !!formErrors?.AttributeValue?.[
-                                                  index
-                                                ]?.Price
-                                              }
-                                              placeholder="Price BDT"
-                                              {...field}
-                                            />
-                                          </FormControl>
-
-                                          <Trash2
-                                            onClick={() => remove(index)}
-                                            className="hover:cursor-pointer"
-                                          />
-                                        </div>
-
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
+                  {variationsFields.map((option, index) => {
+                    return (
+                      <div
+                        key={option.id}
+                        className=" border my-2 border-gray-600 p-3 rounded-md"
+                      >
+                        <VariationImage fieldIndex={index} form={form} />
+                        <div className="flex flex-wrap gap-[3px]">
+                          <FormField
+                            control={form.control}
+                            name={`ProductVariations.${index}.ChoiceName`}
+                            render={({ field }) => (
+                              <FormItem className=" rounded-lg pt-3">
+                                <div className="space-y-0.5">
+                                  <FormLabel>Variation Name</FormLabel>
+                                  <FormDescription></FormDescription>
                                 </div>
-                              );
-                            })}
+                                <div className="flex gap-[7px] items-center">
+                                  <FormControl>
+                                    <Input
+                                      FormError={
+                                        !!formErrors?.ProductVariations?.[index]
+                                          ?.ChoiceName
+                                      }
+                                      placeholder="Variation Name"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                </div>
 
-                            <Button
-                              className="mt-3"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                appendAttributeValue({
-                                  Inventory: 88,
-                                  Price: 10,
-                                  Sku: 'DEFAULT_SKU_35234',
-                                  Value: 'xl',
-                                  CompareAtPrice: 190,
-                                  ShowCompareAtPrice: true,
-                                });
-                              }}
-                            >
-                              Add More Value
-                            </Button>
-                          </CardContent>
-                        </Card>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name={`ProductVariations.${index}.Sku`}
+                            render={({ field }) => (
+                              <FormItem className=" rounded-lg pt-3">
+                                <div className="space-y-0.5">
+                                  <FormLabel>Sku</FormLabel>
+                                  <FormDescription></FormDescription>
+                                </div>
+                                <div className="flex gap-[7px] items-center">
+                                  <FormControl>
+                                    <Input
+                                      FormError={
+                                        !!formErrors?.ProductVariations?.[index]
+                                          ?.Sku
+                                      }
+                                      placeholder="Sku"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                </div>
+
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name={`ProductVariations.${index}.Inventory`}
+                            render={({ field }) => (
+                              <FormItem className=" rounded-lg pt-3">
+                                <div className="space-y-0.5">
+                                  <FormLabel>Inventory</FormLabel>
+                                  <FormDescription></FormDescription>
+                                </div>
+                                <div className="flex gap-[7px] items-center">
+                                  <FormControl>
+                                    <Input
+                                      FormError={
+                                        !!formErrors?.ProductVariations?.[index]
+                                          ?.Inventory
+                                      }
+                                      placeholder="Inventory"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                </div>
+
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name={`ProductVariations.${index}.Price`}
+                            render={({ field }) => (
+                              <FormItem className=" rounded-lg pt-3 ">
+                                <div className="space-y-0.5">
+                                  <FormLabel>Price BDT</FormLabel>
+                                  <FormDescription></FormDescription>
+                                </div>
+                                <div className="flex gap-[7px] items-center">
+                                  <FormControl>
+                                    <Input
+                                      FormError={
+                                        !!formErrors?.ProductVariations?.[index]
+                                          ?.Price
+                                      }
+                                      placeholder="Price BDT"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                </div>
+
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name={`ProductVariations.${index}.SalesPrice`}
+                            render={({ field }) => (
+                              <FormItem className="space-y-0 !mt-3">
+                                <FormLabel>Sales Price (BDT/৳) </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    FormError={
+                                      !!formErrors?.ProductVariations?.[index]
+                                        ?.SalesPrice
+                                    }
+                                    placeholder="Sales Price"
+                                    {...field}
+                                  />
+                                </FormControl>
+
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <Trash2
+                            onClick={() => remove(index)}
+                            className="hover:cursor-pointer"
+                          />
+                        </div>
                       </div>
-                    )}
-                  </div>
+                    );
+                  })}
+
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      appendVariation({
+                        ChoiceName: 'default',
+                        Price: 0,
+                        SalesPrice: 0,
+                        Images: [],
+                        Inventory: 0,
+                      });
+                    }}
+                  >
+                    Add Variation
+                  </Button>
                 </CardContent>
               </Card>
-
-              {!hasVariants && (
-                <Card id="inventory">
-                  <CardHeader className="pb-0 ">
-                    <CardTitle>Enter Single Product Price</CardTitle>
-                    <CardDescription>e.g. 199 Price (BDT/৳)</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <FormField
-                      control={form.control}
-                      name="Price"
-                      render={({ field }) => (
-                        <FormItem className="space-y-0 !mt-3">
-                          <FormLabel>Price (BDT/৳) </FormLabel>
-                          <FormControl>
-                            <Input
-                              FormError={!!formErrors.Price}
-                              placeholder="Price"
-                              {...field}
-                            />
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="CompareAtPrice"
-                      render={({ field }) => (
-                        <FormItem className="space-y-0 !mt-3">
-                          <FormLabel>Compare At Price (BDT/৳) </FormLabel>
-                          <FormControl>
-                            <Input
-                              FormError={!!formErrors.CompareAtPrice}
-                              placeholder="Compare At Price"
-                              {...field}
-                            />
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="ShowCompareAtPrice"
-                      render={({ field }) => (
-                        <FormItem className="flex mt-3 flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                          <div className="space-y-0.5">
-                            <FormLabel>Show compare at price</FormLabel>
-                            <FormDescription>
-                              Check here if you want to show compare at price
-                              with how much off
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="Inventory"
-                      render={({ field }) => (
-                        <FormItem className="space-y-0 !mt-3">
-                          <FormLabel>Inventory / Quantity</FormLabel>
-                          <FormControl>
-                            <Input
-                              FormError={!!formErrors.Inventory}
-                              placeholder="Inventory/Qty"
-                              {...field}
-                            />
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
-              )}
             </div>
 
             {/* right */}

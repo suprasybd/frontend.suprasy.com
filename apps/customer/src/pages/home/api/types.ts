@@ -27,6 +27,7 @@ export interface BalanceResponseType {
   Id: number;
   Balance: number;
   UserId: number;
+  IsTrial: boolean;
   CreatedAt: string;
   UpdatedAt: string;
 }

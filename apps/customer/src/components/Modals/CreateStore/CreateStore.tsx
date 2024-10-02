@@ -155,6 +155,16 @@ const CreateStoreModal: React.FC = () => {
     return false;
   }, [balance, planData]);
 
+  const shouldDisableCreate = useMemo(() => {
+    if (balanceResponse?.Data.IsTrial) {
+      return false;
+    }
+    if (!haveBalance) {
+      return true;
+    }
+    return false;
+  }, [haveBalance, balanceResponse?.Data.IsTrial]);
+
   return (
     <div>
       <Dialog
@@ -215,41 +225,54 @@ const CreateStoreModal: React.FC = () => {
                 )}
               />
 
-              {balanceSuccess && balance && planData && (
-                <div>
-                  {haveBalance ? (
-                    <Alert>
-                      <AlertTitle>Transaction Details</AlertTitle>
-                      <AlertDescription>
-                        {isSuccess && (
-                          <div>
+              {balanceSuccess &&
+                balance &&
+                planData &&
+                !balanceResponse.Data.IsTrial && (
+                  <div>
+                    {haveBalance ? (
+                      <Alert>
+                        <AlertTitle>Transaction Details</AlertTitle>
+                        <AlertDescription>
+                          {isSuccess && (
                             <div>
-                              {MONTHLY_COST} BDT will be deducted from your
-                              balance
-                            </div>
-                            {balanceSuccess && balance && planData && (
                               <div>
-                                Remaining balance will be :{' '}
-                                {balance?.Balance - MONTHLY_COST}
+                                {MONTHLY_COST} BDT will be deducted from your
+                                balance
                               </div>
-                            )}
-                          </div>
-                        )}
-                      </AlertDescription>
-                    </Alert>
-                  ) : (
-                    <Alert variant={'destructive'}>
-                      <AlertTitle>Not enough balance</AlertTitle>
-                      <AlertDescription>
-                        You don't have enought balance.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                </div>
+                              {balanceSuccess && balance && planData && (
+                                <div>
+                                  Remaining balance will be :{' '}
+                                  {balance?.Balance - MONTHLY_COST}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </AlertDescription>
+                      </Alert>
+                    ) : (
+                      <Alert variant={'destructive'}>
+                        <AlertTitle>Not enough balance</AlertTitle>
+                        <AlertDescription>
+                          You don't have enought balance.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
+                )}
+
+              {balanceResponse?.Data.IsTrial && (
+                <Alert variant={'default'}>
+                  <AlertTitle>One Month Trial</AlertTitle>
+                  <AlertDescription>
+                    You are eligible for 1 month trial, create your store and
+                    use for 1 month free.
+                  </AlertDescription>
+                </Alert>
               )}
 
               <Button
-                disabled={!haveBalance || isError}
+                disabled={shouldDisableCreate || isError}
                 type="submit"
                 className="w-full"
               >

@@ -6,4 +6,4 @@ export const SUPRASY_API_URL = 'http://localhost:3000';
 
 export const SITE_URL = window.location.hostname;
 
-export const MONTHLY_COST = 1500;
+export const MONTHLY_COST = 500;

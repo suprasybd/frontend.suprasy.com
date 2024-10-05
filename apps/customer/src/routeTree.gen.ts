@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as ThemesImport } from './routes/themes'
 import { Route as TestImport } from './routes/test'
 import { Route as StoreImport } from './routes/store'
 import { Route as RenderImport } from './routes/render'
@@ -85,6 +86,11 @@ const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
+
+const ThemesRoute = ThemesImport.update({
+  path: '/themes',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const TestRoute = TestImport.update({
   path: '/test',
@@ -358,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestImport
       parentRoute: typeof rootRoute
     }
+    '/themes': {
+      id: '/themes'
+      path: '/themes'
+      fullPath: '/themes'
+      preLoaderRoute: typeof ThemesImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -585,6 +598,7 @@ export const routeTree = rootRoute.addChildren({
     StoreStoreKeyOrdersOrderIdIndexRoute,
   }),
   TestRoute,
+  ThemesRoute,
   AboutLazyRoute,
   PasswordresetCodeIndexRoute,
 })
@@ -604,6 +618,7 @@ export const routeTree = rootRoute.addChildren({
         "/render",
         "/store",
         "/test",
+        "/themes",
         "/about",
         "/passwordreset/$code/"
       ]
@@ -657,6 +672,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/test": {
       "filePath": "test.tsx"
+    },
+    "/themes": {
+      "filePath": "themes.tsx"
     },
     "/about": {
       "filePath": "about.lazy.tsx"

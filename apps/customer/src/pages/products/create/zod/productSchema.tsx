@@ -10,6 +10,7 @@ const ImageUrl = z.object({
 });
 
 const VariationSchema = z.object({
+  Id: z.number().optional(),
   ChoiceName: z.string(),
   Price: z.coerce.number().min(0),
   SalesPrice: z.coerce.number(),

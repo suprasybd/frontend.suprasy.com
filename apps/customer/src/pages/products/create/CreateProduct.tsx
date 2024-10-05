@@ -152,6 +152,8 @@ const CreateProduct: React.FC = () => {
 
   // Pre fill previous values for update
 
+  console.log('values', form.getValues());
+
   useEffect(() => {
     if (productDetails) {
       form.setValue('Title', productDetails.Title);

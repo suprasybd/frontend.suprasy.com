@@ -78,6 +78,7 @@ const CreateProduct: React.FC = () => {
           Price: 0,
           ChoiceName: 'default',
           Sku: 'SF-34526KP',
+          Deleted: false,
         },
       ],
     },
@@ -274,6 +275,7 @@ const CreateProduct: React.FC = () => {
     fields: variationsFields,
     append: appendVariation,
     remove,
+    update: updateVariation,
   } = useFieldArray({
     control: form.control,
     name: 'ProductVariations',
@@ -442,152 +444,163 @@ const CreateProduct: React.FC = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {variationsFields.map((option, index) => {
-                    return (
-                      <div
-                        key={option.id}
-                        className="border shadow-lg my-2 border-gray-300 p-3 rounded-md"
-                      >
-                        <VariationImage fieldIndex={index} form={form} />
-                        <div className="flex flex-wrap justify-start items-end gap-[10px]">
-                          <FormField
-                            control={form.control}
-                            name={`ProductVariations.${index}.ChoiceName`}
-                            render={({ field }) => (
-                              <FormItem className=" rounded-lg pt-3">
-                                <div className="space-y-0.5">
-                                  <FormLabel>Variation Name</FormLabel>
-                                  <FormDescription></FormDescription>
-                                </div>
-                                <div className="flex gap-[7px] items-center">
-                                  <FormControl>
-                                    <Input
-                                      FormError={
-                                        !!formErrors?.ProductVariations?.[index]
-                                          ?.ChoiceName
-                                      }
-                                      placeholder="Variation Name"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                </div>
+                  {variationsFields
+                    .filter((v) => !v.Deleted)
+                    .map((option, index) => {
+                      return (
+                        <div
+                          key={option.id}
+                          className="border shadow-lg my-2 border-gray-300 p-3 rounded-md"
+                        >
+                          <VariationImage fieldIndex={index} form={form} />
+                          <div className="flex flex-wrap justify-start items-end gap-[10px]">
+                            <FormField
+                              control={form.control}
+                              name={`ProductVariations.${index}.ChoiceName`}
+                              render={({ field }) => (
+                                <FormItem className=" rounded-lg pt-3">
+                                  <div className="space-y-0.5">
+                                    <FormLabel>Variation Name</FormLabel>
+                                    <FormDescription></FormDescription>
+                                  </div>
+                                  <div className="flex gap-[7px] items-center">
+                                    <FormControl>
+                                      <Input
+                                        FormError={
+                                          !!formErrors?.ProductVariations?.[
+                                            index
+                                          ]?.ChoiceName
+                                        }
+                                        placeholder="Variation Name"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                  </div>
 
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name={`ProductVariations.${index}.Sku`}
-                            render={({ field }) => (
-                              <FormItem className=" rounded-lg pt-3">
-                                <div className="space-y-0.5">
-                                  <FormLabel>Sku</FormLabel>
-                                  <FormDescription></FormDescription>
-                                </div>
-                                <div className="flex gap-[7px] items-center">
-                                  <FormControl>
-                                    <Input
-                                      FormError={
-                                        !!formErrors?.ProductVariations?.[index]
-                                          ?.Sku
-                                      }
-                                      placeholder="Sku"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                </div>
-
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name={`ProductVariations.${index}.Inventory`}
-                            render={({ field }) => (
-                              <FormItem className=" rounded-lg pt-3">
-                                <div className="space-y-0.5">
-                                  <FormLabel>Inventory</FormLabel>
-                                  <FormDescription></FormDescription>
-                                </div>
-                                <div className="flex gap-[7px] items-center">
-                                  <FormControl>
-                                    <Input
-                                      FormError={
-                                        !!formErrors?.ProductVariations?.[index]
-                                          ?.Inventory
-                                      }
-                                      placeholder="Inventory"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                </div>
-
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name={`ProductVariations.${index}.Price`}
-                            render={({ field }) => (
-                              <FormItem className=" rounded-lg pt-3 ">
-                                <div className="space-y-0.5">
-                                  <FormLabel>Price BDT</FormLabel>
-                                  <FormDescription></FormDescription>
-                                </div>
-                                <div className="flex gap-[7px] items-center">
-                                  <FormControl>
-                                    <Input
-                                      FormError={
-                                        !!formErrors?.ProductVariations?.[index]
-                                          ?.Price
-                                      }
-                                      placeholder="Price BDT"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                </div>
-
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name={`ProductVariations.${index}.SalesPrice`}
-                            render={({ field }) => (
-                              <FormItem className="space-y-0 !mt-3">
-                                <FormLabel>Sales Price (BDT/৳) </FormLabel>
-                                <FormControl>
-                                  <Input
-                                    FormError={
-                                      !!formErrors?.ProductVariations?.[index]
-                                        ?.SalesPrice
-                                    }
-                                    placeholder="Sales Price"
-                                    {...field}
-                                  />
-                                </FormControl>
-
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <div className="h-full flex items-end">
-                            <Trash2
-                              onClick={() => remove(index)}
-                              className="hover:cursor-pointer"
+                                  <FormMessage />
+                                </FormItem>
+                              )}
                             />
+                            <FormField
+                              control={form.control}
+                              name={`ProductVariations.${index}.Sku`}
+                              render={({ field }) => (
+                                <FormItem className=" rounded-lg pt-3">
+                                  <div className="space-y-0.5">
+                                    <FormLabel>Sku</FormLabel>
+                                    <FormDescription></FormDescription>
+                                  </div>
+                                  <div className="flex gap-[7px] items-center">
+                                    <FormControl>
+                                      <Input
+                                        FormError={
+                                          !!formErrors?.ProductVariations?.[
+                                            index
+                                          ]?.Sku
+                                        }
+                                        placeholder="Sku"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                  </div>
+
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name={`ProductVariations.${index}.Inventory`}
+                              render={({ field }) => (
+                                <FormItem className=" rounded-lg pt-3">
+                                  <div className="space-y-0.5">
+                                    <FormLabel>Inventory</FormLabel>
+                                    <FormDescription></FormDescription>
+                                  </div>
+                                  <div className="flex gap-[7px] items-center">
+                                    <FormControl>
+                                      <Input
+                                        FormError={
+                                          !!formErrors?.ProductVariations?.[
+                                            index
+                                          ]?.Inventory
+                                        }
+                                        placeholder="Inventory"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                  </div>
+
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name={`ProductVariations.${index}.Price`}
+                              render={({ field }) => (
+                                <FormItem className=" rounded-lg pt-3 ">
+                                  <div className="space-y-0.5">
+                                    <FormLabel>Price BDT</FormLabel>
+                                    <FormDescription></FormDescription>
+                                  </div>
+                                  <div className="flex gap-[7px] items-center">
+                                    <FormControl>
+                                      <Input
+                                        FormError={
+                                          !!formErrors?.ProductVariations?.[
+                                            index
+                                          ]?.Price
+                                        }
+                                        placeholder="Price BDT"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                  </div>
+
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name={`ProductVariations.${index}.SalesPrice`}
+                              render={({ field }) => (
+                                <FormItem className="space-y-0 !mt-3">
+                                  <FormLabel>Sales Price (BDT/৳) </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      FormError={
+                                        !!formErrors?.ProductVariations?.[index]
+                                          ?.SalesPrice
+                                      }
+                                      placeholder="Sales Price"
+                                      {...field}
+                                    />
+                                  </FormControl>
+
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <div className="h-full flex items-end">
+                              <Trash2
+                                onClick={() =>
+                                  updateVariation(index, {
+                                    ...option,
+                                    Deleted: true,
+                                  })
+                                }
+                                className="hover:cursor-pointer"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
 
                   <Button
                     onClick={(e) => {
@@ -598,6 +611,7 @@ const CreateProduct: React.FC = () => {
                         SalesPrice: 0,
                         Images: [],
                         Inventory: 0,
+                        Deleted: false,
                       });
                     }}
                   >

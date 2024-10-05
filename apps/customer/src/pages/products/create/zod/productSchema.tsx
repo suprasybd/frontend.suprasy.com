@@ -17,6 +17,7 @@ const VariationSchema = z.object({
   Sku: z.string().optional(),
   Inventory: z.coerce.number().min(0),
   Images: z.array(ImageUrl).min(1),
+  Deleted: z.boolean().default(false),
 });
 
 export const productSchema = z.object({

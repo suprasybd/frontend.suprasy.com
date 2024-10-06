@@ -34,13 +34,6 @@ const NavBar = () => {
                   >
                     Stores
                   </Link>
-                  <Link
-                    to={'/themes'}
-                    className="[&.active]:bg-gradient-to-r [&.active]:from-blue-800 [&.active]:to-indigo-900 [&.active]:text-white   rounded-md px-3 py-2 text-sm font-medium bg-slate-300"
-                    aria-current="page"
-                  >
-                    Themes
-                  </Link>
                 </div>
               </div>
             </div>

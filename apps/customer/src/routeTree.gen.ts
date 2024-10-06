@@ -13,7 +13,6 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as ThemesImport } from './routes/themes'
 import { Route as TestImport } from './routes/test'
 import { Route as StoreImport } from './routes/store'
 import { Route as RenderImport } from './routes/render'
@@ -76,6 +75,9 @@ const StoreStoreKeyBillingLazyImport = createFileRoute(
 const StoreStoreKeyAnalyticsLazyImport = createFileRoute(
   '/store/$storeKey/analytics',
 )()
+const StoreStoreKeyAdminThemesLazyImport = createFileRoute(
+  '/store/$storeKey/adminThemes',
+)()
 const StoreStoreKeyProductsProductIdDetailsLazyImport = createFileRoute(
   '/store/$storeKey/products/$productId/details',
 )()
@@ -86,11 +88,6 @@ const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
-
-const ThemesRoute = ThemesImport.update({
-  path: '/themes',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const TestRoute = TestImport.update({
   path: '/test',
@@ -261,6 +258,14 @@ const StoreStoreKeyAnalyticsLazyRoute = StoreStoreKeyAnalyticsLazyImport.update(
   import('./routes/store/$storeKey/analytics.lazy').then((d) => d.Route),
 )
 
+const StoreStoreKeyAdminThemesLazyRoute =
+  StoreStoreKeyAdminThemesLazyImport.update({
+    path: '/$storeKey/adminThemes',
+    getParentRoute: () => StoreRoute,
+  } as any).lazy(() =>
+    import('./routes/store/$storeKey/adminThemes.lazy').then((d) => d.Route),
+  )
+
 const StoreStoreKeyThemesRoute = StoreStoreKeyThemesImport.update({
   path: '/$storeKey/themes',
   getParentRoute: () => StoreRoute,
@@ -364,13 +369,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestImport
       parentRoute: typeof rootRoute
     }
-    '/themes': {
-      id: '/themes'
-      path: '/themes'
-      fullPath: '/themes'
-      preLoaderRoute: typeof ThemesImport
-      parentRoute: typeof rootRoute
-    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -404,6 +402,13 @@ declare module '@tanstack/react-router' {
       path: '/$storeKey/themes'
       fullPath: '/store/$storeKey/themes'
       preLoaderRoute: typeof StoreStoreKeyThemesImport
+      parentRoute: typeof StoreImport
+    }
+    '/store/$storeKey/adminThemes': {
+      id: '/store/$storeKey/adminThemes'
+      path: '/$storeKey/adminThemes'
+      fullPath: '/store/$storeKey/adminThemes'
+      preLoaderRoute: typeof StoreStoreKeyAdminThemesLazyImport
       parentRoute: typeof StoreImport
     }
     '/store/$storeKey/analytics': {
@@ -575,6 +580,7 @@ export const routeTree = rootRoute.addChildren({
     StoreStoreKeyLandingRoute,
     StoreStoreKeyShippingRoute,
     StoreStoreKeyThemesRoute,
+    StoreStoreKeyAdminThemesLazyRoute,
     StoreStoreKeyAnalyticsLazyRoute,
     StoreStoreKeyBillingLazyRoute,
     StoreStoreKeyCategoriesLazyRoute,
@@ -598,7 +604,6 @@ export const routeTree = rootRoute.addChildren({
     StoreStoreKeyOrdersOrderIdIndexRoute,
   }),
   TestRoute,
-  ThemesRoute,
   AboutLazyRoute,
   PasswordresetCodeIndexRoute,
 })
@@ -618,7 +623,6 @@ export const routeTree = rootRoute.addChildren({
         "/render",
         "/store",
         "/test",
-        "/themes",
         "/about",
         "/passwordreset/$code/"
       ]
@@ -647,6 +651,7 @@ export const routeTree = rootRoute.addChildren({
         "/store/$storeKey/landing",
         "/store/$storeKey/shipping",
         "/store/$storeKey/themes",
+        "/store/$storeKey/adminThemes",
         "/store/$storeKey/analytics",
         "/store/$storeKey/billing",
         "/store/$storeKey/categories",
@@ -673,9 +678,6 @@ export const routeTree = rootRoute.addChildren({
     "/test": {
       "filePath": "test.tsx"
     },
-    "/themes": {
-      "filePath": "themes.tsx"
-    },
     "/about": {
       "filePath": "about.lazy.tsx"
     },
@@ -693,6 +695,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/store/$storeKey/themes": {
       "filePath": "store/$storeKey/themes.tsx",
+      "parent": "/store"
+    },
+    "/store/$storeKey/adminThemes": {
+      "filePath": "store/$storeKey/adminThemes.lazy.tsx",
       "parent": "/store"
     },
     "/store/$storeKey/analytics": {

@@ -1,7 +1,7 @@
 import AdminThemes from '@customer/pages/admin-themes/AdminThemes';
-import { createFileRoute } from '@tanstack/react-router';
+import { createLazyFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/themes')({
+export const Route = createLazyFileRoute('/store/$storeKey/adminThemes')({
   component: () => (
     <div>
       <AdminThemes />

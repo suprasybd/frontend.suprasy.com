@@ -14,24 +14,31 @@ import {
   FormMessage,
 } from '@customer/components/index';
 import { Input } from '@customer/components/index';
+import AdminThemeImage from './components/Media/AdminThemeMedia';
 
-const formSchema = z.object({
-  name: z.string().min(2).max(50),
-  description: z.string().min(2).max(50),
-  r2path: z.string().min(2).max(50),
+const ImageUrl = z.object({
+  ImageUrl: z.string().url(),
+});
+
+export const adminThemeSchema = z.object({
+  Name: z.string().min(2).max(50),
+  Description: z.string().min(2).max(50),
+  R2Folder: z.string().min(2).max(50),
+  Images: z.array(ImageUrl).min(1),
 });
 
 const AdminThemes = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof adminThemeSchema>>({
+    resolver: zodResolver(adminThemeSchema),
     defaultValues: {
-      name: '',
-      description: '',
-      r2path: '',
+      Name: '',
+      Description: '',
+      R2Folder: '',
+      Images: [],
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof adminThemeSchema>) {
     console.log(values);
   }
 
@@ -41,12 +48,12 @@ const AdminThemes = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="name"
+            name="Name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Theme Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="name" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -55,12 +62,12 @@ const AdminThemes = () => {
           />
           <FormField
             control={form.control}
-            name="description"
+            name="Description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Theme Name</FormLabel>
+                <FormLabel>Theme Description</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="description" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -69,18 +76,20 @@ const AdminThemes = () => {
           />
           <FormField
             control={form.control}
-            name="r2path"
+            name="R2Folder"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>R2 Folder path</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="folder patch r2" {...field} />
                 </FormControl>
 
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          <AdminThemeImage fieldIndex={1} form={form} />
 
           <Button type="submit">Submit</Button>
         </form>

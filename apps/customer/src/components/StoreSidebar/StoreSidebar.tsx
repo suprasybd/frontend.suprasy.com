@@ -300,6 +300,60 @@ const StoreSidebar = () => {
                 </Link>
               </AccordionDetails>
             </Accordion>
+
+            <Accordion
+              defaultExpanded={true}
+              className=" !shadow-none !p-0"
+              style={{
+                background: 'none',
+              }}
+              sx={{
+                '.MuiAccordion-root.Mui-expanded': {
+                  background: 'red',
+                },
+              }}
+            >
+              <AccordionSummary
+                style={{ padding: 0, minHeight: 'fit-content', margin: 0 }}
+                className=" !p-0"
+                expandIcon={<ArrowDown className="text-sm h-[17px] w-[17px]" />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+                sx={{
+                  '.MuiAccordionSummary-content': {
+                    margin: '0px',
+                  },
+                  '.MuiAccordionSummary-content.Mui-expanded': {
+                    margin: '0px 0',
+                  },
+                }}
+              >
+                <div
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+                >
+                  <Package className="h-4 w-4" />
+                  Admin{' '}
+                </div>
+              </AccordionSummary>
+              <AccordionDetails style={{ padding: 0, paddingLeft: '10px' }}>
+                <Link
+                  to="/store/$storeKey/adminThemes"
+                  params={{
+                    storeKey: storeKey,
+                  }}
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
+              [&.active]:text-black
+              [&.active]:transition-all
+              [&.active]:hover:text-primary"
+                >
+                  <BrickWall className="h-4 w-4" />
+                  Admin Themes
+                </Link>
+              </AccordionDetails>
+            </Accordion>
           </nav>
         </div>
       </div>

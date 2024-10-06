@@ -15,6 +15,8 @@ import {
 } from '@customer/components/index';
 import { Input } from '@customer/components/index';
 import AdminThemeImage from './components/Media/AdminThemeMedia';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { createTheme, getThemes, updateTheme } from './api';
 
 const ImageUrl = z.object({
   ImageUrl: z.string().url(),
@@ -38,8 +40,33 @@ const AdminThemes = () => {
     },
   });
 
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [themeId, setThemeId] = useState<number>(0);
+
+  const { mutate: createThemeMutate } = useMutation({
+    mutationFn: createTheme,
+  });
+
+  const { mutate: updateThemeMutate } = useMutation({
+    mutationFn: updateTheme,
+  });
+
+  const { data: themeResponse } = useQuery({
+    queryKey: ['getThemesList'],
+    queryFn: getThemes,
+  });
+
   function onSubmit(values: z.infer<typeof adminThemeSchema>) {
-    console.log(values);
+    const images = values.Images.map((i) => i.ImageUrl);
+    const updatedValue = {
+      ...values,
+      Images: images,
+    };
+    if (isUpdating) {
+      updateThemeMutate({ data: updatedValue, themeId: themeId });
+    } else {
+      createThemeMutate(updatedValue);
+    }
   }
 
   return (
@@ -91,9 +118,39 @@ const AdminThemes = () => {
 
           <AdminThemeImage fieldIndex={1} form={form} />
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit">{isUpdating ? 'Update' : 'Create'}</Button>
         </form>
       </Form>
+
+      {themeResponse?.Data?.map((theme) => (
+        <div className="p-3 border-2 border-gray-600 rounded-md mt-3">
+          <h1>Name: {theme.Name}</h1>
+          <p>Description: {theme.Description}</p>
+          <p>R2Folder: {theme.R2Folder}</p>
+          <div className="flex flex-wrap gap-[10px]">
+            {theme.Images.map((i) => (
+              <img
+                src={i.ImageUrl}
+                alt="theme"
+                className="w-[300px] h-[300px]"
+              />
+            ))}
+          </div>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              form.setValue('Images', theme.Images);
+              form.setValue('Description', theme.Description);
+              form.setValue('Name', theme.Name);
+              form.setValue('R2Folder', theme.R2Folder);
+              setThemeId(theme.Id);
+              setIsUpdating(true);
+            }}
+          >
+            Update
+          </Button>
+        </div>
+      ))}
     </div>
   );
 };

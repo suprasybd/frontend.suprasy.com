@@ -1,51 +1,66 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import React from 'react';
-import {
-  getStoreDetails,
-  getThemes,
-  getThemeVersion,
-  switchTheme,
-} from '../home/api';
-import { activeFilters } from '@customer/libs/helpers/filters';
+import { getStoreDetails, getThemeVersion, switchTheme } from '../home/api';
+
 import { Button, ScrollArea, useToast } from '@customer/components';
 import { useParams } from '@tanstack/react-router';
 import cn from 'classnames';
+import { getThemes } from '../admin-themes/api';
 
 const Themes = () => {
-  const { data: themesListResponse } = useQuery({
+  const { data: themeResponse } = useQuery({
     queryKey: ['getThemesList'],
-    queryFn: () =>
-      getThemes({
-        Page: 1,
-        Limit: 10,
-      }),
+    queryFn: getThemes,
   });
 
-  const themesData = themesListResponse?.Data;
+  const themesData = themeResponse?.Data;
+
+  const isActive = false;
+  const isPending = false;
 
   return (
     <section className="p-9">
       <h1 className="mb-5 text-3xl">Explore Themes</h1>
-      {themesData?.map((theme) => (
-        <div className="p-2 w-[400px]  rounded-md bg-slate-100">
-          <img
-            width={'400px'}
-            height={'400px'}
-            src={theme.Thumbnail}
-            alt="theme "
-          />
-          <div className="my-4">
-            <h1 className="font-bold text-lg text-slate-800">{theme.Name}</h1>
-            <p>{theme.Description}</p>
-          </div>
+      <div className="flex flex-wrap gap-[20px]">
+        {themesData?.map((theme) => (
+          <div className="p-2 w-[400px]  rounded-md bg-slate-100">
+            <img
+              width={'400px'}
+              height={'400px'}
+              src={theme.Images[0].ImageUrl}
+              alt="theme "
+            />
+            <div className="my-4">
+              <h1 className="font-bold text-lg text-slate-800">{theme.Name}</h1>
+              <p>{theme.Description}</p>
+            </div>
 
-          <div>
-            <ScrollArea className="h-[150px] bg-white w-full rounded-md border p-4">
-              <Version ThemeId={theme.Id} />
-            </ScrollArea>
+            <div>
+              <span
+                className={cn(
+                  'w-full flex my-2 justify-between items-center border-2 border-blue-400 p-3 rounded-md',
+                  isActive && 'bg-green-300'
+                )}
+              >
+                <span>Click to apply theme</span>
+
+                {!isActive && (
+                  <Button
+                    variant={'outline'}
+                    onClick={() => {
+                      // handleSwitchTheme(v.Id);
+                    }}
+                  >
+                    {isPending && 'Applying...'}
+                    {!isPending && 'Apply'}
+                  </Button>
+                )}
+                {isActive && 'Current'}
+              </span>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </section>
   );
 };

@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { getStoreDetails, getThemeVersion, switchTheme } from '../home/api';
 
-import { Button, ScrollArea, useToast } from '@customer/components';
+import { Button, useToast } from '@customer/components';
 import { useParams } from '@tanstack/react-router';
 import cn from 'classnames';
 import { getThemes } from '../admin-themes/api';

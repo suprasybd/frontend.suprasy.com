@@ -28,7 +28,7 @@ export interface OrderProductsType {
   Id: number;
   StoreKey: string;
   OrderId: number;
-  ProductId: number;
+  VariationId: number;
   Price: number;
   Quantity: number;
   ProductAttribute: string;
@@ -60,7 +60,7 @@ export const getOrderById = async (
 export const getOrderProductsById = async (
   orderId: string
 ): Promise<ListResponseType<OrderProductsType>> => {
-  const response = await await ApiClient.get('/orders/products/' + orderId);
+  const response = await ApiClient.get('/orders/products/' + orderId);
 
   return response.data;
 };

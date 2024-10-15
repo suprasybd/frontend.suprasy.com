@@ -6,12 +6,14 @@ import { formatPrice } from '@customer/libs/helpers/formatdate';
 import {
   getProductsDetails,
   getProductsImages,
+  getVariationDetails,
 } from '@customer/pages/products/api';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Badge,
 } from '@customer/components/index';
 
 const OrderDetails = () => {
@@ -41,7 +43,7 @@ const OrderDetails = () => {
       total += order.DeliveryMethodPrice;
       total += order.ShippingMethodPrice;
       for (const product of orderProducts) {
-        total += product.Price;
+        total += product.Price * product.Quantity;
       }
       return total;
     }
@@ -52,7 +54,7 @@ const OrderDetails = () => {
     let total = 0;
     if (orderProducts && order && orderProducts.length) {
       for (const product of orderProducts) {
-        total += product.Price;
+        total += product.Price * product.Quantity;
       }
       return total;
     }
@@ -104,7 +106,9 @@ const OrderDetails = () => {
       <div className="flex gap-[100px] flex-wrap w-full">
         <div>
           <h1 className="text-sm font-medium">Status </h1>
-          <h1>{order?.Status} </h1>
+          <h1>
+            <Badge> {order?.Status} </Badge>
+          </h1>
         </div>
 
         {order?.Note && (
@@ -120,7 +124,7 @@ const OrderDetails = () => {
 
       {orderProducts?.map((product) => (
         <div className="p-4 border border-gray-400 rounded-md my-3">
-          <ProductDetails ProductId={product.ProductId} />
+          <ProductDetails VariationId={product.VariationId} />
           <div className="flex gap-[100px] flex-wrap w-full">
             <div>
               <h1 className="text-sm font-medium">Quantity </h1>
@@ -139,7 +143,9 @@ const OrderDetails = () => {
             </div>
 
             <div>
-              <h1 className="text-sm font-medium">Total Price</h1>
+              <h1 className="text-sm font-medium">
+                Total Price (Quantity * Price)
+              </h1>
               <h1>{formatPrice(product?.Price * product.Quantity)} </h1>
             </div>
           </div>
@@ -179,20 +185,29 @@ const OrderDetails = () => {
   );
 };
 
-const ProductDetails: React.FC<{ ProductId: number }> = ({ ProductId }) => {
-  const { data: productDetailsResponse } = useQuery({
-    queryKey: ['getProductDetailsOrderDPage', ProductId],
-    queryFn: () => getProductsDetails(ProductId || 0),
-    enabled: !!ProductId,
+const ProductDetails: React.FC<{ VariationId: number }> = ({ VariationId }) => {
+  const { data: variationsDataResponse } = useQuery({
+    queryKey: ['getVarination', VariationId],
+    queryFn: () => getVariationDetails(VariationId || 0),
+    enabled: !!VariationId,
   });
+
   const { data: productImagesResponse } = useQuery({
-    queryKey: ['getProductImagesOrderDPage', ProductId],
-    queryFn: () => getProductsImages(ProductId || 0),
-    enabled: !!ProductId,
+    queryKey: ['getProductImagesOrderDPage', VariationId],
+    queryFn: () => getProductsImages(VariationId || 0),
+    enabled: !!VariationId,
+  });
+
+  const productImages = productImagesResponse?.Data;
+  const variationDetails = variationsDataResponse?.Data;
+
+  const { data: productDetailsResponse } = useQuery({
+    queryKey: ['getProductDetailsOrderDPage', variationDetails?.ProductId],
+    queryFn: () => getProductsDetails(variationDetails?.ProductId || 0),
+    enabled: !!variationDetails?.ProductId,
   });
 
   const productDetails = productDetailsResponse?.Data;
-  const productImages = productImagesResponse?.Data;
 
   return (
     <div className="my-3">
@@ -205,10 +220,17 @@ const ProductDetails: React.FC<{ ProductId: number }> = ({ ProductId }) => {
           alt="product"
         />
       )}
+
       <div className="flex gap-[100px] flex-wrap w-full">
         <div>
-          <h1 className="text-sm font-medium mt-3">Title </h1>
-          <h1>{productDetails?.Title} </h1>
+          <h1 className="text-sm font-bold mt-3">Product Title</h1>
+          <h1>
+            {productDetails?.Title} ({variationDetails?.ChoiceName})
+          </h1>
+        </div>
+        <div>
+          <h1 className="text-sm font-bold mt-3">Variation</h1>
+          <h1>{variationDetails?.ChoiceName}</h1>
         </div>
       </div>
     </div>

@@ -26,10 +26,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Switch,
   useToast,
 } from '@customer/components/index';
-import { ArrowLeft, ArrowRight, Star, Trash2, Upload } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReloadIcon } from '@radix-ui/react-icons';
@@ -40,7 +39,7 @@ import {
   useParams,
   useSearch,
 } from '@tanstack/react-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -51,13 +50,10 @@ import {
   getProductSku,
   getProductsDetails,
   getProductsImages,
-  getProductsVariantsDetails,
   getVariations,
   updateStoresProduct,
 } from '../api';
 import { productSchema } from './zod/productSchema';
-import { useModalStore } from '@customer/store/modalStore';
-import { useMediaFormStore } from '@customer/store/mediaFormStore';
 import useTurnStileHook from '@customer/hooks/turnstile';
 import { Turnstile } from '@marsidev/react-turnstile';
 import VariationImage from './components/VariationImage';
@@ -103,12 +99,6 @@ const CreateProduct: React.FC = () => {
     queryKey: ['getProductDetails', productId, uuid],
     queryFn: () => getProductsDetails(productId || 0),
 
-    enabled: !!productId && update,
-  });
-
-  const { data: productVariantsResponse } = useQuery({
-    queryKey: ['getProductVariantsDetails', productId],
-    queryFn: () => getProductsVariantsDetails(productId || 0),
     enabled: !!productId && update,
   });
 

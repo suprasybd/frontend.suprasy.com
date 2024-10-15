@@ -10,7 +10,7 @@ import {
   ProductImagesTypes,
   ProductSku,
   ProductType,
-  ProductsVairantsTypes,
+  ProductVariationType,
 } from './types';
 import { productSchema } from '../create/zod/productSchema';
 
@@ -63,10 +63,10 @@ export const getProductsDetails = async (
   return response.data;
 };
 
-export const getProductsVariantsDetails = async (
-  productId: number
-): Promise<ResponseType<ProductsVairantsTypes>> => {
-  const response = await ApiClient.get(`/products/variants/${productId}`);
+export const getVariationDetails = async (
+  variationId: number
+): Promise<ResponseType<ProductVariationType>> => {
+  const response = await ApiClient.get(`/products/variation-id/${variationId}`);
 
   return response.data;
 };
@@ -81,7 +81,7 @@ export const getProductsImages = async (
 
 export const getVariations = async (
   productId: number
-): Promise<ListResponseType<ProductImagesTypes>> => {
+): Promise<ListResponseType<ProductVariationType>> => {
   const response = await ApiClient.get(`/products/variations/${productId}`);
 
   return response.data;

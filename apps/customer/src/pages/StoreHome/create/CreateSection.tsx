@@ -322,8 +322,8 @@ const CreateSection = () => {
                   <div className="flex w-full flex-wrap gap-[30px]">
                     {products?.length > 0 &&
                       products.map((product, index) => (
-                        <div className="w-fit border border-slate-600 rounded-md bg-slate-800 text-white min-w-[100px] flex justify-center items-center gap-[3px]">
-                          <ProductCard ProductId={product.ProductId} />
+                        <div className="w-fit border border-green-400 border-[5px] rounded-md bg-slate-800 text-black min-w-[100px] flex justify-center items-center gap-[3px]">
+                          <ProductCard ProductId={product.ProductId} compact />
                           <Button
                             className="h-full"
                             onClick={(e) => {

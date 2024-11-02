@@ -49,16 +49,6 @@ const StoreHome = () => {
           <Hero />
         </TabsContent>
         <TabsContent value="sections">
-          <div className="my-10">
-            <Button>
-              <Link
-                to="/store/$storeKey/section/create"
-                params={{ storeKey: storeKey }}
-              >
-                Create New Section
-              </Link>
-            </Button>
-          </div>
           <StoreHomeSections />
         </TabsContent>
       </Tabs>

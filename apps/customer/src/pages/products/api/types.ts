@@ -1,7 +1,6 @@
 export interface ProductType {
   Id: number;
   StoreKey: string;
-  HasVariant: boolean;
   CategoryId: number;
   Slug: string;
   Status: string;

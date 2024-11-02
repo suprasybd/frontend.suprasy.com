@@ -46,8 +46,6 @@ import { z } from 'zod';
 import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/products_/create';
 import {
   createStoresProduct,
-  getProductAttributes,
-  getProductSku,
   getProductsDetails,
   getProductsImages,
   getVariations,
@@ -56,7 +54,6 @@ import {
 import { productSchema } from './zod/productSchema';
 import useTurnStileHook from '@customer/hooks/turnstile';
 import { Turnstile } from '@marsidev/react-turnstile';
-import VariationImage from './components/VariationImage';
 import { Plus } from 'lucide-react';
 import { VariationCard } from './components/VariationCard';
 const CreateProduct: React.FC = () => {
@@ -88,7 +85,7 @@ const CreateProduct: React.FC = () => {
     storeKey: string;
   };
 
-  const { update, productId, uuid, updateInventory } = useSearch({
+  const { update, productId, uuid } = useSearch({
     from: ProductsCreateRoute.fullPath,
   });
 
@@ -101,22 +98,6 @@ const CreateProduct: React.FC = () => {
     queryFn: () => getProductsDetails(productId || 0),
 
     enabled: !!productId && update,
-  });
-
-  const { data: productAttributeResponse } = useQuery({
-    queryKey: ['getProductsAttribute', productId],
-    queryFn: () => getProductAttributes(productId || 0),
-    enabled: !!productId && update,
-  });
-
-  const { data: productSkuResponse } = useQuery({
-    queryKey: ['getProductsAttribute', productId, productDetailsResponse],
-    queryFn: () => getProductSku(productId || 0),
-    enabled:
-      !!productId &&
-      update &&
-      !productDetailsResponse?.Data.HasVariant &&
-      !!productDetailsResponse?.Data,
   });
 
   const { data: productImagesResponse } = useQuery({
@@ -139,8 +120,6 @@ const CreateProduct: React.FC = () => {
 
   const productDetails = productDetailsResponse?.Data;
   const productImagesData = productImagesResponse?.Data;
-  const productAttributes = productAttributeResponse?.Data;
-  const productSku = productSkuResponse?.Data;
 
   // Pre fill previous values for update
 
@@ -165,14 +144,7 @@ const CreateProduct: React.FC = () => {
 
       // setImageUpdated((prev) => prev + 1);
     }
-  }, [
-    productDetails,
-    form,
-    productImagesData,
-    isUpdating,
-    productAttributes,
-    productSku,
-  ]);
+  }, [productDetails, form, productImagesData, isUpdating]);
 
   const navigate = useNavigate();
 

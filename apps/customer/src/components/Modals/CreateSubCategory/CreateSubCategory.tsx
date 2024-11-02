@@ -105,54 +105,70 @@ const CreateSubCategory: React.FC = () => {
           }
         }}
       >
-        <DialogContent>
-          <div className="my-2 mt-4">
+        <DialogContent className="sm:max-w-[425px]">
+          <div className="space-y-6 py-4">
+            <div className="flex flex-col space-y-2 text-center sm:text-left">
+              <h2 className="text-lg font-semibold tracking-tight">
+                Create Sub Category
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Add a new sub-category to organize your products
+              </p>
+            </div>
+
             <Form {...form}>
-              <form onSubmit={handleFormWrapper} className="space-y-8">
+              <form onSubmit={handleFormWrapper} className="space-y-4">
                 <FormField
                   control={form.control}
                   name="CategoryName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Add Sub Category</FormLabel>
+                      <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="sub category" {...field} />
+                        <Input
+                          placeholder="Enter sub-category name"
+                          {...field}
+                          className="w-full"
+                        />
                       </FormControl>
-
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <Turnstile
-                  options={{ size: 'auto' }}
-                  siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
-                />
+                <div className="w-full">
+                  <Turnstile
+                    options={{ size: 'auto' }}
+                    siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
+                  />
+                </div>
 
-                <div className="w-full flex justify-center gap-[7px]">
+                <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4">
                   <Button
-                    className="w-full"
-                    type="submit"
-                    disabled={!turnstileLoaded}
-                  >
-                    {!turnstileLoaded && (
-                      <>
-                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                        wait a few moment..
-                      </>
-                    )}
-                    {turnstileLoaded && (
-                      <span>
-                        {isPending ? 'Addding..' : 'Add Sub Category'}
-                      </span>
-                    )}
-                  </Button>
-                  <Button
-                    className="w-full"
-                    variant={'destructive'}
+                    type="button"
+                    variant="outline"
                     onClick={() => closeModal()}
                   >
-                    Close
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={!turnstileLoaded || isPending}
+                    className="min-w-[100px]"
+                  >
+                    {!turnstileLoaded ? (
+                      <div className="flex items-center gap-2">
+                        <ReloadIcon className="h-4 w-4 animate-spin" />
+                        <span>Loading...</span>
+                      </div>
+                    ) : isPending ? (
+                      <div className="flex items-center gap-2">
+                        <ReloadIcon className="h-4 w-4 animate-spin" />
+                        <span>Creating...</span>
+                      </div>
+                    ) : (
+                      'Create'
+                    )}
                   </Button>
                 </div>
               </form>

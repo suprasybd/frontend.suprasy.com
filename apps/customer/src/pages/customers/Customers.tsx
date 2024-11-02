@@ -15,6 +15,10 @@ import {
   AccordionItem,
   AccordionTrigger,
   Label,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
 } from '@customer/components/index';
 import { Link, useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -24,7 +28,7 @@ import { customersColumn } from './columns';
 import PaginationMain from '@customer/components/Pagination/Pagination';
 import { LoaderMain } from '@customer/components/Loader/Loader';
 import { activeFilters } from '@customer/libs/helpers/filters';
-import { Search } from 'lucide-react';
+import { Search, Users } from 'lucide-react';
 const CustomersPage = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
 
@@ -57,76 +61,114 @@ const CustomersPage = () => {
 
   return (
     <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
-      {/* breadcrumbs */}
-      <Breadcrumb className="pb-5">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <Link
-              to="/store/$storeKey/dashboard"
-              params={{ storeKey: storeKey }}
-            >
-              Home
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <Link
-              to="/store/$storeKey/customers"
-              params={{ storeKey: storeKey }}
-            >
-              Customers
-            </Link>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      {/* Header section */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Customers</h1>
+          <Breadcrumb className="text-sm text-muted-foreground">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <Link
+                  to="/store/$storeKey/dashboard"
+                  params={{ storeKey: storeKey }}
+                >
+                  Home
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <Link
+                  to="/store/$storeKey/customers"
+                  params={{ storeKey: storeKey }}
+                >
+                  Customers
+                </Link>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+      </div>
 
-      <Accordion type="single" collapsible>
-        <AccordionItem className="border-b-0" value="item-1">
-          <AccordionTrigger className="hover:no-underline border-b-0">
-            <Button variant={'defaultGradiant'}>
-              Filters / Search <Search className="ml-3" />
-            </Button>
-          </AccordionTrigger>
-          <AccordionContent>
-            <div className="flex flex-wrap gap-[10px]">
-              {/* <Input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Filter using phone"
-              /> */}
-              <div className="w-[300px]">
-                <Label className="my-2">Filter Email</Label>
-                <Input
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Filter using email"
-                />
-              </div>
+      {/* Main content card */}
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Customer List</CardTitle>
+          <div className="flex items-center gap-4">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem className="border-b-0" value="item-1">
+                <AccordionTrigger className="hover:no-underline">
+                  <Button variant="outline" size="sm">
+                    <Search className="h-4 w-4 mr-2" />
+                    Filters
+                  </Button>
+                </AccordionTrigger>
+                <AccordionContent className="pt-4">
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="space-y-2">
+                      <Label>Email</Label>
+                      <Input
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Filter by email"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Phone</Label>
+                      <Input
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="Filter by phone"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Customer ID</Label>
+                      <Input
+                        value={id}
+                        onChange={(e) => setId(e.target.value)}
+                        type="number"
+                        placeholder="Filter by ID"
+                      />
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </CardHeader>
 
-              {/* <Input
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-                type="number"
-                placeholder="Filter using id"
-              /> */}
+        <CardContent>
+          {isLoading && (
+            <div className="flex justify-center py-8">
+              <LoaderMain />
             </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+          )}
 
-      {isLoading && <LoaderMain />}
-      {!isLoading && !customers?.length && <div>No customers found!</div>}
+          {!isLoading && !customers?.length && (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <Users className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold">No customers found</h3>
+              <p className="text-sm text-muted-foreground">
+                Try adjusting your filters or add new customers
+              </p>
+            </div>
+          )}
 
-      {!isLoading && customers && customers?.length > 0 && (
-        <DataTable columns={customersColumn} data={customers || []} />
-      )}
+          {!isLoading && customers && customers?.length > 0 && (
+            <div className="space-y-4">
+              <DataTable columns={customersColumn} data={customers || []} />
 
-      {customersResponse?.Pagination && (
-        <PaginationMain
-          PaginationDetails={customersResponse?.Pagination}
-          setPage={setPage}
-        />
-      )}
+              {customersResponse?.Pagination && (
+                <div className="flex justify-end">
+                  <PaginationMain
+                    PaginationDetails={customersResponse?.Pagination}
+                    setPage={setPage}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </section>
   );
 };

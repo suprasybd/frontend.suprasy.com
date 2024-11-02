@@ -1,4 +1,7 @@
 import {
+  Badge,
+  Button,
+  cn,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -15,6 +18,8 @@ import {
 import { useModalStore } from '@customer/store/modalStore';
 import { useProductSelectionStore } from '@customer/store/productSelection';
 import { useQuery } from '@tanstack/react-query';
+import { Link, useParams } from '@tanstack/react-router';
+import { Calendar, ImageIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 const ProductSelection: React.FC = () => {
@@ -82,7 +87,7 @@ const ProductSelection: React.FC = () => {
                         closeModal();
                       }}
                     >
-                      <ProductCard ProductId={product.Id} />
+                      <ProductCard ProductId={product.Id} compact />
                     </div>
                   ))}
               </div>
@@ -94,51 +99,129 @@ const ProductSelection: React.FC = () => {
   );
 };
 
-export const ProductCard: React.FC<{
+interface ProductCardProps {
   ProductId: number;
-  className?: string;
-  variant?: string;
-}> = ({ ProductId, className, variant }) => {
-  const { data: imagesResposne } = useQuery({
-    queryFn: () => getProductsImages(ProductId),
-    queryKey: ['getProductImagesForSelectionModal', ProductId],
-    enabled: !!ProductId,
-  });
+  showActions?: boolean;
+  compact?: boolean;
+}
 
-  const { data: productDetailsResposne } = useQuery({
+export const ProductCard: React.FC<ProductCardProps> = ({
+  ProductId,
+  showActions = false,
+  compact = false,
+}) => {
+  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+  const { data: productResponse, isLoading } = useQuery({
+    queryKey: ['getProductDetails', ProductId],
     queryFn: () => getProductsDetails(ProductId),
-    queryKey: ['getProductDetailsForSelectionModal', ProductId],
-    enabled: !!ProductId,
   });
 
-  const images = imagesResposne?.Data;
-  const productDetails = productDetailsResposne?.Data;
+  const { data: productImagesResponse } = useQuery({
+    queryKey: ['getProductImages', ProductId],
+    queryFn: () => getProductsImages(ProductId),
+  });
+
+  const product = productResponse?.Data;
+  const images = productImagesResponse?.Data;
+  const mainImage = images?.[0]?.ImageUrl;
+
+  if (isLoading) {
+    return (
+      <div className="relative rounded-lg border border-border bg-card overflow-hidden">
+        <div className="aspect-square w-full animate-pulse bg-muted" />
+        <div className="p-3 space-y-2">
+          <div className="h-4 w-2/3 animate-pulse bg-muted rounded" />
+          <div className="h-4 w-1/3 animate-pulse bg-muted rounded" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="relative rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+        <p className="text-sm text-destructive">Product not found</p>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div
-        className="p-3 rounded-md my-2 min-h-[120px] bg-slate-800 text-white hover:bg-slate-700 cursor-pointer"
-        key={ProductId}
-      >
-        {images && images.length > 0 && (
+    <div
+      className={cn(
+        'group relative rounded-lg border border-border bg-card overflow-hidden transition-all duration-200 hover:shadow-md',
+        compact ? 'w-[200px]' : 'w-full'
+      )}
+    >
+      {/* Image Section */}
+      <div className="relative aspect-square w-full bg-muted">
+        {mainImage ? (
           <img
-            className="rounded-md h-[150px] w-[150px] border-2 border-white"
-            alt="product"
-            src={images[0].ImageUrl}
-            width={'150px'}
-            height={'150px'}
+            src={mainImage}
+            alt={product.Title}
+            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
           />
+        ) : (
+          <div className="flex items-center justify-center w-full h-full bg-muted">
+            <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
+          </div>
         )}
-        <div className="my-3">
-          <p className="text-sm max-w-[150px]">
-            Title: {productDetails?.Title}
-          </p>
-          {variant ? (
-            <p className="text-sm">Variant: {variant}</p>
-          ) : (
-            <p className="text-sm">Product Id: {productDetails?.Id}</p>
-          )}
+
+        {/* Status Badge */}
+        <div className="absolute top-2 right-2">
+          <Badge
+            variant={product.Status === 'active' ? 'default' : 'secondary'}
+          >
+            {product.Status}
+          </Badge>
         </div>
+      </div>
+
+      {/* Content Section */}
+      <div className="p-3 space-y-2">
+        <h3 className="font-medium leading-tight line-clamp-2">
+          {product.Title}
+        </h3>
+
+        {!compact && (
+          <>
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {product.Summary || 'No summary available'}
+            </p>
+
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Calendar className="h-4 w-4" />
+              <span>{new Date(product.CreatedAt).toLocaleDateString()}</span>
+            </div>
+          </>
+        )}
+
+        {/* Actions */}
+        {showActions && (
+          <div className="mt-3 flex gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <Link
+                to="/store/$storeKey/products/$productId/details"
+                params={{
+                  storeKey: storeKey,
+                  productId: product.Id.toString(),
+                }}
+              >
+                View Details
+              </Link>
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <Link
+                to="/store/$storeKey/products/$productId/details"
+                params={{
+                  storeKey: storeKey,
+                  productId: product.Id.toString(),
+                }}
+              >
+                Edit
+              </Link>
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

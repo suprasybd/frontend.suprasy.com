@@ -13,6 +13,8 @@ import {
   FormMessage,
   Input,
   useToast,
+  DialogHeader,
+  DialogTitle,
 } from '@customer/components/index';
 import React, { useEffect, useRef } from 'react';
 
@@ -165,40 +167,55 @@ const AddMethod: React.FC = () => {
       }}
     >
       <DialogTrigger onClick={() => toggleModal()}>
-        <Button className="my-3" variant={'gradiantT'}>
+        <Button className="my-3" variant="gradiantT">
           Add Delivery Method
         </Button>
       </DialogTrigger>
-      <DialogContent className="my-3">
-        <h1>{!update ? 'Add' : 'Update'} Delivery Method</h1>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-semibold">
+            {!update ? 'Add' : 'Update'} Delivery Method
+          </DialogTitle>
+        </DialogHeader>
+
         <Form {...form}>
-          <form onSubmit={handleFormWrapper} className="space-y-8">
+          <form onSubmit={handleFormWrapper} className="space-y-6">
             <FormField
               control={form.control}
               name="DeliveryMethod"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Delivery Method</FormLabel>
+                  <FormLabel className="text-sm font-medium">
+                    Delivery Method
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Delivery Method" {...field} />
+                    <Input placeholder="Enter delivery method" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    This is the delivery method. (COD, UPFRONT)
+                  <FormDescription className="text-xs text-muted-foreground">
+                    Choose between COD or UPFRONT payment methods
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="Cost"
               render={({ field }) => (
-                <FormItem className="!mt-0">
-                  <FormLabel>Cost</FormLabel>
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">Cost</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="Cost" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Enter delivery cost"
+                      className="w-full"
+                      {...field}
+                    />
                   </FormControl>
-                  <FormDescription>This is the area/zone name.</FormDescription>
+                  <FormDescription className="text-xs text-muted-foreground">
+                    Enter the delivery cost for this method
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -207,10 +224,11 @@ const AddMethod: React.FC = () => {
             <Turnstile
               options={{ size: 'auto' }}
               siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
+              className="mt-4"
             />
 
-            <div className="flex gap-[8px]">
-              <DialogClose className="w-full" ref={closeBtn}>
+            <div className="flex gap-4 mt-6">
+              <DialogClose ref={closeBtn}>
                 <Button
                   onClick={(e) => {
                     e.preventDefault();
@@ -218,29 +236,28 @@ const AddMethod: React.FC = () => {
                       (closeBtn.current as { click: () => void }).click();
                     }
                   }}
-                  variant={'outline'}
-                  className="w-full"
+                  variant="outline"
+                  className="w-[120px]"
                 >
                   Cancel
                 </Button>
               </DialogClose>
               <Button
-                variant={'defaultGradiant'}
-                className="w-full"
+                variant="defaultGradiant"
+                className="flex-1"
                 type="submit"
                 disabled={isPending || isUpdating || !turnstileLoaded}
               >
-                {!turnstileLoaded && (
-                  <>
+                {!turnstileLoaded ? (
+                  <div className="flex items-center">
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                    wait a few moment..
-                  </>
-                )}
-                {turnstileLoaded && (
+                    <span>Please wait...</span>
+                  </div>
+                ) : (
                   <span>
                     {isPending || isUpdating
-                      ? `${update ? 'Updating' : 'Adding'} Method..`
-                      : `${update ? 'Update' : 'Add'} This Method`}
+                      ? `${update ? 'Updating' : 'Adding'} Method...`
+                      : `${update ? 'Update' : 'Add'} Method`}
                   </span>
                 )}
               </Button>

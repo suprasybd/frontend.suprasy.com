@@ -22,12 +22,14 @@ import { useModalStore } from '@customer/store/modalStore';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProductsImages } from '../api';
 import { Badge } from '@customer/components/index';
-import { Eye, Edit, CircleIcon, Copy } from 'lucide-react';
+import { Eye, Edit, CircleIcon, Copy, FolderEdit } from 'lucide-react';
 import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from '@customer/components/index';
+import { updateStoresProduct } from '../api';
+import { useToast } from '@customer/components/index';
 
 export const productsColumn: ColumnDef<ProductType>[] = [
   {
@@ -131,6 +133,7 @@ const ProductImage: React.FC<{ product: ProductType }> = ({ product }) => {
 const ActionComponent: React.FC<{ product: ProductType }> = ({ product }) => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   return (
     <DropdownMenu>
@@ -179,25 +182,6 @@ const ActionComponent: React.FC<{ product: ProductType }> = ({ product }) => {
         {/* Update Category */}
         <UpdateWrapper productId={product.Id} />
 
-        {/* Status Update */}
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <CircleIcon className="mr-2 h-4 w-4" />
-            Change Status
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuItem onClick={() => 0}>Active</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => 0}>Draft</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => 0}>Archive</DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-
-        {/* Duplicate */}
-        <DropdownMenuItem>
-          <Copy className="mr-2 h-4 w-4" />
-          Duplicate
-        </DropdownMenuItem>
-
         <DropdownMenuSeparator />
 
         {/* Delete */}
@@ -220,8 +204,9 @@ const UpdateWrapper: React.FC<{ productId: number }> = ({ productId }) => {
         e.preventDefault();
         setModalPath({ modal: 'update-category-product', productId });
       }}
-      className="  hover:cursor-pointer"
+      className="hover:cursor-pointer"
     >
+      <FolderEdit className="mr-2 h-4 w-4" />
       Update Category
     </DropdownMenuItem>
   );

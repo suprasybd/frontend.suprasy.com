@@ -61,7 +61,12 @@ const StoreHome = () => {
 
   const { toast } = useToast();
 
-  const { data: homeSectionsResponse, refetch } = useQuery({
+  const {
+    data: homeSectionsResponse,
+    refetch,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['getHomeSections', storeKey],
     queryFn: () => getHomeSections(),
     enabled: !!storeKey,
@@ -126,86 +131,115 @@ const StoreHome = () => {
   }, [Product]);
 
   return (
-    <section className="w-full">
-      {/* create section */}
+    <section className="w-full max-w-7xl mx-auto px-4">
+      {/* Loading state */}
+      {isLoading && (
+        <div className="flex justify-center items-center min-h-[200px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      )}
 
-      {homeSesctions?.length === 0 && <h1>No sections found!</h1>}
+      {/* Error state */}
+      {error && (
+        <Card className="my-10 border-destructive">
+          <CardContent className="pt-6">
+            <p className="text-destructive">
+              Failed to load sections. Please try again.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* home sections */}
+      {/* Empty state with better styling */}
+      {!isLoading && homeSesctions?.length === 0 && (
+        <Card className="my-10">
+          <CardContent className="pt-6 text-center">
+            <h2 className="text-xl font-semibold mb-2">No sections found</h2>
+            <p className="text-muted-foreground mb-4">
+              Create your first section to get started
+            </p>
+            <Button asChild>
+              <Link to="/store/$storeKey/section/create" params={{ storeKey }}>
+                Create Section
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Sections list with improved styling */}
       {homeSesctions && homeSesctions.length > 0 && (
         <Card className="my-10">
-          <CardHeader>
-            <CardTitle>
-              {' '}
-              <h1 className="my-4 font-bold text-xl">Sections List</h1>
-            </CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-2xl">Sections List</CardTitle>
+            <Button asChild>
+              <Link to="/store/$storeKey/section/create" params={{ storeKey }}>
+                Add Section
+              </Link>
+            </Button>
           </CardHeader>
-          <CardContent>
-            {homeSesctions &&
-              homeSesctions.length > 0 &&
-              homeSesctions.map((section) => (
-                <div className="p-5 border my-2 border-gray-300 rounded-md">
-                  <h1 className="text-4xl font-medium">{section.Title}</h1>
-                  <RichTextRender
-                    initialVal={section.Description}
-                    classname="!h-fit"
-                  />
+          <CardContent className="grid gap-6">
+            {homeSesctions.map((section) => (
+              <Card key={section.Id} className="overflow-hidden">
+                <CardHeader>
+                  <CardTitle>{section.Title}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="prose max-w-none dark:prose-invert">
+                    <RichTextRender
+                      initialVal={section.Description}
+                      classname="!h-fit"
+                    />
+                  </div>
 
                   <SectionProducts sectionId={section.Id} />
 
-                  <AlertDialog>
-                    <AlertDialogTrigger>
-                      {' '}
-                      <Button className="my-5" variant={'destructive'}>
-                        Remove Section
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete your section and remove your data from our
-                          servers.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction className="p-0">
-                          <Button
-                            className="my-5"
-                            variant={'destructive'}
-                            onClick={() => {
-                              handleDeleteSection(section.Id);
-                            }}
-                          >
-                            Confirm Remove
-                          </Button>
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                  <div className="flex gap-2">
+                    <Button asChild variant="outline">
+                      <Link
+                        to="/store/$storeKey/section/create"
+                        search={{ update: true, sectionId: section.Id }}
+                        params={{ storeKey }}
+                      >
+                        Edit Section
+                      </Link>
+                    </Button>
 
-                  <Button
-                    className="my-5 mx-2"
-                    onClick={() => {
-                      // form.setValue('Products', []);
-                      // setSectionId(section.Id);
-                      // setIsUpdating(true);
-                    }}
-                  >
-                    <Link
-                      to="/store/$storeKey/section/create"
-                      search={{ update: true, sectionId: section.Id }}
-                      params={{ storeKey }}
-                    >
-                      Update Section
-                    </Link>
-                  </Button>
-                </div>
-              ))}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive">Remove Section</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete your section and remove your data from our
+                            servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction className="p-0">
+                            <Button
+                              className="my-5"
+                              variant={'destructive'}
+                              onClick={() => {
+                                handleDeleteSection(section.Id);
+                              }}
+                            >
+                              Confirm Remove
+                            </Button>
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </CardContent>
         </Card>
       )}
@@ -214,22 +248,45 @@ const StoreHome = () => {
 };
 
 const SectionProducts: React.FC<{ sectionId: number }> = ({ sectionId }) => {
-  const { data: sectionProductsResponse } = useQuery({
+  const { data: sectionProductsResponse, isLoading } = useQuery({
     queryKey: ['getSectionsProducts', sectionId],
     queryFn: () => getHomesectionsProducts(sectionId),
     enabled: !!sectionId,
   });
+
   const sectionProducts = sectionProductsResponse?.Data;
 
-  return (
-    <div className="flex gap-[10px] flex-wrap">
-      {sectionProducts &&
-        sectionProducts.length &&
-        sectionProducts.map((products) => (
-          <div className="w-fit">
-            <ProductCard ProductId={products.ProductId} />
-          </div>
+  if (isLoading) {
+    return (
+      <div className="flex gap-2">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="w-[200px] h-[160px] bg-muted animate-pulse rounded-md"
+          />
         ))}
+      </div>
+    );
+  }
+
+  if (!sectionProducts?.length) {
+    return (
+      <p className="text-muted-foreground text-sm">
+        No products in this section
+      </p>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {sectionProducts.map((product) => (
+        <ProductCard
+          key={product.ProductId}
+          ProductId={product.ProductId}
+          compact
+          showActions
+        />
+      ))}
     </div>
   );
 };

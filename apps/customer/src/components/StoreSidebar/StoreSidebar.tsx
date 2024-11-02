@@ -1,6 +1,5 @@
 import { Link, useParams } from '@tanstack/react-router';
 import {
-  ArrowDown,
   BarChartHorizontal,
   BrickWall,
   Container,
@@ -9,24 +8,29 @@ import {
   Link2,
   Package,
   Palette,
+  Settings,
   ShoppingCart,
   Store,
   Tent,
   Users,
 } from 'lucide-react';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary, {
-  AccordionSummaryProps,
-} from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Badge } from '@customer/components/index';
-
 import { useQuery } from '@tanstack/react-query';
 import { getStoreOrders } from '@customer/pages/orders/api';
 import { getStoreDetails } from '@customer/pages/home/api';
+
+// Improved link styles with better hover and active states
+const linkStyles = `
+  flex items-center gap-3 rounded-lg px-4 py-2.5 
+  text-muted-foreground/90 transition-all duration-200
+  hover:bg-muted/80 hover:text-foreground
+  [&.active]:bg-muted/90 [&.active]:text-primary [&.active]:font-medium
+`;
+
+// Add section header styles
+const sectionHeaderStyles = `
+  text-xs font-semibold text-muted-foreground/70 px-4 py-2 uppercase tracking-wider
+`;
 
 const StoreSidebar = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
@@ -44,316 +48,141 @@ const StoreSidebar = () => {
   const storeData = storeDetailsResponse?.Data;
 
   return (
-    <div className="hidden border-r bg-muted/40 md:block">
-      <div className="flex h-full max-h-[93vh]  flex-col gap-2">
+    <div className="hidden border-r bg-background/95 md:block">
+      <div className="flex h-full max-h-[93vh] flex-col">
+        {/* Store Header */}
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-          <span className="flex items-center gap-2 font-semibold">
-            <Store className="h-6 w-6" />
-
-            <span className="">{storeData?.StoreName}</span>
+          <span className="flex items-center gap-2.5 font-semibold">
+            <Store className="h-6 w-6 text-primary" />
+            <span className="text-foreground">{storeData?.StoreName}</span>
           </span>
-          {/* <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-            <Bell className="h-4 w-4" />
-            <span className="sr-only">Toggle notifications</span>
-          </Button> */}
         </div>
-        <div className="flex-1">
-          <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-            <Link
-              to="/store/$storeKey/dashboard"
-              params={{
-                storeKey: storeKey,
-              }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-            >
-              <Home className="h-4 w-4" />
-              Dashboard
-            </Link>
-            <Link
-              to="/store/$storeKey/orders"
-              params={{
-                storeKey: storeKey,
-              }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-            >
-              <ShoppingCart className="h-4 w-4" />
-              Orders
-              <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto py-3">
+          <nav className="grid items-start gap-1 px-2 text-sm lg:px-3">
+            {/* Main Navigation */}
+            <div className="space-y-1">
+              <Link
+                to="/store/$storeKey/dashboard"
+                params={{ storeKey }}
+                className={linkStyles}
+              >
+                <Home className="h-4 w-4" />
+                Dashboard
+              </Link>
+              <Link
+                to="/store/$storeKey/orders"
+                params={{ storeKey }}
+                className={linkStyles}
+              >
+                <ShoppingCart className="h-4 w-4" />
+                Orders
                 {!isLoading && ordersResponse?.Pagination && (
-                  <>{ordersResponse.Pagination.TotalItems}</>
+                  <Badge className="ml-auto flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs">
+                    {ordersResponse.Pagination.TotalItems}
+                  </Badge>
                 )}
-              </Badge>
-            </Link>
-
-            <Accordion
-              defaultExpanded={true}
-              className=" !shadow-none !p-0"
-              style={{
-                background: 'none',
-              }}
-              sx={{
-                '.MuiAccordion-root.Mui-expanded': {
-                  background: 'red',
-                },
-              }}
-            >
-              <AccordionSummary
-                style={{ padding: 0, minHeight: 'fit-content', margin: 0 }}
-                className=" !p-0"
-                expandIcon={<ArrowDown className="text-sm h-[17px] w-[17px]" />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-                sx={{
-                  '.MuiAccordionSummary-content': {
-                    margin: '0px',
-                  },
-                  '.MuiAccordionSummary-content.Mui-expanded': {
-                    margin: '0px 0',
-                  },
-                }}
+              </Link>
+              <Link
+                to="/store/$storeKey/products"
+                params={{ storeKey }}
+                className={linkStyles}
               >
-                <Link
-                  to="/store/$storeKey/products"
-                  params={{
-                    storeKey: storeKey,
-                  }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-                >
-                  <Package className="h-4 w-4" />
-                  Products{' '}
-                </Link>
-              </AccordionSummary>
-              <AccordionDetails style={{ padding: 0, paddingLeft: '10px' }}>
-                <Link
-                  to="/store/$storeKey/categories"
-                  params={{
-                    storeKey: storeKey,
-                  }}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-                >
-                  <BarChartHorizontal className="h-4 w-4" />
-                  Categories
-                </Link>
-                <Link
-                  to="/store/$storeKey/genlink"
-                  params={{
-                    storeKey: storeKey,
-                  }}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-                >
-                  <Link2 className="h-4 w-4" />
-                  Direct Checkout Link
-                </Link>
-              </AccordionDetails>
-            </Accordion>
-
-            <Link
-              to="/store/$storeKey/customers"
-              params={{
-                storeKey: storeKey,
-              }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-            >
-              <Users className="h-4 w-4" />
-              Customers
-            </Link>
-
-            <Link
-              to="/store/$storeKey/home"
-              params={{
-                storeKey: storeKey,
-              }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-            >
-              <Home className="h-4 w-4" />
-              Home Page
-            </Link>
-
-            <Link
-              to="/store/$storeKey/shipping"
-              params={{
-                storeKey: storeKey,
-              }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-            >
-              <Container className="h-4 w-4" />
-              Shipping
-            </Link>
-
-            <Link
-              to="/store/$storeKey/footer"
-              params={{
-                storeKey: storeKey,
-              }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-            >
-              <Tent className="h-4 w-4" />
-              Pages & Footer
-            </Link>
-
-            {/* Settings */}
-            <hr />
-
-            <Accordion
-              defaultExpanded={true}
-              className=" !shadow-none !p-0"
-              style={{
-                background: 'none',
-              }}
-              sx={{
-                '.MuiAccordion-root.Mui-expanded': {
-                  background: 'red',
-                },
-              }}
-            >
-              <AccordionSummary
-                style={{ padding: 0, minHeight: 'fit-content', margin: 0 }}
-                className=" !p-0"
-                expandIcon={<ArrowDown className="text-sm h-[17px] w-[17px]" />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-                sx={{
-                  '.MuiAccordionSummary-content': {
-                    margin: '0px',
-                  },
-                  '.MuiAccordionSummary-content.Mui-expanded': {
-                    margin: '0px 0',
-                  },
-                }}
+                <Package className="h-4 w-4" />
+                Products
+              </Link>
+              <Link
+                to="/store/$storeKey/categories"
+                params={{ storeKey }}
+                className={linkStyles}
               >
-                <div
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-                >
-                  <Package className="h-4 w-4" />
-                  Settings{' '}
-                </div>
-              </AccordionSummary>
-              <AccordionDetails style={{ padding: 0, paddingLeft: '10px' }}>
-                <Link
-                  to="/store/$storeKey/turnstile"
-                  params={{
-                    storeKey: storeKey,
-                  }}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-                >
-                  <BrickWall className="h-4 w-4" />
-                  Trunstile & Logo
-                </Link>
-                <Link
-                  to="/store/$storeKey/domain"
-                  params={{
-                    storeKey: storeKey,
-                  }}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-                >
-                  <FolderPen className="h-4 w-4" />
-                  Domain Name
-                </Link>
-                <Link
-                  to="/store/$storeKey/themes"
-                  params={{
-                    storeKey: storeKey,
-                  }}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-                >
-                  <Palette className="h-4 w-4" />
-                  Themes
-                </Link>
-              </AccordionDetails>
-            </Accordion>
-
-            <Accordion
-              defaultExpanded={true}
-              className=" !shadow-none !p-0"
-              style={{
-                background: 'none',
-              }}
-              sx={{
-                '.MuiAccordion-root.Mui-expanded': {
-                  background: 'red',
-                },
-              }}
-            >
-              <AccordionSummary
-                style={{ padding: 0, minHeight: 'fit-content', margin: 0 }}
-                className=" !p-0"
-                expandIcon={<ArrowDown className="text-sm h-[17px] w-[17px]" />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-                sx={{
-                  '.MuiAccordionSummary-content': {
-                    margin: '0px',
-                  },
-                  '.MuiAccordionSummary-content.Mui-expanded': {
-                    margin: '0px 0',
-                  },
-                }}
+                <BarChartHorizontal className="h-4 w-4" />
+                Categories
+              </Link>
+              <Link
+                to="/store/$storeKey/customers"
+                params={{ storeKey }}
+                className={linkStyles}
               >
-                <div
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-                >
-                  <Package className="h-4 w-4" />
-                  Admin{' '}
-                </div>
-              </AccordionSummary>
-              <AccordionDetails style={{ padding: 0, paddingLeft: '10px' }}>
-                <Link
-                  to="/store/$storeKey/adminThemes"
-                  params={{
-                    storeKey: storeKey,
-                  }}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary 
-              [&.active]:text-black
-              [&.active]:transition-all
-              [&.active]:hover:text-primary"
-                >
-                  <BrickWall className="h-4 w-4" />
-                  Admin Themes
-                </Link>
-              </AccordionDetails>
-            </Accordion>
+                <Users className="h-4 w-4" />
+                Customers
+              </Link>
+            </div>
+
+            {/* Store Management */}
+            <div className="mt-4 space-y-1">
+              <div className={sectionHeaderStyles}>Store Management</div>
+              <Link
+                to="/store/$storeKey/home"
+                params={{ storeKey }}
+                className={linkStyles}
+              >
+                <Home className="h-4 w-4" />
+                Home Page
+              </Link>
+              <Link
+                to="/store/$storeKey/shipping"
+                params={{ storeKey }}
+                className={linkStyles}
+              >
+                <Container className="h-4 w-4" />
+                Shipping
+              </Link>
+              <Link
+                to="/store/$storeKey/footer"
+                params={{ storeKey }}
+                className={linkStyles}
+              >
+                <Tent className="h-4 w-4" />
+                Pages & Footer
+              </Link>
+              <Link
+                to="/store/$storeKey/genlink"
+                params={{ storeKey }}
+                className={linkStyles}
+              >
+                <Link2 className="h-4 w-4" />
+                Direct Checkout
+              </Link>
+            </div>
+
+            {/* Settings & Admin */}
+            <div className="mt-4 space-y-1">
+              <div className={sectionHeaderStyles}>Settings</div>
+              <Link
+                to="/store/$storeKey/turnstile"
+                params={{ storeKey }}
+                className={linkStyles}
+              >
+                <BrickWall className="h-4 w-4" />
+                Turnstile & Logo
+              </Link>
+              <Link
+                to="/store/$storeKey/domain"
+                params={{ storeKey }}
+                className={linkStyles}
+              >
+                <FolderPen className="h-4 w-4" />
+                Domain Name
+              </Link>
+              <Link
+                to="/store/$storeKey/themes"
+                params={{ storeKey }}
+                className={linkStyles}
+              >
+                <Palette className="h-4 w-4" />
+                Themes
+              </Link>
+              <Link
+                to="/store/$storeKey/adminThemes"
+                params={{ storeKey }}
+                className={linkStyles}
+              >
+                <Settings className="h-4 w-4" />
+                Admin Themes
+              </Link>
+            </div>
           </nav>
         </div>
       </div>

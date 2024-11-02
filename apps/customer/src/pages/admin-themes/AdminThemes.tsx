@@ -17,6 +17,13 @@ import { Input } from '@customer/components/index';
 import AdminThemeImage from './components/Media/AdminThemeMedia';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createTheme, getThemes, updateTheme } from './api';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardTitle,
+  CardDescription,
+} from '@customer/components/index';
 
 const ImageUrl = z.object({
   ImageUrl: z.string().url(),
@@ -70,86 +77,113 @@ const AdminThemes = () => {
   }
 
   return (
-    <div className="px-10">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="Name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Theme Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="name" {...field} />
-                </FormControl>
+    <div className="container mx-auto py-8">
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>
+            {isUpdating ? 'Update Theme' : 'Create New Theme'}
+          </CardTitle>
+          <CardDescription>
+            Configure your theme settings and upload images
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="Name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Theme Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter theme name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="Description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Theme Description</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter theme description" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="R2Folder"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>R2 Folder Path</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter R2 folder path" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="Description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Theme Description</FormLabel>
-                <FormControl>
-                  <Input placeholder="description" {...field} />
-                </FormControl>
+              <AdminThemeImage fieldIndex={1} form={form} />
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="R2Folder"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>R2 Folder path</FormLabel>
-                <FormControl>
-                  <Input placeholder="folder patch r2" {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <AdminThemeImage fieldIndex={1} form={form} />
-
-          <Button type="submit">{isUpdating ? 'Update' : 'Create'}</Button>
-        </form>
-      </Form>
+              <Button type="submit" className="w-full">
+                {isUpdating ? 'Update Theme' : 'Create Theme'}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
 
       {themeResponse?.Data?.map((theme) => (
-        <div className="p-3 border-2 border-gray-600 rounded-md mt-3">
-          <h1>Name: {theme.Name}</h1>
-          <p>Description: {theme.Description}</p>
-          <p>R2Folder: {theme.R2Folder}</p>
-          <div className="flex flex-wrap gap-[10px]">
-            {theme.Images.map((i) => (
-              <img
-                src={i.ImageUrl}
-                alt="theme"
-                className="w-[300px] h-[300px]"
-              />
-            ))}
-          </div>
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              form.setValue('Images', theme.Images);
-              form.setValue('Description', theme.Description);
-              form.setValue('Name', theme.Name);
-              form.setValue('R2Folder', theme.R2Folder);
-              setThemeId(theme.Id);
-              setIsUpdating(true);
-            }}
-          >
-            Update
-          </Button>
-        </div>
+        <Card key={theme.Id} className="mb-4">
+          <CardHeader>
+            <CardTitle>{theme.Name}</CardTitle>
+            <CardDescription>{theme.Description}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4">
+              <Label className="text-sm font-medium">R2 Folder:</Label>
+              <p className="text-muted-foreground">{theme.R2Folder}</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {theme.Images.map((image, index) => (
+                <div
+                  key={index}
+                  className="relative aspect-square overflow-hidden rounded-lg"
+                >
+                  <img
+                    src={image.ImageUrl}
+                    alt={`Theme ${theme.Name} - Image ${index + 1}`}
+                    className="object-cover w-full h-full hover:scale-105 transition-transform duration-200"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                form.setValue('Images', theme.Images);
+                form.setValue('Description', theme.Description);
+                form.setValue('Name', theme.Name);
+                form.setValue('R2Folder', theme.R2Folder);
+                setThemeId(theme.Id);
+                setIsUpdating(true);
+              }}
+              className="mt-4"
+              variant="outline"
+            >
+              Edit Theme
+            </Button>
+          </CardContent>
+        </Card>
       ))}
     </div>
   );

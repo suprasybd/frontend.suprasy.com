@@ -13,6 +13,9 @@ import {
   FormMessage,
   Input,
   useToast,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
 } from '@customer/components/index';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -164,38 +167,53 @@ const AddArea: React.FC = () => {
       }}
     >
       <DialogTrigger onClick={() => toggleModal()}>
-        <Button className="my-3" variant={'gradiantT'}>
+        <Button className="my-3" variant="gradiantT">
           Add Area/Zone
         </Button>
       </DialogTrigger>
-      <DialogContent className="my-3">
-        <h1>{!update ? 'Add' : 'Update'} area/zone</h1>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{!update ? 'Add' : 'Update'} Area/Zone</DialogTitle>
+          <DialogDescription>
+            Add shipping areas and set delivery costs for different zones.
+          </DialogDescription>
+        </DialogHeader>
+
         <Form {...form}>
-          <form onSubmit={handleFormWrapper} className="space-y-8">
+          <form onSubmit={handleFormWrapper} className="space-y-6">
             <FormField
               control={form.control}
               name="Area"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Area</FormLabel>
+                  <FormLabel>Area Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Area" {...field} />
+                    <Input placeholder="Enter area name" {...field} />
                   </FormControl>
-                  <FormDescription>This is the area/zone name.</FormDescription>
+                  <FormDescription>
+                    The name of the delivery zone or area
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="Cost"
               render={({ field }) => (
-                <FormItem className="!mt-0">
-                  <FormLabel>Cost</FormLabel>
+                <FormItem>
+                  <FormLabel>Delivery Cost</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="Cost" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Enter delivery cost"
+                      {...field}
+                    />
                   </FormControl>
-                  <FormDescription>This is the area/zone name.</FormDescription>
+                  <FormDescription>
+                    The delivery cost for this area in your currency
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -204,18 +222,20 @@ const AddArea: React.FC = () => {
             <Turnstile
               options={{ size: 'auto' }}
               siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
+              className="mt-4"
             />
 
-            <div className="flex gap-[8px]">
-              <DialogClose className="w-full" ref={closeBtn}>
+            <div className="flex gap-4 mt-6">
+              <DialogClose asChild>
                 <Button
+                  ref={closeBtn}
                   onClick={(e) => {
                     e.preventDefault();
                     if (closeBtn.current) {
                       (closeBtn.current as { click: () => void }).click();
                     }
                   }}
-                  variant={'outline'}
+                  variant="outline"
                   className="w-full"
                 >
                   Cancel
@@ -223,22 +243,21 @@ const AddArea: React.FC = () => {
               </DialogClose>
 
               <Button
-                variant={'defaultGradiant'}
+                variant="defaultGradiant"
                 className="w-full"
                 type="submit"
                 disabled={isPending || isUpdating || !turnstileLoaded}
               >
-                {!turnstileLoaded && (
-                  <>
+                {!turnstileLoaded ? (
+                  <div className="flex items-center">
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                    wait a few moment..
-                  </>
-                )}
-                {turnstileLoaded && (
+                    <span>Please wait...</span>
+                  </div>
+                ) : (
                   <span>
                     {isPending || isUpdating
-                      ? `${update ? 'Updating' : 'Adding'} Area..`
-                      : `${update ? 'Update' : 'Add'} This Area`}
+                      ? `${update ? 'Updating' : 'Adding'}...`
+                      : `${update ? 'Update' : 'Add'} Area`}
                   </span>
                 )}
               </Button>

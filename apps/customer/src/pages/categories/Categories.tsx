@@ -15,6 +15,9 @@ import {
   FormControl,
   FormMessage,
   Form,
+  CardHeader,
+  CardTitle,
+  FormDescription,
 } from '@customer/components/index';
 import { Link, useParams } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -34,6 +37,7 @@ import { z } from 'zod';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { useModalStore } from '@customer/store/modalStore';
+import { Plus } from 'lucide-react';
 
 const formSchema = z.object({
   CategoryName: z.string().min(2).max(50),
@@ -136,45 +140,73 @@ const Categories = () => {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <Card>
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Add New Category</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Create a new category to organize your products
+          </p>
+        </CardHeader>
         <CardContent>
-          <div className="my-2 mt-4">
-            <Form {...form}>
-              <form onSubmit={handleFormWrapper} className="space-y-8">
-                <FormField
-                  control={form.control}
-                  name="CategoryName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Add Category</FormLabel>
-                      <FormControl>
-                        <Input placeholder="category" {...field} />
-                      </FormControl>
+          <Form {...form}>
+            <form onSubmit={handleFormWrapper} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="CategoryName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter category name"
+                        {...field}
+                        className="w-full"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Choose a clear and descriptive name for your category
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
+              <div className="pt-2">
                 <Turnstile
                   options={{ size: 'auto' }}
                   siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
                 />
+              </div>
 
-                <Button type="submit" disabled={!turnstileLoaded}>
-                  {!turnstileLoaded && (
-                    <>
-                      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                      wait a few moment..
-                    </>
-                  )}
-                  {turnstileLoaded && (
-                    <span>{isPending ? 'Addding..' : 'Add Category'}</span>
-                  )}
-                </Button>
-              </form>
-            </Form>
-          </div>
+              <Button
+                type="submit"
+                disabled={!turnstileLoaded}
+                className="w-full sm:w-auto"
+              >
+                {!turnstileLoaded && (
+                  <>
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait...
+                  </>
+                )}
+                {turnstileLoaded && (
+                  <span className="flex items-center gap-2">
+                    {isPending ? (
+                      <>
+                        <ReloadIcon className="h-4 w-4 animate-spin" />
+                        Adding Category...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="h-4 w-4" />
+                        Add Category
+                      </>
+                    )}
+                  </span>
+                )}
+              </Button>
+            </form>
+          </Form>
         </CardContent>
       </Card>
 
@@ -205,21 +237,38 @@ const CategoriesCard: React.FC<{ category: Category }> = ({ category }) => {
 
   const subCategories = subCategoriesResponse?.Data;
   return (
-    <div className="shadow-lg border-2 border-slate-500 rounded-md p-2">
-      <p>Parent Category</p>
+    <div className="bg-white shadow-md border border-gray-200 rounded-lg p-4">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-800">Parent Category</h3>
+        <Button
+          onClick={() => {
+            setModalPath({
+              modal: 'subcategory',
+              parentCategoryId: category.Id,
+            });
+          }}
+          variant="outline"
+          size="sm"
+        >
+          Add Sub Category
+        </Button>
+      </div>
+
       <UpdateCategory category={category} />
-      <Button
-        onClick={() => {
-          setModalPath({ modal: 'subcategory', parentCategoryId: category.Id });
-        }}
-        className="my-2 mt-4 w-full"
-      >
-        Add Sub Category
-      </Button>
-      <p>Sub Categories</p>
-      {subCategories?.map((s) => (
-        <UpdateCategory category={s} />
-      ))}
+
+      {subCategories && subCategories.length > 0 && (
+        <>
+          <div className="my-4 border-t border-gray-200" />
+          <h4 className="text-md font-medium text-gray-700 mb-3">
+            Sub Categories
+          </h4>
+          <div className="space-y-3">
+            {subCategories?.map((s) => (
+              <UpdateCategory key={s.Id} category={s} />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };
@@ -282,33 +331,50 @@ const UpdateCategory: React.FC<{ category: Category }> = ({ category }) => {
   });
 
   return (
-    <div className="border border-gray-300 rounded-md p-3 w-fit">
-      <h1 className="mt-3">Category Id: {category.Id}</h1>
+    <div className="bg-gray-50 rounded-lg p-4 w-full">
+      <div className="text-sm text-gray-500 mb-2">
+        Category ID: {category.Id}
+      </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="CategoryName"
             render={({ field }) => (
               <FormItem className="mb-0">
                 <FormControl>
-                  <Input placeholder="Category" {...field} />
+                  <Input
+                    placeholder="Category name"
+                    className="bg-white"
+                    {...field}
+                  />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <div className="flex justify-between gap-[3px]">
-            <Button type="submit" variant={'outline'} className="w-full">
-              <span>{isPending ? 'Updating..' : 'Update'}</span>
+          <div className="flex gap-2">
+            <Button
+              type="submit"
+              variant="outline"
+              className="flex-1"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <>
+                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                'Update'
+              )}
             </Button>
 
             <Button
-              className="w-full"
-              variant={'gradiantT'}
+              variant="destructive"
+              className="flex-1"
               onClick={(e) => {
                 e.preventDefault();
                 handleRemove({ id: category.Id });

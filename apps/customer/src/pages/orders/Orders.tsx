@@ -15,6 +15,10 @@ import {
   AccordionItem,
   AccordionTrigger,
   Label,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
 } from '@customer/components/index';
 import { Link, useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -77,80 +81,95 @@ const Orders = () => {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <Accordion type="single" collapsible defaultChecked defaultValue="item-1">
-        <AccordionItem className="border-b-0" value="item-1">
-          <AccordionTrigger className="hover:no-underline border-b-0">
-            <Button variant={'defaultGradiant'}>
-              Filters / Search <Search className="ml-3" />
-            </Button>
-          </AccordionTrigger>
-          <AccordionContent>
-            <div className="flex flex-wrap gap-[10px]">
-              <div className="w-[300px]">
-                <Label className="my-2">Filter Phone</Label>
-                <Input
-                  className="my-2"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Filter using phone"
-                />
-              </div>
+      <Card className="mb-6">
+        <CardHeader className="pb-3">
+          <CardTitle>Orders Management</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Accordion type="single" collapsible defaultValue="item-1">
+            <AccordionItem className="border-none" value="item-1">
+              <AccordionTrigger className="hover:no-underline py-2 px-4 rounded-lg bg-secondary/10">
+                <div className="flex items-center gap-2">
+                  <Search className="h-4 w-4" />
+                  <span>Search & Filters</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>Phone Number</Label>
+                    <Input
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Search by phone"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Email Address</Label>
+                    <Input
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Search by email"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Order ID</Label>
+                    <Input
+                      value={id}
+                      onChange={(e) => setId(e.target.value)}
+                      type="number"
+                      placeholder="Search by ID"
+                    />
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
-              <div className="w-[300px]">
-                <Label className="my-2">Filter Email</Label>
-                <Input
-                  className="my-2"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Filter using email"
-                />
-              </div>
-              <div className="w-[300px]">
-                <Label className="my-2">Filter Order Id</Label>
-                <Input
-                  className="my-2"
-                  value={id}
-                  onChange={(e) => setId(e.target.value)}
-                  type="number"
-                  placeholder="Filter using id"
-                />
-              </div>
+          <Tabs
+            onValueChange={setTab}
+            defaultValue={tab}
+            className="w-full mt-6"
+          >
+            <TabsList className="w-full justify-start overflow-x-auto">
+              <TabsTrigger value="pending">Pending</TabsTrigger>
+              <TabsTrigger value="unverified">Unverified</TabsTrigger>
+              <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
+              <TabsTrigger value="shipped">Shipped</TabsTrigger>
+              <TabsTrigger value="completed">Completed</TabsTrigger>
+              <TabsTrigger value="cancled">Cancelled</TabsTrigger>
+              <TabsTrigger value="returned">Returned</TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          {isLoading && (
+            <div className="w-full flex justify-center py-8">
+              <LoaderMain />
             </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+          )}
 
-      <Tabs
-        onValueChange={(val) => {
-          setTab(val);
-        }}
-        defaultValue={tab}
-        className="w-[400px]"
-      >
-        <TabsList className="mb-5">
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-          <TabsTrigger value="unverified">Unverified</TabsTrigger>
-          <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
-          <TabsTrigger value="shipped">Shipped</TabsTrigger>
-          <TabsTrigger value="completed">Completed</TabsTrigger>
-          <TabsTrigger value="cancled">Cancled</TabsTrigger>
-          <TabsTrigger value="returned">Returned</TabsTrigger>
-        </TabsList>
-      </Tabs>
+          {!isLoading && !orders?.length && (
+            <div className="text-center py-8 text-muted-foreground">
+              No orders found
+            </div>
+          )}
 
-      {isLoading && <LoaderMain />}
-      {!isLoading && !orders?.length && <div>No orders found!</div>}
+          {!isLoading && orders && orders?.length > 0 && (
+            <div className="mt-4">
+              <DataTable columns={ordersColumn} data={orders} />
+            </div>
+          )}
 
-      {!isLoading && orders && orders?.length > 0 && (
-        <DataTable columns={ordersColumn} data={orders || []} />
-      )}
-
-      {ordersResponse?.Pagination && (
-        <PaginationMain
-          PaginationDetails={ordersResponse?.Pagination}
-          setPage={setPage}
-        />
-      )}
+          {ordersResponse?.Pagination && (
+            <div className="mt-4 flex justify-end">
+              <PaginationMain
+                PaginationDetails={ordersResponse.Pagination}
+                setPage={setPage}
+              />
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </section>
   );
 };

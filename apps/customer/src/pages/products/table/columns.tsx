@@ -19,8 +19,15 @@ import {
   formatDateToMinutes,
 } from '../../../../src/libs/helpers/formatdate';
 import { useModalStore } from '@customer/store/modalStore';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProductsImages } from '../api';
+import { Badge } from '@customer/components/index';
+import { Eye, Edit, CircleIcon, Copy } from 'lucide-react';
+import {
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from '@customer/components/index';
 
 export const productsColumn: ColumnDef<ProductType>[] = [
   {
@@ -34,6 +41,14 @@ export const productsColumn: ColumnDef<ProductType>[] = [
   {
     accessorKey: 'Title',
     header: 'Title',
+    cell: ({ row }) => {
+      const product = row.original;
+      return (
+        <div className="flex flex-col">
+          <span className="font-medium">{product.Title}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'Slug',
@@ -42,7 +57,24 @@ export const productsColumn: ColumnDef<ProductType>[] = [
   {
     accessorKey: 'Status',
     header: 'Status',
+    cell: ({ row }) => {
+      const status = row.original.Status?.toLowerCase();
+      return (
+        <Badge
+          variant={
+            status === 'active'
+              ? 'default'
+              : status === 'draft'
+              ? 'secondary'
+              : 'destructive'
+          }
+        >
+          {row.original.Status}
+        </Badge>
+      );
+    },
   },
+
   {
     accessorKey: 'UpdatedAt',
     header: 'UpdatedAt',
@@ -63,6 +95,7 @@ export const productsColumn: ColumnDef<ProductType>[] = [
   },
   {
     id: 'actions',
+    header: 'Actions',
     cell: ({ row }) => {
       const product = row.original;
 
@@ -97,6 +130,7 @@ const ProductImage: React.FC<{ product: ProductType }> = ({ product }) => {
 
 const ActionComponent: React.FC<{ product: ProductType }> = ({ product }) => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+  const queryClient = useQueryClient();
 
   return (
     <DropdownMenu>
@@ -106,10 +140,11 @@ const ActionComponent: React.FC<{ product: ProductType }> = ({ product }) => {
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-[200px]">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
         <DropdownMenuSeparator />
+
+        {/* View Details */}
         <DropdownMenuItem>
           <Link
             to="/store/$storeKey/products/$productId/details"
@@ -117,30 +152,58 @@ const ActionComponent: React.FC<{ product: ProductType }> = ({ product }) => {
               productId: product.Id?.toString(),
               storeKey,
             }}
+            className="flex w-full items-center"
           >
-            View product details
+            <Eye className="mr-2 h-4 w-4" />
+            View Details
           </Link>
         </DropdownMenuItem>
+
+        {/* Update Product */}
         <DropdownMenuItem>
           <Link
             to="/store/$storeKey/products/create"
-            params={{
-              storeKey,
-            }}
+            params={{ storeKey }}
             search={{
               productId: product.Id,
               update: true,
               uuid: uuidv4(),
             }}
+            className="flex w-full items-center"
           >
-            Update Product
+            <Edit className="mr-2 h-4 w-4" />
+            Edit Product
           </Link>
         </DropdownMenuItem>
 
+        {/* Update Category */}
         <UpdateWrapper productId={product.Id} />
+
+        {/* Status Update */}
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <CircleIcon className="mr-2 h-4 w-4" />
+            Change Status
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem onClick={() => 0}>Active</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => 0}>Draft</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => 0}>Archive</DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
+        {/* Duplicate */}
+        <DropdownMenuItem>
+          <Copy className="mr-2 h-4 w-4" />
+          Duplicate
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        {/* Delete */}
         <DropdownMenuItem
           onClick={(e) => e.preventDefault()}
-          className="hover:!bg-red-500 hover:!text-white"
+          className="text-red-600 hover:!bg-red-50 hover:!text-red-700"
         >
           <DeleteProductModal productId={product.Id} />
         </DropdownMenuItem>

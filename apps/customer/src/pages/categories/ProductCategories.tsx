@@ -23,26 +23,35 @@ const ProductCategories = () => {
   const categories = categoryResponse?.Data;
 
   return (
-    <div>
-      {/* prodcuts for categories */}
-      {categories && categories.length > 0 && (
-        <Tabs
-          defaultValue={categories && categories[0].Id.toString()}
-          className="w-full"
-        >
-          <TabsList>
+    <div className="container mx-auto p-4">
+      {/* products for categories */}
+      {categories && categories.length > 0 ? (
+        <Tabs defaultValue={categories[0].Id.toString()} className="w-full">
+          <TabsList className="w-full flex overflow-x-auto tabs-list-scroll">
             {categories?.map((category) => (
-              <TabsTrigger value={category.Id.toString()}>
+              <TabsTrigger
+                key={category.Id}
+                value={category.Id.toString()}
+                className="tabs-trigger whitespace-nowrap"
+              >
                 {category.Name}
               </TabsTrigger>
             ))}
           </TabsList>
           {categories?.map((category) => (
-            <TabsContent value={category.Id.toString()}>
+            <TabsContent
+              key={category.Id}
+              value={category.Id.toString()}
+              className="mt-6"
+            >
               <ProductTable category={category} />
             </TabsContent>
           ))}
         </Tabs>
+      ) : (
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">No categories found</p>
+        </div>
       )}
     </div>
   );
@@ -70,19 +79,29 @@ const ProductTable: React.FC<{ category: Category }> = ({ category }) => {
   });
 
   return (
-    <div>
-      {!isLoading && products?.Data && products?.Data?.length > 0 && (
-        <DataTable
-          columns={productsColumnCategories}
-          data={products?.Data || []}
-        />
-      )}
-
-      {products?.Pagination && (
-        <PaginationMain
-          PaginationDetails={products?.Pagination}
-          setPage={setPage}
-        />
+    <div className="space-y-4">
+      {isLoading ? (
+        <div className="w-full h-32 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      ) : products?.Data && products.Data.length > 0 ? (
+        <>
+          <DataTable columns={productsColumnCategories} data={products.Data} />
+          {products.Pagination && (
+            <div className="mt-4">
+              <PaginationMain
+                PaginationDetails={products.Pagination}
+                setPage={setPage}
+              />
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="text-center py-8 bg-muted/10 rounded-lg">
+          <p className="text-muted-foreground">
+            No products found in this category
+          </p>
+        </div>
       )}
     </div>
   );

@@ -98,7 +98,6 @@ export interface StorefrontOptions {
   CreatedAt: string;
   UpdatedAt: string;
 }
-
 export interface StorefrontOptionsValue {
   Id: number;
   StoreKey: string;
@@ -126,7 +125,6 @@ export interface AttributeValue {
   CreatedAt: string;
   UpdatedAt: string;
 }
-
 export interface ProductSku {
   Id: number;
   StoreKey: string;

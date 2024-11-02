@@ -175,28 +175,33 @@ const CreateStoreModal: React.FC = () => {
           }
         }}
       >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create Store</DialogTitle>
-            <DialogDescription>Create Store</DialogDescription>
+        <DialogContent className="max-w-[500px]">
+          <DialogHeader className="space-y-2">
+            <DialogTitle className="text-2xl font-semibold">
+              Create Store
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Fill in the details below to create your new store.
+            </DialogDescription>
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="StoreName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Store Name</FormLabel>
+                    <FormLabel className="font-medium">Store Name</FormLabel>
                     <FormControl>
                       <Input
                         FormError={!!form.formState.errors.StoreName}
-                        placeholder="StoreName"
+                        placeholder="Enter your store name"
+                        className="h-10"
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-xs text-muted-foreground">
                       This is your public display name.
                     </FormDescription>
                     <FormMessage />
@@ -209,16 +214,18 @@ const CreateStoreModal: React.FC = () => {
                 name="SubDomain"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Sub Domain</FormLabel>
+                    <FormLabel className="font-medium">Sub Domain</FormLabel>
                     <FormControl>
                       <Input
                         FormError={!!form.formState.errors.StoreName}
-                        placeholder="Sub Domain"
+                        placeholder="Enter subdomain"
+                        className="h-10"
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Subdomain: store-{subdomain}.suprasy.com
+                    <FormDescription className="text-xs text-muted-foreground">
+                      Your store URL will be: store-{subdomain || 'example'}
+                      .suprasy.com
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -229,21 +236,27 @@ const CreateStoreModal: React.FC = () => {
                 balance &&
                 planData &&
                 !balanceResponse.Data.IsTrial && (
-                  <div>
+                  <div className="space-y-4">
                     {haveBalance ? (
-                      <Alert>
-                        <AlertTitle>Transaction Details</AlertTitle>
-                        <AlertDescription>
+                      <Alert className="bg-muted/50 border">
+                        <AlertTitle className="font-medium">
+                          Transaction Details
+                        </AlertTitle>
+                        <AlertDescription className="text-sm">
                           {isSuccess && (
-                            <div>
-                              <div>
-                                {MONTHLY_COST} BDT will be deducted from your
-                                balance
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span>Monthly Cost:</span>
+                                <span className="font-medium">
+                                  {MONTHLY_COST} BDT
+                                </span>
                               </div>
                               {balanceSuccess && balance && planData && (
-                                <div>
-                                  Remaining balance will be :{' '}
-                                  {balance?.Balance - MONTHLY_COST}
+                                <div className="flex items-center justify-between">
+                                  <span>Remaining Balance:</span>
+                                  <span className="font-medium">
+                                    {balance?.Balance - MONTHLY_COST} BDT
+                                  </span>
                                 </div>
                               )}
                             </div>
@@ -251,10 +264,15 @@ const CreateStoreModal: React.FC = () => {
                         </AlertDescription>
                       </Alert>
                     ) : (
-                      <Alert variant={'destructive'}>
-                        <AlertTitle>Not enough balance</AlertTitle>
+                      <Alert
+                        variant="destructive"
+                        className="border-destructive/50"
+                      >
+                        <AlertTitle className="font-medium">
+                          Not enough balance
+                        </AlertTitle>
                         <AlertDescription>
-                          You don't have enought balance.
+                          Please add funds to your account to create a store.
                         </AlertDescription>
                       </Alert>
                     )}
@@ -262,8 +280,10 @@ const CreateStoreModal: React.FC = () => {
                 )}
 
               {balanceResponse?.Data.IsTrial && (
-                <Alert variant={'default'}>
-                  <AlertTitle>One Month Trial</AlertTitle>
+                <Alert className="bg-primary/10 border-primary/20">
+                  <AlertTitle className="font-medium">
+                    One Month Trial
+                  </AlertTitle>
                   <AlertDescription>
                     You are eligible for 1 month trial, create your store and
                     use for 1 month free.
@@ -271,20 +291,25 @@ const CreateStoreModal: React.FC = () => {
                 </Alert>
               )}
 
-              <Button
-                disabled={shouldDisableCreate || isError}
-                type="submit"
-                className="w-full"
-              >
-                {isPending && 'Creating...'}
-                {!isPending && 'Create Store'}
-              </Button>
+              <div className="flex flex-col gap-3 pt-2">
+                <Button
+                  disabled={shouldDisableCreate || isError}
+                  type="submit"
+                  className="w-full h-10"
+                >
+                  {isPending ? 'Creating...' : 'Create Store'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => closeModal()}
+                  className="w-full h-10"
+                >
+                  Cancel
+                </Button>
+              </div>
             </form>
           </Form>
-
-          <Button variant={'destructive'} onClick={() => closeModal()}>
-            Close
-          </Button>
         </DialogContent>
       </Dialog>
     </div>

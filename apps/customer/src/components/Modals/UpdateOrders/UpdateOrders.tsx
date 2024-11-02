@@ -120,13 +120,18 @@ const UpdateOrder: React.FC = () => {
           }
         }}
       >
-        <DialogContent key={ordersDetails?.Status}>
-          <DialogHeader>
-            <DialogTitle>Update order information</DialogTitle>
+        <DialogContent key={ordersDetails?.Status} className="max-w-[500px]">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-2xl font-semibold">
+              Update Order Information
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground">
+              Update the order status and add optional notes
+            </p>
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {orderResposne?.Data.Status && (
                 <FormField
                   control={form.control}
@@ -134,27 +139,26 @@ const UpdateOrder: React.FC = () => {
                   defaultValue={orderResposne.Data.Status}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Status</FormLabel>
+                      <FormLabel className="text-base">Order Status</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="h-11">
                             <SelectValue placeholder="Select Status" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="pending">Pending</SelectItem>{' '}
+                          <SelectItem value="pending">Pending</SelectItem>
                           <SelectItem value="unverified">Unverified</SelectItem>
                           <SelectItem value="confirmed">Confirmed</SelectItem>
                           <SelectItem value="shipped">Shipped</SelectItem>
                           <SelectItem value="completed">Completed</SelectItem>
-                          <SelectItem value="cancled">Cancled</SelectItem>
+                          <SelectItem value="cancled">Cancelled</SelectItem>
                           <SelectItem value="returned">Returned</SelectItem>
                         </SelectContent>
                       </Select>
-
                       <FormMessage />
                     </FormItem>
                   )}
@@ -166,28 +170,35 @@ const UpdateOrder: React.FC = () => {
                 name="Note"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Store Name</FormLabel>
+                    <FormLabel className="text-base">Note</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="note (optional)" {...field} />
+                      <Textarea
+                        placeholder="Add a note about this order update (optional)"
+                        className="min-h-[100px] resize-none"
+                        {...field}
+                      />
                     </FormControl>
                     <FormDescription>
-                      Enter a note for the user (optional)
+                      This note will be visible to the user
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <Button variant={'gradiantT'} type="submit" className="w-full">
-                Update Order
-              </Button>
-              <Button
-                className="w-full !mt-3"
-                variant={'outline'}
-                onClick={() => closeModal()}
-              >
-                Close
-              </Button>
+              <div className="flex flex-col gap-3 pt-2">
+                <Button variant="default" type="submit" className="h-11">
+                  Update Order
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => closeModal()}
+                  className="h-11"
+                  type="button"
+                >
+                  Cancel
+                </Button>
+              </div>
             </form>
           </Form>
         </DialogContent>

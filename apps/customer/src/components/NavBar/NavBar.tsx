@@ -41,31 +41,34 @@ const NavBar = () => {
               <div className="relative ml-3">
                 <DropdownMenu>
                   <DropdownMenuTrigger className="outline-none">
-                    <Button variant={'outline'}>
-                      <UserRound size={'18px'} className="mr-2" />
-                      Account
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-2 hover:bg-muted/60"
+                    >
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <UserRound size={16} className="text-primary" />
+                      </div>
+                      <span className="font-medium">Account</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>
-                      <div>
-                        <span>Signed in as</span>
-                      </div>
-                      <div>
-                        <h4>{user?.Email}</h4>
+                  <DropdownMenuContent className="w-64">
+                    <DropdownMenuLabel className="p-4">
+                      <div className="space-y-1.5">
+                        <p className="text-sm text-muted-foreground">
+                          Signed in as
+                        </p>
+                        <p className="font-medium truncate">{user?.Email}</p>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <div className="p-2">
                       <Button
                         onClick={logoutUser}
-                        variant={'dropdown'}
-                        className="w-full justify-start"
+                        variant="ghost"
+                        className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
-                        <div className="flex gap-[8px] items-center">
-                          <Power size={'17px'} />
-                          Sign out
-                        </div>
+                        <Power size={16} className="mr-2" />
+                        Sign out
                       </Button>
                     </div>
                   </DropdownMenuContent>

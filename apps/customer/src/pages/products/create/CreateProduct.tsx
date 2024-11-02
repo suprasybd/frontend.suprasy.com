@@ -57,7 +57,8 @@ import { productSchema } from './zod/productSchema';
 import useTurnStileHook from '@customer/hooks/turnstile';
 import { Turnstile } from '@marsidev/react-turnstile';
 import VariationImage from './components/VariationImage';
-
+import { Plus } from 'lucide-react';
+import { VariationCard } from './components/VariationCard';
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -338,371 +339,202 @@ const CreateProduct: React.FC = () => {
 
       <Form {...form}>
         <form onSubmit={handleFormWrapper} className="space-y-8">
-          <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
-            {/* left */}
-            <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
-              <Card className={updateInventory ? 'hidden' : ''}>
-                <CardHeader>
-                  <CardTitle>
-                    {isUpdating ? 'Update Product' : 'Create Product'}
-                  </CardTitle>
-                  <CardDescription>
-                    Enter Product Info Carefully!
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="Title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input
-                            FormError={!!formErrors.Title}
-                            placeholder="Title"
-                            {...field}
-                          />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="mt-2">
-                    <FormLabel>Description</FormLabel>
-                    <p className="text-sm text-red-600">
-                      {errors.Description?.message}
-                    </p>
-                    {productDescription && isUpdating && (
-                      <RichTextEditor
-                        initialVal={productDescription}
-                        onValChange={(data) =>
-                          form.setValue('Description', JSON.stringify(data))
-                        }
+          {/* Basic Info Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {isUpdating ? 'Update Product' : 'Create Product'}
+              </CardTitle>
+              <CardDescription>Enter Product Info Carefully!</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <FormField
+                control={form.control}
+                name="Title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input
+                        FormError={!!formErrors.Title}
+                        placeholder="Title"
+                        {...field}
                       />
-                    )}
-
-                    {!isUpdating && (
-                      <RichTextEditor
-                        onValChange={(data) =>
-                          form.setValue('Description', JSON.stringify(data))
-                        }
-                      />
-                    )}
-                  </div>
-
-                  {/* summary */}
-                  <div className="mt-2">
-                    <FormLabel>Summary</FormLabel>
-                    <p className="text-sm text-red-600">
-                      {errors.Summary?.message}
-                    </p>
-
-                    {productSummary && isUpdating && (
-                      <RichTextEditor
-                        initialVal={productSummary}
-                        onValChange={(data) =>
-                          form.setValue('Summary', JSON.stringify(data))
-                        }
-                      />
-                    )}
-
-                    {!isUpdating && (
-                      <RichTextEditor
-                        onValChange={(data) =>
-                          form.setValue('Summary', JSON.stringify(data))
-                        }
-                      />
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {updateInventory && (
-                <h1 className="text-xl font-bold my-3">
-                  Update Variants & Inventory (Stock)
-                </h1>
-              )}
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Options & Variants</CardTitle>
-                  <CardDescription>
-                    Does this product has options like size, color etc.?
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {variationsFields
-                    .filter((v) => !v.Deleted)
-                    .map((option, index) => {
-                      return (
-                        <div
-                          key={option.id}
-                          className="border shadow-lg my-2 border-gray-300 p-3 rounded-md"
-                        >
-                          <VariationImage fieldIndex={index} form={form} />
-                          <div className="flex flex-wrap justify-start items-end gap-[10px]">
-                            <FormField
-                              control={form.control}
-                              name={`ProductVariations.${index}.ChoiceName`}
-                              render={({ field }) => (
-                                <FormItem className=" rounded-lg pt-3">
-                                  <div className="space-y-0.5">
-                                    <FormLabel>Variation Name</FormLabel>
-                                    <FormDescription></FormDescription>
-                                  </div>
-                                  <div className="flex gap-[7px] items-center">
-                                    <FormControl>
-                                      <Input
-                                        FormError={
-                                          !!formErrors?.ProductVariations?.[
-                                            index
-                                          ]?.ChoiceName
-                                        }
-                                        placeholder="Variation Name"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                  </div>
-
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={form.control}
-                              name={`ProductVariations.${index}.Sku`}
-                              render={({ field }) => (
-                                <FormItem className=" rounded-lg pt-3">
-                                  <div className="space-y-0.5">
-                                    <FormLabel>Sku</FormLabel>
-                                    <FormDescription></FormDescription>
-                                  </div>
-                                  <div className="flex gap-[7px] items-center">
-                                    <FormControl>
-                                      <Input
-                                        FormError={
-                                          !!formErrors?.ProductVariations?.[
-                                            index
-                                          ]?.Sku
-                                        }
-                                        placeholder="Sku"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                  </div>
-
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={form.control}
-                              name={`ProductVariations.${index}.Inventory`}
-                              render={({ field }) => (
-                                <FormItem className=" rounded-lg pt-3">
-                                  <div className="space-y-0.5">
-                                    <FormLabel>Inventory</FormLabel>
-                                    <FormDescription></FormDescription>
-                                  </div>
-                                  <div className="flex gap-[7px] items-center">
-                                    <FormControl>
-                                      <Input
-                                        FormError={
-                                          !!formErrors?.ProductVariations?.[
-                                            index
-                                          ]?.Inventory
-                                        }
-                                        placeholder="Inventory"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                  </div>
-
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-
-                            <FormField
-                              control={form.control}
-                              name={`ProductVariations.${index}.Price`}
-                              render={({ field }) => (
-                                <FormItem className=" rounded-lg pt-3 ">
-                                  <div className="space-y-0.5">
-                                    <FormLabel>Price BDT</FormLabel>
-                                    <FormDescription></FormDescription>
-                                  </div>
-                                  <div className="flex gap-[7px] items-center">
-                                    <FormControl>
-                                      <Input
-                                        FormError={
-                                          !!formErrors?.ProductVariations?.[
-                                            index
-                                          ]?.Price
-                                        }
-                                        placeholder="Price BDT"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                  </div>
-
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-
-                            <FormField
-                              control={form.control}
-                              name={`ProductVariations.${index}.SalesPrice`}
-                              render={({ field }) => (
-                                <FormItem className="space-y-0 !mt-3">
-                                  <FormLabel>Sales Price (BDT/৳) </FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      FormError={
-                                        !!formErrors?.ProductVariations?.[index]
-                                          ?.SalesPrice
-                                      }
-                                      placeholder="Sales Price"
-                                      {...field}
-                                    />
-                                  </FormControl>
-
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-
-                            <div className="h-full flex items-end">
-                              <Trash2
-                                onClick={() =>
-                                  updateVariation(index, {
-                                    ...option,
-                                    Deleted: true,
-                                  })
-                                }
-                                className="hover:cursor-pointer"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-
-                  <Button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      appendVariation({
-                        ChoiceName: 'default',
-                        Price: 0,
-                        SalesPrice: 0,
-                        Images: [],
-                        Inventory: 0,
-                        Deleted: false,
-                      });
-                    }}
-                  >
-                    Add Variation
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* right */}
-            <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Product Status</CardTitle>
-                </CardHeader>
-                <CardContent key={`${productDetails?.Status}`}>
-                  <div className="grid gap-6">
-                    <div className="grid gap-3">
-                      <Label htmlFor="status">Status</Label>
-                      <Select
-                        onValueChange={(value) => {
-                          form.setValue('Status', value);
-                        }}
-                        defaultValue={productDetails?.Status || 'draft'}
-                      >
-                        <SelectTrigger id="status" aria-label="Select status">
-                          <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="draft">Draft</SelectItem>
-                          <SelectItem value="active">Active</SelectItem>
-                          <SelectItem value="archived">Archived</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className={updateInventory ? 'hidden' : ''}>
-                <CardHeader className="pb-0">
-                  <CardTitle>Enter Product Slug / Url</CardTitle>
-                  <CardDescription>
-                    e.g. mydomain.com/blue-t-shirt-special
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="Slug"
-                    render={({ field }) => (
-                      <FormItem className="space-y-0 !mt-3">
-                        <FormLabel>Slug</FormLabel>
-                        <FormControl>
-                          <Input
-                            FormError={!!formErrors.Slug}
-                            placeholder="Slug"
-                            {...field}
-                          />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              <Turnstile
-                options={{ size: 'auto' }}
-                siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
 
-              <Button
-                disabled={updateProductLoading || isPending || !turnstileLoaded}
-                type="submit"
-                className="w-full "
-                variant={'defaultGradiant'}
-              >
-                {!turnstileLoaded && (
-                  <>
-                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                    wait a few moment..
-                  </>
-                )}
+              {/* Description Editor */}
+              <div className="space-y-2">
+                <FormLabel>Description</FormLabel>
+                <FormMessage>{errors.Description?.message}</FormMessage>
+                <RichTextEditor
+                  initialVal={productDescription}
+                  onValChange={(data) =>
+                    form.setValue('Description', JSON.stringify(data))
+                  }
+                />
+              </div>
 
-                {turnstileLoaded && (
-                  <>
-                    {(isPending || updateProductLoading) && (
-                      <>
-                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                        Processing
-                      </>
-                    )}
-                    {!isPending && isUpdating
-                      ? 'Update Product'
-                      : 'Create Product'}
-                  </>
-                )}
-              </Button>
-            </div>
+              {/* Summary Editor */}
+              <div className="space-y-2">
+                <FormLabel>Summary</FormLabel>
+                <FormMessage>{errors.Summary?.message}</FormMessage>
+                <RichTextEditor
+                  initialVal={productSummary}
+                  onValChange={(data) =>
+                    form.setValue('Summary', JSON.stringify(data))
+                  }
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Product Settings */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Product Status</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select
+                    onValueChange={(value) => form.setValue('Status', value)}
+                    defaultValue={productDetails?.Status || 'draft'}
+                  >
+                    <SelectTrigger id="status">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="archived">Archived</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Product URL</CardTitle>
+                <CardDescription>
+                  e.g. mydomain.com/blue-t-shirt-special
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={form.control}
+                  name="Slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input
+                          FormError={!!formErrors.Slug}
+                          placeholder="product-url-slug"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
           </div>
+
+          {/* Product Variations */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Variations</CardTitle>
+              <CardDescription>
+                Manage product options like size, color etc.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {variationsFields
+                  .filter((v) => !v.Deleted)
+                  .map((option, index) => (
+                    <VariationCard
+                      key={option.id}
+                      option={option}
+                      index={index}
+                      form={form}
+                      formErrors={formErrors}
+                      onDelete={() =>
+                        updateVariation(index, {
+                          ...option,
+                          Deleted: true,
+                        })
+                      }
+                    />
+                  ))}
+
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    appendVariation({
+                      ChoiceName: 'default',
+                      Price: 0,
+                      SalesPrice: 0,
+                      Sku: '',
+                      Images: [],
+                      Inventory: 0,
+                      Deleted: false,
+                    });
+                  }}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Variation
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Form Actions */}
+          <div className="flex justify-end gap-4">
+            <Button
+              variant="outline"
+              onClick={() => navigate({ to: '..' })}
+              type="button"
+            >
+              Cancel
+            </Button>
+
+            <Button
+              disabled={updateProductLoading || isPending || !turnstileLoaded}
+              type="submit"
+              variant="defaultGradiant"
+            >
+              {!turnstileLoaded ? (
+                <>
+                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait...
+                </>
+              ) : isPending || updateProductLoading ? (
+                <>
+                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                  Processing
+                </>
+              ) : isUpdating ? (
+                'Update Product'
+              ) : (
+                'Create Product'
+              )}
+            </Button>
+          </div>
+
+          <Turnstile
+            options={{ size: 'auto' }}
+            siteKey="0x4AAAAAAAQW6BNxMGjPxRxa"
+          />
         </form>
       </Form>
     </section>

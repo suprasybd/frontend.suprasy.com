@@ -93,8 +93,7 @@ export const getUserBalance = async (): Promise<
   return response.data;
 };
 
-export const getPlan = async (): Promise<ResponseType<PlanResponseType>> => {
-  const response = await ApiClient.get('/billing/plan');
-
+export const getPlan = async (): Promise<PlanResponseType> => {
+  const response = await ApiClient.get('/plans');
   return response.data;
 };

@@ -102,22 +102,6 @@ export const getProductOptions = async (
   return response.data;
 };
 
-export const getProductSku = async (
-  productId: number
-): Promise<ResponseType<ProductSku>> => {
-  const response = await ApiClient.get(`/inventory/sku/${productId}`);
-
-  return response.data;
-};
-
-export const getProudcctsOptions = async (
-  productId: number
-): Promise<ListResponseType<Options>> => {
-  const response = await ApiClient.get(`/products/options/${productId}`);
-
-  return response.data;
-};
-
 export const getProductsMultipleVariants = async (
   productId: number
 ): Promise<ListResponseType<MultipleVariantsTypes>> => {

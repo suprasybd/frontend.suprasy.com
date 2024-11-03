@@ -1,6 +1,7 @@
 import { useModalStore } from '@customer/store/modalStore';
 import {
   Button,
+  cn,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -34,6 +35,10 @@ import {
 import { MONTHLY_COST } from '@customer/config/api';
 import { checkSubDomain } from '@customer/pages/turnstile/api';
 import { useDebounce } from 'use-debounce';
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from '@customer/components/ui/radio-group';
 
 const formSchema = z.object({
   StoreName: z
@@ -55,6 +60,8 @@ const formSchema = z.object({
       message: "Subdomain can't have special char or spaces",
     })
     .max(150),
+
+  planId: z.number(),
 });
 
 const CreateStoreModal: React.FC = () => {
@@ -71,6 +78,7 @@ const CreateStoreModal: React.FC = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       StoreName: '',
+      planId: 1,
     },
   });
 
@@ -143,20 +151,22 @@ const CreateStoreModal: React.FC = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     handleCreateStore({
       ...values,
-      planId: 1,
-    } as any);
+      planId: values.planId,
+    });
   }
 
   const haveBalance = useMemo(() => {
-    if (balance && planData) {
-      if (balance.Balance >= planData.MonthlyCharge) {
+    if (balance && planResponse?.Data) {
+      const selectedPlan = planResponse.Data.find(
+        (p) => p.Id === form.getValues('planId')
+      );
+      if (selectedPlan && balance.Balance >= selectedPlan.MonthlyPrice) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     }
     return false;
-  }, [balance, planData]);
+  }, [balance, planResponse?.Data, form]);
 
   const shouldDisableCreate = useMemo(() => {
     if (balanceResponse?.Data.IsTrial) {
@@ -168,6 +178,15 @@ const CreateStoreModal: React.FC = () => {
     return false;
   }, [haveBalance, balanceResponse?.Data.IsTrial]);
 
+  const getPlanFeatures = (featuresJson: string): string[] => {
+    try {
+      return JSON.parse(featuresJson);
+    } catch {
+      return [];
+    }
+  };
+  const selectedPlanId = form.watch('planId');
+  console.log(selectedPlanId);
   return (
     <div>
       <Dialog
@@ -178,141 +197,225 @@ const CreateStoreModal: React.FC = () => {
           }
         }}
       >
-        <DialogContent className="max-w-[500px]">
-          <DialogHeader className="space-y-2">
-            <DialogTitle className="text-2xl font-semibold">
-              Create Store
-            </DialogTitle>
-            <DialogDescription className="text-muted-foreground">
-              Fill in the details below to create your new store.
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="max-w-[500px] h-[90vh] overflow-y-scroll p-0">
+          <div className="flex flex-col h-full">
+            <div className="p-6 pb-2">
+              <DialogHeader className="space-y-2">
+                <DialogTitle className="text-2xl font-semibold">
+                  Create Store
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground">
+                  Fill in the details below to create your new store.
+                </DialogDescription>
+              </DialogHeader>
+            </div>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="StoreName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-medium">Store Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        FormError={!!form.formState.errors.StoreName}
-                        placeholder="Enter your store name"
-                        className="h-10"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription className="text-xs text-muted-foreground">
-                      This is your public display name.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col h-full"
+              >
+                <div className="flex-1 overflow-y-auto px-6 space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="StoreName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-medium">
+                          Store Name
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            FormError={!!form.formState.errors.StoreName}
+                            placeholder="Enter your store name"
+                            className="h-10"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-xs text-muted-foreground">
+                          This is your public display name.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="SubDomain"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-medium">Sub Domain</FormLabel>
-                    <FormControl>
-                      <Input
-                        FormError={!!form.formState.errors.StoreName}
-                        placeholder="Enter subdomain"
-                        className="h-10"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription className="text-xs text-muted-foreground">
-                      Your store URL will be: store-{subdomain || 'example'}
-                      .suprasy.com
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="SubDomain"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-medium">
+                          Sub Domain
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            FormError={!!form.formState.errors.StoreName}
+                            placeholder="Enter subdomain"
+                            className="h-10"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-xs text-muted-foreground">
+                          Your store URL will be: store-{subdomain || 'example'}
+                          .suprasy.com
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              {balanceSuccess &&
-                balance &&
-                planData &&
-                !balanceResponse.Data.IsTrial && (
-                  <div className="space-y-4">
-                    {haveBalance ? (
-                      <Alert className="bg-muted/50 border">
-                        <AlertTitle className="font-medium">
-                          Transaction Details
-                        </AlertTitle>
-                        <AlertDescription className="text-sm">
-                          {isSuccess && (
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <span>Monthly Cost:</span>
-                                <span className="font-medium">
-                                  {MONTHLY_COST} BDT
-                                </span>
+                  <FormField
+                    control={form.control}
+                    name="planId"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel>Select Plan</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={(value) => {
+                              field.onChange(parseInt(value));
+                            }}
+                            value={field.value?.toString()}
+                            className="space-y-3"
+                          >
+                            {planResponse?.Data.map((plan) => (
+                              <div
+                                key={plan.Id}
+                                className={cn(
+                                  'flex items-start space-x-3 space-y-0 p-4 border rounded-lg',
+                                  field.value === plan.Id &&
+                                    'border-primary bg-primary/5'
+                                )}
+                              >
+                                <RadioGroupItem
+                                  value={plan.Id.toString()}
+                                  id={`plan-${plan.Id}`}
+                                />
+                                <div className="grid gap-1.5 leading-none">
+                                  <label
+                                    htmlFor={`plan-${plan.Id}`}
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                  >
+                                    {plan.Name.charAt(0).toUpperCase() +
+                                      plan.Name.slice(1)}{' '}
+                                    - {plan.MonthlyPrice} BDT/month
+                                  </label>
+                                  <ul className="text-sm text-muted-foreground list-disc pl-4">
+                                    {getPlanFeatures(plan.Features).map(
+                                      (feature, idx) => (
+                                        <li key={idx}>{feature}</li>
+                                      )
+                                    )}
+                                  </ul>
+                                </div>
                               </div>
-                              {balanceSuccess && balance && planData && (
-                                <div className="flex items-center justify-between">
-                                  <span>Remaining Balance:</span>
-                                  <span className="font-medium">
-                                    {balance?.Balance - MONTHLY_COST} BDT
-                                  </span>
+                            ))}
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {balanceSuccess &&
+                    balance &&
+                    planData &&
+                    !balanceResponse.Data.IsTrial && (
+                      <div className="space-y-4">
+                        {haveBalance ? (
+                          <Alert className="bg-muted/50 border">
+                            <AlertTitle className="font-medium">
+                              Transaction Details
+                            </AlertTitle>
+                            <AlertDescription className="text-sm">
+                              {isSuccess && (
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <span>Monthly Cost:</span>
+                                    <span className="font-medium">
+                                      {planResponse?.Data.find(
+                                        (p) => p.Id === form.getValues('planId')
+                                      )?.MonthlyPrice ?? 0}{' '}
+                                      BDT
+                                    </span>
+                                  </div>
+                                  {balanceSuccess && balance && planData && (
+                                    <div className="flex items-center justify-between">
+                                      <span>Remaining Balance:</span>
+                                      <span className="font-medium">
+                                        {balance?.Balance -
+                                          (planResponse?.Data.find(
+                                            (p) =>
+                                              p.Id === form.getValues('planId')
+                                          )?.MonthlyPrice ?? 0)}{' '}
+                                        BDT
+                                      </span>
+                                    </div>
+                                  )}
                                 </div>
                               )}
-                            </div>
-                          )}
-                        </AlertDescription>
-                      </Alert>
-                    ) : (
-                      <Alert
-                        variant="destructive"
-                        className="border-destructive/50"
-                      >
-                        <AlertTitle className="font-medium">
-                          Not enough balance
-                        </AlertTitle>
-                        <AlertDescription>
-                          Please add funds to your account to create a store.
-                        </AlertDescription>
-                      </Alert>
+                            </AlertDescription>
+                          </Alert>
+                        ) : (
+                          <Alert
+                            variant="destructive"
+                            className="border-destructive/50"
+                          >
+                            <AlertTitle className="font-medium">
+                              Not enough balance
+                            </AlertTitle>
+                            <AlertDescription>
+                              Please add funds to your account to create a
+                              store.
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                      </div>
                     )}
+
+                  {balanceResponse?.Data.IsTrial && (
+                    <Alert className="bg-primary/10 border-primary/20">
+                      <AlertTitle className="font-medium">
+                        One Month Trial
+                      </AlertTitle>
+                      <AlertDescription>
+                        You are eligible for 1 month trial, create your store
+                        and use for 1 month free.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
+
+                <div className="p-6 mt-auto border-t">
+                  <div className="flex flex-col gap-3">
+                    <Button
+                      disabled={
+                        isError ||
+                        (!balanceResponse?.Data.IsTrial &&
+                          (balance?.Balance ?? 0) <
+                            (planResponse?.Data.find(
+                              (p) => p.Id === form.getValues('planId')
+                            )?.MonthlyPrice ?? 0))
+                      }
+                      type="submit"
+                      className="w-full h-10"
+                    >
+                      {isPending ? 'Creating...' : 'Create Store'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => closeModal()}
+                      className="w-full h-10"
+                    >
+                      Cancel
+                    </Button>
                   </div>
-                )}
-
-              {balanceResponse?.Data.IsTrial && (
-                <Alert className="bg-primary/10 border-primary/20">
-                  <AlertTitle className="font-medium">
-                    One Month Trial
-                  </AlertTitle>
-                  <AlertDescription>
-                    You are eligible for 1 month trial, create your store and
-                    use for 1 month free.
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              <div className="flex flex-col gap-3 pt-2">
-                <Button
-                  disabled={isError}
-                  type="submit"
-                  className="w-full h-10"
-                >
-                  {isPending ? 'Creating...' : 'Create Store'}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => closeModal()}
-                  className="w-full h-10"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </Form>
+                </div>
+              </form>
+            </Form>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

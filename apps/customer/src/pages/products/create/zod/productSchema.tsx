@@ -14,7 +14,7 @@ const VariationSchema = z.object({
   ChoiceName: z.string(),
   Price: z.coerce.number().min(0),
   SalesPrice: z.coerce.number(),
-  Sku: z.string(),
+  Sku: z.string().min(1),
   Inventory: z.coerce.number().min(0),
   Images: z.array(ImageUrl).min(1),
   Deleted: z.boolean().default(false),

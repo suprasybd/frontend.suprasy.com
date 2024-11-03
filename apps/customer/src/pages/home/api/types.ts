@@ -32,9 +32,15 @@ export interface BalanceResponseType {
   UpdatedAt: string;
 }
 
-export interface PlanResponseType {
+export interface PlanType {
   Id: number;
-  MonthlyCharge: number;
-  CreatedAt: string;
-  UpdatedAt: string;
+  Name: string;
+  MonthlyPrice: number;
+  Features: string; // JSON string of features array
+}
+
+export interface PlanResponseType {
+  Success: boolean;
+  Message: string;
+  Data: PlanType[];
 }

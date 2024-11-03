@@ -56,6 +56,7 @@ import useTurnStileHook from '@customer/hooks/turnstile';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { Plus } from 'lucide-react';
 import { VariationCard } from './components/VariationCard';
+
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -134,7 +135,6 @@ const CreateProduct: React.FC = () => {
 
       form.setValue('Status', productDetails.Status);
     }
-
     if (productImagesData) {
       const productImagesFormatted = productImagesData.map((image) => ({
         ImageUrl: image.ImageUrl,
@@ -163,12 +163,23 @@ const CreateProduct: React.FC = () => {
           },
         });
       },
-      onError: (response: { response: { data: { Message: string } } }) => {
+      onError: (response: {
+        response: {
+          data: {
+            Message: string | string[];
+          };
+        };
+      }) => {
+        const errorMessage = Array.isArray(response.response.data.Message)
+          ? response.response.data.Message.join('\n')
+          : response.response.data.Message;
+
         toast({
           title: 'Product Update',
-          description: response.response.data.Message,
+          description: errorMessage,
           variant: 'destructive',
         });
+        window.turnstile?.reset();
       },
     });
 
@@ -186,12 +197,23 @@ const CreateProduct: React.FC = () => {
         },
       });
     },
-    onError: (response: { response: { data: { Message: string } } }) => {
+    onError: (response: {
+      response: {
+        data: {
+          Message: string | string[];
+        };
+      };
+    }) => {
+      const errorMessage = Array.isArray(response.response.data.Message)
+        ? response.response.data.Message.join('\n')
+        : response.response.data.Message;
+
       toast({
         title: 'Product Create',
-        description: response.response.data.Message,
+        description: errorMessage,
         variant: 'destructive',
       });
+      window.turnstile?.reset();
     },
   });
 
@@ -267,13 +289,16 @@ const CreateProduct: React.FC = () => {
     try {
       const tRes = e.target['cf-turnstile-response'].value;
 
-      if (!tRes) return;
+      if (!tRes) {
+        window.turnstile?.reset();
+        return;
+      }
 
       form.handleSubmit((values: z.infer<typeof productSchema>) =>
         onSubmit(values, tRes)
       )(e);
     } catch (error) {
-      forceUpdate();
+      window.turnstile?.reset();
     }
   };
 

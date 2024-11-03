@@ -72,9 +72,9 @@ export const getVariationDetails = async (
 };
 
 export const getProductsImages = async (
-  productId: number
+  variationId: number
 ): Promise<ListResponseType<ProductImagesTypes>> => {
-  const response = await ApiClient.get(`/products/images/${productId}`);
+  const response = await ApiClient.get(`/products/images/${variationId}`);
 
   return response.data;
 };

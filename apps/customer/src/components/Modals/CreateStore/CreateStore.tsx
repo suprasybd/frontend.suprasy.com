@@ -296,7 +296,7 @@ const CreateStoreModal: React.FC = () => {
 
               <div className="flex flex-col gap-3 pt-2">
                 <Button
-                  disabled={shouldDisableCreate || isError}
+                  disabled={isError}
                   type="submit"
                   className="w-full h-10"
                 >

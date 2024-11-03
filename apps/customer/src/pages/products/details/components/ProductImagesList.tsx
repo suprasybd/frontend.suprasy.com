@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import { getProductsImages } from '../../api';
+import { getProductsImages, getVariations } from '../../api';
 import { useParams } from '@tanstack/react-router';
 import { LoaderMain } from '../../../../components/Loader/Loader';
 
@@ -10,12 +10,25 @@ const ProductImagesList: React.FC = () => {
     productId: string;
   };
 
-  const { data: productImagesResponse, isLoading } = useQuery({
-    queryKey: ['getProductImages', productId],
-    queryFn: () => getProductsImages(parseInt(productId) || 0),
-    enabled: !!productId,
+  // First fetch variations
+  const { data: variationsResponse, isLoading: isLoadingVariations } = useQuery(
+    {
+      queryKey: ['getProductVariations', productId],
+      queryFn: () => getVariations(parseInt(productId) || 0),
+      enabled: !!productId,
+    }
+  );
+
+  // Then fetch images using the first variation's ID
+  const firstVariationId = variationsResponse?.Data?.[0]?.Id;
+  const { data: productImagesResponse, isLoading: isLoadingImages } = useQuery({
+    queryKey: ['getProductImages', firstVariationId],
+    queryFn: () => getProductsImages(firstVariationId!),
+    enabled: !!firstVariationId,
   });
+
   const productImages = productImagesResponse?.Data;
+  const isLoading = isLoadingVariations || isLoadingImages;
 
   return (
     <div>
@@ -26,7 +39,7 @@ const ProductImagesList: React.FC = () => {
           <span className="text-lg font-bold my-3 ">Images</span>
           {productImages?.map((image) => (
             <div>
-              <img src={image.ImageUrl} alt="Proudct" />
+              <img src={image.ImageUrl} alt="Product" />
             </div>
           ))}
         </div>

@@ -62,124 +62,149 @@ const OrderDetails = () => {
   }, [orderProducts, order]);
 
   return (
-    <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
-      {/* contact info */}
-      <h1 className="font-bold my-5">Contact Information</h1>
-      <div className="flex gap-[100px] flex-wrap w-full">
-        <div>
-          <h1 className="text-sm font-medium">Full Name</h1>
-          <h1>{order?.FullName}</h1>
-        </div>
-
-        <div>
-          <h1 className="text-sm font-medium">Phone</h1>
-          <h1>{order?.Phone}</h1>
-        </div>
-
-        <div>
-          <h1 className="text-sm font-medium">Email</h1>
-          <h1>{order?.Email}</h1>
-        </div>
-      </div>
-
-      {/* address info */}
-      <h1 className="font-bold my-5">Shipping Information</h1>
-      <div className="flex gap-[100px] flex-wrap w-full">
-        <div>
-          <h1 className="text-sm font-medium">Address</h1>
-          <h1>{order?.Address}</h1>
-        </div>
-
-        <div>
-          <h1 className="text-sm font-medium">Delivery Method </h1>
-          <h1>{order?.DeliveryMethod}</h1>
-          {formatPrice(order?.DeliveryMethodPrice || 0)}
-        </div>
-
-        <div>
-          <h1 className="text-sm font-medium">Shipping Method </h1>
-          <h1>{order?.ShippingMethod} </h1>
-          {formatPrice(order?.ShippingMethodPrice || 0)}
-        </div>
-      </div>
-      <h1 className="font-bold my-5">Other</h1>
-      <div className="flex gap-[100px] flex-wrap w-full">
-        <div>
-          <h1 className="text-sm font-medium">Status </h1>
-          <h1>
-            <Badge> {order?.Status} </Badge>
-          </h1>
-        </div>
-
-        {order?.Note && (
-          <div>
-            <h1 className="text-sm font-medium">Note </h1>
-            <h1>{order?.Note} </h1>
-          </div>
-        )}
-      </div>
-
-      {/* products list */}
-      <h1 className="font-bold my-5">Products Ordered Listed Bellow</h1>
-
-      {orderProducts?.map((product) => (
-        <div className="p-4 border border-gray-400 rounded-md my-3">
-          <ProductDetails VariationId={product.VariationId} />
-          <div className="flex gap-[100px] flex-wrap w-full">
+    <section className="max-w-7xl w-full min-h-full mx-auto gap-6 py-8 px-4 sm:px-8">
+      <div className="space-y-8">
+        {/* Order Status Banner */}
+        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+          <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-sm font-medium">Quantity </h1>
-              <h1>{product?.Quantity} </h1>
+              <h2 className="text-sm text-gray-500">Order ID</h2>
+              <p className="font-medium">#{orderId}</p>
             </div>
+            <Badge className="px-4 py-1.5 text-sm capitalize">
+              {order?.Status}
+            </Badge>
+          </div>
+        </div>
 
-            {product?.ProductAttribute && (
+        {/* Contact Information */}
+        <div className="bg-white rounded-lg border border-gray-200">
+          <div className="p-6">
+            <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <h1 className="text-sm font-medium">Variant </h1>
-                <h1>{product?.ProductAttribute} </h1>
+                <h3 className="text-sm text-gray-500">Full Name</h3>
+                <p className="font-medium">{order?.FullName}</p>
               </div>
-            )}
-            <div>
-              <h1 className="text-sm font-medium"> Price</h1>
-              <h1>{formatPrice(product?.Price)} </h1>
-            </div>
-
-            <div>
-              <h1 className="text-sm font-medium">
-                Total Price (Quantity * Price)
-              </h1>
-              <h1>{formatPrice(product?.Price * product.Quantity)} </h1>
+              <div>
+                <h3 className="text-sm text-gray-500">Phone</h3>
+                <p className="font-medium">{order?.Phone}</p>
+              </div>
+              <div>
+                <h3 className="text-sm text-gray-500">Email</h3>
+                <p className="font-medium">{order?.Email}</p>
+              </div>
             </div>
           </div>
         </div>
-      ))}
 
-      {/* total cost */}
-      <div>
-        <Accordion type="single" collapsible defaultValue="item-1">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>
-              <div className="flex  font-medium text-3xl justify-between w-full">
-                <h1 className=" my-5">Cost Breakdown</h1>
-                <h1>Total Cost: {formatPrice(totalCost || 0)}</h1>
+        {/* Shipping Information */}
+        <div className="bg-white rounded-lg border border-gray-200">
+          <div className="p-6">
+            <h2 className="text-lg font-semibold mb-4">Shipping Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <h3 className="text-sm text-gray-500">Address</h3>
+                <p className="font-medium">{order?.Address}</p>
               </div>
-            </AccordionTrigger>
+              <div>
+                <h3 className="text-sm text-gray-500">Delivery Method</h3>
+                <p className="font-medium">{order?.DeliveryMethod}</p>
+                <p className="text-sm text-gray-500">
+                  {formatPrice(order?.DeliveryMethodPrice || 0)}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-sm text-gray-500">Shipping Method</h3>
+                <p className="font-medium">{order?.ShippingMethod}</p>
+                <p className="text-sm text-gray-500">
+                  {formatPrice(order?.ShippingMethodPrice || 0)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <AccordionContent>
-              Breakdown Is Bellow
-              <div className="my-3">
-                <h1 className="text-sm font-medium"> Shipping Cost</h1>
-                <h1>{formatPrice(order?.ShippingMethodPrice || 0)} </h1>
-              </div>
-              <div className="my-3">
-                <h1 className="text-sm font-medium"> Delivery Cost</h1>
-                <h1>{formatPrice(order?.DeliveryMethodPrice || 0)} </h1>
-              </div>
-              <div className="my-3">
-                <h1 className="text-sm font-medium"> Total Product Cost</h1>
-                <h1>{formatPrice(totalProductCost || 0)} </h1>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        {/* Products List */}
+        <div className="bg-white rounded-lg border border-gray-200">
+          <div className="p-6">
+            <h2 className="text-lg font-semibold mb-4">Ordered Products</h2>
+            <div className="space-y-4">
+              {orderProducts?.map((product) => (
+                <div
+                  key={product.VariationId}
+                  className="p-4 bg-gray-50 rounded-lg"
+                >
+                  <ProductDetails VariationId={product.VariationId} />
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+                    <div>
+                      <h3 className="text-sm text-gray-500">Quantity</h3>
+                      <p className="font-medium">{product?.Quantity}</p>
+                    </div>
+                    {product?.ProductAttribute && (
+                      <div>
+                        <h3 className="text-sm text-gray-500">Variant</h3>
+                        <p className="font-medium">
+                          {product?.ProductAttribute}
+                        </p>
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="text-sm text-gray-500">Price</h3>
+                      <p className="font-medium">
+                        {formatPrice(product?.Price)}
+                      </p>
+                    </div>
+                    <div>
+                      <h3 className="text-sm text-gray-500">Total Price</h3>
+                      <p className="font-medium">
+                        {formatPrice(product?.Price * product.Quantity)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Cost Breakdown */}
+        <div className="bg-white rounded-lg border border-gray-200">
+          <Accordion type="single" collapsible defaultValue="item-1">
+            <AccordionItem value="item-1" className="border-none">
+              <AccordionTrigger className="px-6 py-4">
+                <div className="flex justify-between w-full items-center">
+                  <h2 className="text-lg font-semibold">Cost Breakdown</h2>
+                  <p className="text-xl font-semibold">
+                    {formatPrice(totalCost || 0)}
+                  </p>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Shipping Cost</span>
+                    <span className="font-medium">
+                      {formatPrice(order?.ShippingMethodPrice || 0)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Delivery Cost</span>
+                    <span className="font-medium">
+                      {formatPrice(order?.DeliveryMethodPrice || 0)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Products Cost</span>
+                    <span className="font-medium">
+                      {formatPrice(totalProductCost || 0)}
+                    </span>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
       </div>
     </section>
   );
@@ -210,28 +235,24 @@ const ProductDetails: React.FC<{ VariationId: number }> = ({ VariationId }) => {
   const productDetails = productDetailsResponse?.Data;
 
   return (
-    <div className="my-3">
+    <div className="flex items-center gap-6">
       {productImages && (
         <img
           src={productImages[0].ImageUrl}
-          width={'100px'}
-          className="rounded-md"
-          height={'100px'}
-          alt="product"
+          className="w-20 h-20 object-cover rounded-md"
+          alt={productDetails?.Title || 'Product image'}
         />
       )}
-
-      <div className="flex gap-[100px] flex-wrap w-full">
-        <div>
-          <h1 className="text-sm font-bold mt-3">Product Title</h1>
-          <h1>
-            {productDetails?.Title} ({variationDetails?.ChoiceName})
-          </h1>
-        </div>
-        <div>
-          <h1 className="text-sm font-bold mt-3">Variation</h1>
-          <h1>{variationDetails?.ChoiceName}</h1>
-        </div>
+      <div>
+        <h3 className="font-medium">
+          {productDetails?.Title}{' '}
+          <span className="text-gray-500">
+            ({variationDetails?.ChoiceName})
+          </span>
+        </h3>
+        <p className="text-sm text-gray-500">
+          Variation: {variationDetails?.ChoiceName}
+        </p>
       </div>
     </div>
   );

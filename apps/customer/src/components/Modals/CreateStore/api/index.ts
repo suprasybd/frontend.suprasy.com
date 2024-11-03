@@ -12,8 +12,14 @@ export interface StoreImageType {
   UpdatedAt: string;
 }
 
+interface CreateStoreData {
+  StoreName: string;
+  SubDomain: string;
+  planId: number;
+}
+
 export const createStore = async (
-  data: FormData
+  data: CreateStoreData
 ): Promise<ResponseType<string>> => {
   const response = await ApiClient.post('/creator', data);
   return response.data;

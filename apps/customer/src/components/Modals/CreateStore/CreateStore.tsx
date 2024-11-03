@@ -141,7 +141,10 @@ const CreateStoreModal: React.FC = () => {
   }, [isError]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    handleCreateStore(values as any);
+    handleCreateStore({
+      ...values,
+      planId: 1,
+    } as any);
   }
 
   const haveBalance = useMemo(() => {

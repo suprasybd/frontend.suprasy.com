@@ -129,15 +129,15 @@ const Hero = () => {
           setModalPath({ modal: 'media', aspect: 3 });
         }}
       >
-        Add Hero Image
+        Add Slider Image
       </Button>
 
       <Card className="mt-5">
         <CardHeader>
-          <CardTitle>Hero Images</CardTitle>
+          <CardTitle>Slider Images</CardTitle>
         </CardHeader>
         <CardContent>
-          {productImages.length === 0 && <h1>No hero image found!</h1>}
+          {productImages.length === 0 && <h1>No slider image found!</h1>}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="my-10 flex flex-wrap gap-[10px]">

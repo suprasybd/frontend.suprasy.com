@@ -42,7 +42,7 @@ const StoreHome = () => {
 
       <Tabs defaultValue="hero" className="w-full">
         <TabsList>
-          <TabsTrigger value="hero">Hero Images</TabsTrigger>
+          <TabsTrigger value="hero">Slider Images</TabsTrigger>
           <TabsTrigger value="sections">Sections</TabsTrigger>
         </TabsList>
         <TabsContent value="hero">

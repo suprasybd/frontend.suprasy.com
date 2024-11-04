@@ -137,7 +137,7 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
           <div className="flex items-center gap-2">
             <Link2 className="h-4 w-4 text-muted-foreground" />
             <a
-              href={`https://${store.SubDomain}.suprasy.com`}
+              href={`http://${store.SubDomain}.suprasy.com`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-muted-foreground hover:text-primary"

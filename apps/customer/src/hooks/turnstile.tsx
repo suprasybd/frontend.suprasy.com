@@ -1,30 +1,44 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-const useTurnStileHook = (): [boolean] => {
+const useTurnStileHook = (): [boolean, () => void] => {
   const intervalRef = useRef(null);
-
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      const turnstileDiv = document.getElementById('cf-turnstile');
-      const isLoaded =
-        turnstileDiv?.innerHTML.includes('<input') &&
-        turnstileDiv?.innerHTML.includes('value=');
+  const checkTurnstile = useCallback(() => {
+    const turnstileDiv = document.getElementById('cf-turnstile');
+    const isLoaded =
+      turnstileDiv?.innerHTML.includes('<input') &&
+      turnstileDiv?.innerHTML.includes('value=');
 
-      if (isLoaded) {
-        setIsLoaded(true);
-        clearInterval(intervalRef.current as any);
-      }
-    }, 1000) as any;
-
-    return () => {
+    if (isLoaded) {
+      setIsLoaded(true);
       clearInterval(intervalRef.current as any);
-    };
+      intervalRef.current = null;
+    }
   }, []);
 
-  return [isLoaded];
+  const resetTurnstile = useCallback(() => {
+    setIsLoaded(false);
+    if (window.turnstile) {
+      window.turnstile.reset();
+    }
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(checkTurnstile, 1000);
+    }
+  }, [checkTurnstile]);
+
+  useEffect(() => {
+    intervalRef.current = setInterval(checkTurnstile, 1000) as any;
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current as any);
+      }
+    };
+  }, [checkTurnstile]);
+
+  return [isLoaded, resetTurnstile];
 };
 
 export default useTurnStileHook;

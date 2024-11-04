@@ -72,6 +72,8 @@ const Categories = () => {
 
   const categories = categoryResponse?.Data;
 
+  const [turnstileLoaded, resetTurnstile] = useTurnStileHook();
+
   const { mutate: handleAddCategory, isPending } = useMutation({
     mutationFn: addCategory,
     onSuccess: () => {
@@ -83,7 +85,7 @@ const Categories = () => {
       });
 
       form.reset();
-      forceUpdate();
+      resetTurnstile();
     },
     onError: (response: { response: { data: { Message: string } } }) => {
       toast({
@@ -94,11 +96,6 @@ const Categories = () => {
     },
   });
 
-  const forceUpdate = () => {
-    window.location.reload();
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFormWrapper = (e: any) => {
     e.preventDefault();
     try {
@@ -110,11 +107,13 @@ const Categories = () => {
         onSubmit(values, tRes)
       )(e);
     } catch (error) {
-      forceUpdate();
+      toast({
+        title: 'Error',
+        description: 'Please complete the Turnstile verification',
+        variant: 'destructive',
+      });
     }
   };
-
-  const [turnstileLoaded] = useTurnStileHook();
 
   return (
     <section>

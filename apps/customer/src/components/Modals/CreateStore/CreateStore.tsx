@@ -160,23 +160,16 @@ const CreateStoreModal: React.FC = () => {
       const selectedPlan = planResponse.Data.find(
         (p) => p.Id === form.getValues('planId')
       );
-      if (selectedPlan && balance.Balance >= selectedPlan.MonthlyPrice) {
-        return true;
+      if (selectedPlan) {
+        return (
+          selectedPlan.MonthlyPrice === 0 ||
+          balance.Balance >= selectedPlan.MonthlyPrice
+        );
       }
       return false;
     }
     return false;
   }, [balance, planResponse?.Data, form]);
-
-  const shouldDisableCreate = useMemo(() => {
-    if (balanceResponse?.Data.IsTrial) {
-      return false;
-    }
-    if (!haveBalance) {
-      return true;
-    }
-    return false;
-  }, [haveBalance, balanceResponse?.Data.IsTrial]);
 
   const getPlanFeatures = (featuresJson: string): string[] => {
     try {
@@ -318,72 +311,56 @@ const CreateStoreModal: React.FC = () => {
                     )}
                   />
 
-                  {balanceSuccess &&
-                    balance &&
-                    planData &&
-                    !balanceResponse.Data.IsTrial && (
-                      <div className="space-y-4">
-                        {haveBalance ? (
-                          <Alert className="bg-muted/50 border">
-                            <AlertTitle className="font-medium">
-                              Transaction Details
-                            </AlertTitle>
-                            <AlertDescription className="text-sm">
-                              {isSuccess && (
-                                <div className="space-y-2">
+                  {balanceSuccess && balance && planData && (
+                    <div className="space-y-4">
+                      {haveBalance ? (
+                        <Alert className="bg-muted/50 border">
+                          <AlertTitle className="font-medium">
+                            Transaction Details
+                          </AlertTitle>
+                          <AlertDescription className="text-sm">
+                            {isSuccess && (
+                              <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                  <span>Monthly Cost:</span>
+                                  <span className="font-medium">
+                                    {planResponse?.Data.find(
+                                      (p) => p.Id === form.getValues('planId')
+                                    )?.MonthlyPrice ?? 0}{' '}
+                                    BDT
+                                  </span>
+                                </div>
+                                {balanceSuccess && balance && planData && (
                                   <div className="flex items-center justify-between">
-                                    <span>Monthly Cost:</span>
+                                    <span>Remaining Balance:</span>
                                     <span className="font-medium">
-                                      {planResponse?.Data.find(
-                                        (p) => p.Id === form.getValues('planId')
-                                      )?.MonthlyPrice ?? 0}{' '}
+                                      {balance?.Balance -
+                                        (planResponse?.Data.find(
+                                          (p) =>
+                                            p.Id === form.getValues('planId')
+                                        )?.MonthlyPrice ?? 0)}{' '}
                                       BDT
                                     </span>
                                   </div>
-                                  {balanceSuccess && balance && planData && (
-                                    <div className="flex items-center justify-between">
-                                      <span>Remaining Balance:</span>
-                                      <span className="font-medium">
-                                        {balance?.Balance -
-                                          (planResponse?.Data.find(
-                                            (p) =>
-                                              p.Id === form.getValues('planId')
-                                          )?.MonthlyPrice ?? 0)}{' '}
-                                        BDT
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </AlertDescription>
-                          </Alert>
-                        ) : (
-                          <Alert
-                            variant="destructive"
-                            className="border-destructive/50"
-                          >
-                            <AlertTitle className="font-medium">
-                              Not enough balance
-                            </AlertTitle>
-                            <AlertDescription>
-                              Please add funds to your account to create a
-                              store.
-                            </AlertDescription>
-                          </Alert>
-                        )}
-                      </div>
-                    )}
-
-                  {balanceResponse?.Data.IsTrial && (
-                    <Alert className="bg-primary/10 border-primary/20">
-                      <AlertTitle className="font-medium">
-                        One Month Trial
-                      </AlertTitle>
-                      <AlertDescription>
-                        You are eligible for 1 month trial, create your store
-                        and use for 1 month free.
-                      </AlertDescription>
-                    </Alert>
+                                )}
+                              </div>
+                            )}
+                          </AlertDescription>
+                        </Alert>
+                      ) : (
+                        <Alert
+                          variant="destructive"
+                          className="border-destructive/50"
+                        >
+                          <AlertTitle className="font-medium">
+                            Not enough balance
+                          </AlertTitle>
+                          <AlertDescription>
+                            Please add funds to your account to create a store.
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                    </div>
                   )}
                 </div>
 
@@ -392,11 +369,13 @@ const CreateStoreModal: React.FC = () => {
                     <Button
                       disabled={
                         isError ||
-                        (!balanceResponse?.Data.IsTrial &&
-                          (balance?.Balance ?? 0) <
-                            (planResponse?.Data.find(
-                              (p) => p.Id === form.getValues('planId')
-                            )?.MonthlyPrice ?? 0))
+                        ((balance?.Balance ?? 0) <
+                          (planResponse?.Data.find(
+                            (p) => p.Id === form.getValues('planId')
+                          )?.MonthlyPrice ?? 0) &&
+                          (planResponse?.Data.find(
+                            (p) => p.Id === form.getValues('planId')
+                          )?.MonthlyPrice ?? 0) !== 0)
                       }
                       type="submit"
                       className="w-full h-10"

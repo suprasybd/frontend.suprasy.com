@@ -46,9 +46,6 @@ const StoreStoreKeyOrdersLazyImport = createFileRoute(
   '/store/$storeKey/orders',
 )()
 const StoreStoreKeyMediaLazyImport = createFileRoute('/store/$storeKey/media')()
-const StoreStoreKeyInventoryLazyImport = createFileRoute(
-  '/store/$storeKey/inventory',
-)()
 const StoreStoreKeyHomeLazyImport = createFileRoute('/store/$storeKey/home')()
 const StoreStoreKeyGenlinkLazyImport = createFileRoute(
   '/store/$storeKey/genlink',
@@ -170,15 +167,6 @@ const StoreStoreKeyMediaLazyRoute = StoreStoreKeyMediaLazyImport.update({
   getParentRoute: () => StoreRoute,
 } as any).lazy(() =>
   import('./routes/store/$storeKey/media.lazy').then((d) => d.Route),
-)
-
-const StoreStoreKeyInventoryLazyRoute = StoreStoreKeyInventoryLazyImport.update(
-  {
-    path: '/$storeKey/inventory',
-    getParentRoute: () => StoreRoute,
-  } as any,
-).lazy(() =>
-  import('./routes/store/$storeKey/inventory.lazy').then((d) => d.Route),
 )
 
 const StoreStoreKeyHomeLazyRoute = StoreStoreKeyHomeLazyImport.update({
@@ -481,13 +469,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreStoreKeyHomeLazyImport
       parentRoute: typeof StoreImport
     }
-    '/store/$storeKey/inventory': {
-      id: '/store/$storeKey/inventory'
-      path: '/$storeKey/inventory'
-      fullPath: '/store/$storeKey/inventory'
-      preLoaderRoute: typeof StoreStoreKeyInventoryLazyImport
-      parentRoute: typeof StoreImport
-    }
     '/store/$storeKey/media': {
       id: '/store/$storeKey/media'
       path: '/$storeKey/media'
@@ -591,7 +572,6 @@ export const routeTree = rootRoute.addChildren({
     StoreStoreKeyFooterLazyRoute,
     StoreStoreKeyGenlinkLazyRoute,
     StoreStoreKeyHomeLazyRoute,
-    StoreStoreKeyInventoryLazyRoute,
     StoreStoreKeyMediaLazyRoute,
     StoreStoreKeyOrdersLazyRoute,
     StoreStoreKeyPaymentsLazyRoute,
@@ -662,7 +642,6 @@ export const routeTree = rootRoute.addChildren({
         "/store/$storeKey/footer",
         "/store/$storeKey/genlink",
         "/store/$storeKey/home",
-        "/store/$storeKey/inventory",
         "/store/$storeKey/media",
         "/store/$storeKey/orders",
         "/store/$storeKey/payments",
@@ -739,10 +718,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/store/$storeKey/home": {
       "filePath": "store/$storeKey/home.lazy.tsx",
-      "parent": "/store"
-    },
-    "/store/$storeKey/inventory": {
-      "filePath": "store/$storeKey/inventory.lazy.tsx",
       "parent": "/store"
     },
     "/store/$storeKey/media": {

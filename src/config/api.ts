@@ -1,8 +1,6 @@
 // dev
-export const SUPRASY_API_URL = 'http://localhost:3000';
-
-// //  prod
-// export const SUPRASY_API_URL = 'https://api.suprasy.com';
+export const SUPRASY_API_URL = import.meta.env.VITE_API_URL;
+export const ENV = import.meta.env.VITE_ENV;
 
 export const SITE_URL = window.location.hostname;
 

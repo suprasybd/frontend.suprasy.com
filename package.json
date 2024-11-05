@@ -4,9 +4,9 @@
   "license": "MIT",
   "scripts": {
     "start": "vite",
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "dev": "vite --mode development",
+    "build": "vite build --mode production",
+    "preview": "vite preview --mode production",
     "lint": "eslint ."
   },
   "private": true,

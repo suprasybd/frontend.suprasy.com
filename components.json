@@ -9,8 +9,8 @@
     "cssVariables": true
   },
   "aliases": {
-    "components": "@customer/components/index/components",
-    "utils": "@customer/components/index/utils"
+    "components": "@/components/index/components",
+    "utils": "@/components/index/utils"
   },
   "components": ["tabs", "card"]
 }

@@ -43,42 +43,66 @@ const ThemeCard: React.FC<{ theme: GuestThemeType }> = ({ theme }) => {
   const isPending = false;
 
   return (
-    <div className="p-2 w-[400px] rounded-md bg-slate-100">
-      {themeImages.length > 0 && (
-        <img
-          width={'400px'}
-          height={'400px'}
-          src={themeImages[0].ImageUrl}
-          alt="theme"
-        />
-      )}
-      <div className="my-4">
-        <h1 className="font-bold text-lg text-slate-800">{theme.Name}</h1>
-        <p>{theme.Description}</p>
-      </div>
-
-      <div>
+    <div className="overflow-hidden rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow">
+      {/* Image container with overlay */}
+      <div className="relative">
+        {themeImages.length > 0 ? (
+          <img
+            className="w-[400px] h-[250px] object-cover"
+            src={themeImages[0].ImageUrl}
+            alt={theme.Name}
+          />
+        ) : (
+          <div className="w-[400px] h-[250px] bg-slate-200 flex items-center justify-center">
+            <span className="text-slate-500">No preview available</span>
+          </div>
+        )}
+        {/* Theme type badge */}
         <span
           className={cn(
-            'w-full flex my-2 justify-between items-center border-2 border-blue-400 p-3 rounded-md',
-            isActive && 'bg-green-300'
+            'absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium',
+            theme.Type === 'free'
+              ? 'bg-green-100 text-green-800'
+              : 'bg-purple-100 text-purple-800'
           )}
         >
-          <span>Click to apply theme</span>
+          {theme.Type === 'free' ? 'Free' : 'Premium'}
+        </span>
+      </div>
+
+      {/* Content section */}
+      <div className="p-5">
+        <h2 className="font-bold text-xl text-slate-800 mb-2">{theme.Name}</h2>
+        <p className="text-slate-600 mb-4">{theme.Description}</p>
+
+        {/* Action button */}
+        <div
+          className={cn(
+            'flex justify-between items-center p-3 rounded-lg border',
+            isActive
+              ? 'bg-green-50 border-green-200'
+              : 'border-blue-200 hover:border-blue-300'
+          )}
+        >
+          <span className="text-sm text-slate-700">
+            {isActive ? 'Current Theme' : 'Click to apply theme'}
+          </span>
 
           {!isActive && (
             <Button
               variant={'outline'}
+              className="hover:bg-blue-50"
               onClick={() => {
                 // handleSwitchTheme(v.Id);
               }}
             >
-              {isPending && 'Applying...'}
-              {!isPending && 'Apply'}
+              {isPending ? 'Applying...' : 'Apply Theme'}
             </Button>
           )}
-          {isActive && 'Current'}
-        </span>
+          {isActive && (
+            <span className="text-green-600 font-medium">✓ Active</span>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ export interface GuestThemeType {
   Id: number;
   Name: string;
   Description: string;
+  Type: 'free' | 'paid';
   CreatedAt: string;
   UpdatedAt: string;
 }

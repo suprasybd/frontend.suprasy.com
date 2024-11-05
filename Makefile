@@ -1,2 +1,2 @@
 default:
-	npx nx serve customer
+	npm run dev

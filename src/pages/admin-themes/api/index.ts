@@ -30,12 +30,12 @@ export const updateTheme = async ({
   data: any;
   themeId: number;
 }): Promise<ResponseType<string>> => {
-  const response = await ApiClient.put(`/store/themes/${themeId}`, data);
+  const response = await ApiClient.put(`/themes/${themeId}`, data);
   return response.data;
 };
 
 export const getThemes = async (): Promise<ListResponseType<ThemeResponse>> => {
-  const response = await ApiClient.get('/store/themes-admin');
+  const response = await ApiClient.get('/themes/admin');
 
   return response.data;
 };

@@ -139,7 +139,7 @@ const Categories = () => {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <Card className="max-w-2xl mx-auto">
+      <Card className="max-w-2xl">
         <CardHeader>
           <CardTitle>Add New Category</CardTitle>
           <p className="text-sm text-muted-foreground">

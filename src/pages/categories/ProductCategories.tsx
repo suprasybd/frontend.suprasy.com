@@ -1,13 +1,13 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/index';
 import { useQuery } from '@tanstack/react-query';
 import { Category, getAllCategories } from './api';
 import { useParams } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { getUserStoresProductsList } from '../products/api';
 import { DataTable } from '@/components/Table/table';
 import { productsColumnCategories } from './table/columns';
 import PaginationMain from '@/components/Pagination/Pagination';
 import { activeFilters } from '@/libs/helpers/filters';
+import { ChevronRight } from 'lucide-react';
 
 const ProductCategories = () => {
   const { data: categoryResponse } = useQuery({
@@ -15,34 +15,84 @@ const ProductCategories = () => {
     queryFn: () => getAllCategories(),
   });
 
-  const categories = categoryResponse?.Data;
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+
+  // Organize categories into parent and children
+  const organizedCategories = useMemo(() => {
+    if (!categoryResponse?.Data) return [];
+
+    const parents = categoryResponse.Data.filter(
+      (cat) => cat.ParentCategoryId === null
+    );
+
+    return parents.map((parent) => ({
+      ...parent,
+      children: categoryResponse.Data.filter(
+        (cat) => cat.ParentCategoryId === parent.Id
+      ),
+    }));
+  }, [categoryResponse?.Data]);
 
   return (
     <div className="container mx-auto p-4">
-      {/* products for categories */}
-      {categories && categories.length > 0 ? (
-        <Tabs defaultValue={categories[0].Id.toString()} className="w-full">
-          <TabsList className="w-full flex overflow-x-auto tabs-list-scroll">
-            {categories?.map((category) => (
-              <TabsTrigger
-                key={category.Id}
-                value={category.Id.toString()}
-                className="tabs-trigger whitespace-nowrap"
-              >
-                {category.Name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {categories?.map((category) => (
-            <TabsContent
-              key={category.Id}
-              value={category.Id.toString()}
-              className="mt-6"
-            >
-              <ProductTable category={category} />
-            </TabsContent>
-          ))}
-        </Tabs>
+      {organizedCategories.length > 0 ? (
+        <div className="flex gap-6">
+          {/* Categories sidebar */}
+          <div className="w-72 shrink-0">
+            <div className="bg-card rounded-lg border p-4 space-y-4">
+              {organizedCategories.map((parent) => (
+                <div key={parent.Id} className="space-y-2">
+                  <button
+                    onClick={() => setSelectedCategory(parent.Id)}
+                    className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      selectedCategory === parent.Id
+                        ? 'bg-primary text-primary-foreground'
+                        : 'hover:bg-muted'
+                    }`}
+                  >
+                    {parent.Name}
+                  </button>
+
+                  {parent.children.length > 0 && (
+                    <div className="ml-4 space-y-1 border-l">
+                      {parent.children.map((child) => (
+                        <button
+                          key={child.Id}
+                          onClick={() => setSelectedCategory(child.Id)}
+                          className={`w-full text-left pl-4 pr-3 py-1.5 text-sm transition-colors flex items-center gap-2 ${
+                            selectedCategory === child.Id
+                              ? 'bg-primary/10 text-primary font-medium'
+                              : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                          }`}
+                        >
+                          <ChevronRight className="h-3 w-3" />
+                          {child.Name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Products area */}
+          <div className="flex-1">
+            {selectedCategory ? (
+              <ProductTable
+                category={
+                  categoryResponse!.Data.find((c) => c.Id === selectedCategory)!
+                }
+              />
+            ) : (
+              <div className="text-center py-8 bg-muted/10 rounded-lg">
+                <p className="text-muted-foreground">
+                  Select a category to view products
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       ) : (
         <div className="text-center py-8">
           <p className="text-muted-foreground">No categories found</p>

@@ -20,7 +20,7 @@ import {
 } from '../../../../src/libs/helpers/formatdate';
 import { useModalStore } from '@/store/modalStore';
 import { useQuery } from '@tanstack/react-query';
-import { getProductsImages } from '@/pages/products/api';
+import { getProductsImages, getVariations } from '@/pages/products/api';
 import { ProductType } from '@/pages/products/api/types';
 
 export const productsColumnCategories: ColumnDef<ProductType>[] = [
@@ -76,20 +76,31 @@ const ProductImage: React.FC<{ product: ProductType }> = ({ product }) => {
   const { storeKey } = useParams({ strict: false }) as {
     storeKey: string;
   };
-  const { data: productImages } = useQuery({
-    queryKey: ['getProductImagesinTable', product.Id, storeKey],
-    queryFn: () => getProductsImages(product.Id),
+
+  // First fetch variations
+  const { data: variationsResponse } = useQuery({
+    queryKey: ['getProductVariations', product.Id, storeKey],
+    queryFn: () => getVariations(product.Id),
     enabled: !!product.Id && !!storeKey,
   });
+
+  // Then fetch images using the first variation's ID
+  const firstVariationId = variationsResponse?.Data?.[0]?.Id;
+  const { data: productImages } = useQuery({
+    queryKey: ['getProductImagesinTable', firstVariationId, storeKey],
+    queryFn: () => getProductsImages(firstVariationId!),
+    enabled: !!firstVariationId && !!storeKey,
+  });
+
   return (
     <div className="ml-5 !w-[100px]">
-      {productImages?.Data[0]?.ImageUrl && (
+      {productImages?.Data?.[0]?.ImageUrl && (
         <img
           className="rounded-md h-[100px] w-[100px]"
           alt="product"
           height={'100px'}
           width={'100px'}
-          src={productImages?.Data[0].ImageUrl}
+          src={productImages.Data[0].ImageUrl}
         />
       )}
     </div>

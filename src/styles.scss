@@ -133,38 +133,38 @@ body {
   }
 }
 
-// Add custom styles for tabs overflow
+// Update tabs-list styles
 .tabs-list-scroll {
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-
-  &::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  &::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    @apply bg-primary/50 rounded-full;
-  }
+  @apply w-full;
 }
 
-// Improve tab triggers styling
+// Update tabs-trigger styles
 .tabs-trigger {
-  @apply px-4 py-2 transition-colors;
+  @apply px-4 py-2 transition-colors rounded-md text-sm w-full;
 
   &[data-state='active'] {
-    @apply bg-primary text-primary-foreground;
+    @apply bg-primary text-primary-foreground shadow-sm;
   }
 
   &[data-state='inactive'] {
-    @apply hover:bg-muted;
+    @apply hover:bg-muted/80 text-muted-foreground;
   }
 }
 
 // Add to your existing styles
 .container {
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+// Add to your existing styles
+.category-sidebar {
+  @apply bg-card rounded-lg border p-4;
+
+  .parent-category {
+    @apply mb-2;
+
+    .subcategories {
+      @apply ml-4 pl-4 border-l border-border;
+    }
+  }
 }

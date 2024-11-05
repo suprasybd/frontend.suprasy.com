@@ -14,6 +14,7 @@ import {
   getProductsDetails,
   getProductsImages,
   getUserStoresProductsList,
+  getVariations,
 } from '@/pages/products/api';
 import { useModalStore } from '@/store/modalStore';
 import { useProductSelectionStore } from '@/store/productSelection';
@@ -116,9 +117,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     queryFn: () => getProductsDetails(ProductId),
   });
 
+  // First fetch variations
+  const { data: variationsResponse } = useQuery({
+    queryKey: ['getProductVariations', ProductId],
+    queryFn: () => getVariations(ProductId),
+    enabled: !!ProductId,
+  });
+
+  // Then fetch images using the first variation's ID
+  const firstVariationId = variationsResponse?.Data?.[0]?.Id;
   const { data: productImagesResponse } = useQuery({
-    queryKey: ['getProductImages', ProductId],
-    queryFn: () => getProductsImages(ProductId),
+    queryKey: ['getProductImages', firstVariationId],
+    queryFn: () => getProductsImages(firstVariationId!),
+    enabled: !!firstVariationId,
   });
 
   const product = productResponse?.Data;

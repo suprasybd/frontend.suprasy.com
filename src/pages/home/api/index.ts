@@ -7,6 +7,7 @@ import {
   BalanceResponseType,
   PlanResponseType,
   StoreType,
+  SubscriptionResponseType,
   SubscriptionType,
 } from './types';
 
@@ -50,13 +51,6 @@ export const getSubDetails = async (
   return response.data;
 };
 
-export const renewSubscription = async (
-  StoreKey: string
-): Promise<ResponseType<StoreType>> => {
-  const response = await ApiClient.get('/store/renew/' + StoreKey);
-  return response.data;
-};
-
 export const getThemes = async (Queries: {
   [key: string]: any;
   Page?: number;
@@ -95,5 +89,23 @@ export const getUserBalance = async (): Promise<
 
 export const getPlan = async (): Promise<PlanResponseType> => {
   const response = await ApiClient.get('/plans');
+  return response.data;
+};
+
+export const getSubscriptionList = async (
+  StoreKey: string
+): Promise<SubscriptionResponseType> => {
+  const response = await ApiClient.get(`/store/subscription`);
+  return response.data;
+};
+
+export const renewSubscription = async ({
+  StoreKey,
+  planId,
+}: {
+  StoreKey: string;
+  planId: number;
+}): Promise<ResponseType<string>> => {
+  const response = await ApiClient.post(`/store/renew/${StoreKey}`, { planId });
   return response.data;
 };

@@ -13,6 +13,7 @@ import {
   Store,
   Tent,
   Users,
+  CreditCard,
 } from 'lucide-react';
 import { Badge } from '@/components/index';
 import { useQuery } from '@tanstack/react-query';
@@ -150,6 +151,14 @@ const StoreSidebar = () => {
             {/* Settings & Admin */}
             <div className="mt-4 space-y-1">
               <div className={sectionHeaderStyles}>Settings</div>
+              <Link
+                to="/store/$storeKey/subscription"
+                params={{ storeKey }}
+                className={linkStyles}
+              >
+                <CreditCard className="h-4 w-4" />
+                Subscription
+              </Link>
               <Link
                 to="/store/$storeKey/turnstile"
                 params={{ storeKey }}

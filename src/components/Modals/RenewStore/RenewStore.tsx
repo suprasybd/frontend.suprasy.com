@@ -133,7 +133,10 @@ const RenewStore: React.FC = () => {
           <Button
             disabled={!haveBalance}
             onClick={() => {
-              hanldeRenewStore(storeKey);
+              hanldeRenewStore({
+                StoreKey: storeKey,
+                planId: currentPlan.Id,
+              });
             }}
             type="submit"
             className="w-full"

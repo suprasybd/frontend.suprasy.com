@@ -17,10 +17,18 @@ export interface StoreType {
 export interface SubscriptionType {
   Id: number;
   StoreKey: string;
+  PlanId: number;
   StartDate: string;
-  EndDate: string;
+  EndDate: string | null;
+  AutoRenew: boolean;
   CreatedAt: string;
   UpdatedAt: string;
+}
+
+export interface SubscriptionResponseType {
+  Success: boolean;
+  Message: string;
+  Data: SubscriptionType;
 }
 
 export interface BalanceResponseType {

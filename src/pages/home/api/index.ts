@@ -75,9 +75,7 @@ export const getThemeVersion = async (
 export const switchTheme = async (
   ThemeVersionId: number
 ): Promise<ResponseType<string>> => {
-  const response = await ApiClient.post(
-    `/store/themes/switch/${ThemeVersionId}`
-  );
+  const response = await ApiClient.post(`/themes/switch/${ThemeVersionId}`);
   return response.data;
 };
 

@@ -17,10 +17,13 @@ export interface ThemeImageType {
   UpdatedAt: string;
 }
 
-export const getGuestThemes = async (): Promise<
-  ListResponseType<GuestThemeType>
-> => {
-  const response = await ApiClient.get('/themes');
+export const getGuestThemes = async (params?: {
+  Page?: number;
+  Limit?: number;
+}): Promise<ListResponseType<GuestThemeType>> => {
+  const response = await ApiClient.get('/themes', {
+    params,
+  });
   return response.data;
 };
 

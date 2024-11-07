@@ -1,46 +1,101 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import React from 'react';
-import { getStoreDetails, getThemeVersion, switchTheme } from '../home/api';
+import React, { useState } from 'react';
+import { getStoreDetails, switchTheme } from '../home/api';
 
-import { Button, useToast } from '@/components';
+import { Button, toast, useToast } from '@/components';
 import { useParams } from '@tanstack/react-router';
 import cn from 'classnames';
-import {
-  getGuestThemes,
-  getThemeImages,
-  GuestThemeType,
-  ThemeImageType,
-} from './api';
+import { getGuestThemes, getThemeImages, GuestThemeType } from './api';
 
 const Themes = () => {
+  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+  const [page, setPage] = useState(1);
+  const limit = 5;
+
   const { data: themeResponse } = useQuery({
-    queryKey: ['getThemesList'],
-    queryFn: getGuestThemes,
+    queryKey: ['getThemesList', page, limit],
+    queryFn: () => getGuestThemes({ Page: page, Limit: limit }),
+  });
+
+  const { data: storeDetailsResponse } = useQuery({
+    queryKey: ['getStoreDetails', storeKey],
+    queryFn: () => getStoreDetails(storeKey),
   });
 
   const themesData = themeResponse?.Data;
+  const activeThemeId = storeDetailsResponse?.Data?.ThemeId;
+  const pagination = themeResponse?.Pagination;
 
   return (
     <section className="p-9">
       <h1 className="mb-5 text-3xl">Explore Themes</h1>
       <div className="flex flex-wrap gap-[20px]">
-        {themesData?.map((theme) => (
-          <ThemeCard key={theme.Id} theme={theme} />
+        {themesData?.map((theme: GuestThemeType) => (
+          <ThemeCard
+            key={theme.Id}
+            theme={theme}
+            isActive={theme.Id === activeThemeId}
+          />
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      {pagination && (
+        <div className="flex justify-center mt-6">
+          <Button
+            variant="outline"
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+          >
+            Previous
+          </Button>
+          <span className="mx-4">
+            Page {pagination.Page} of {pagination.TotalPages}
+          </span>
+          <Button
+            variant="outline"
+            onClick={() => setPage((prev) => prev + 1)}
+            disabled={page === pagination.TotalPages}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </section>
   );
 };
 
-const ThemeCard: React.FC<{ theme: GuestThemeType }> = ({ theme }) => {
+const ThemeCard: React.FC<{ theme: GuestThemeType; isActive: boolean }> = ({
+  theme,
+  isActive,
+}) => {
   const { data: themeImagesResponse } = useQuery({
     queryKey: ['getThemeImages', theme.Id],
     queryFn: () => getThemeImages(theme.Id),
   });
 
   const themeImages = themeImagesResponse?.Data || [];
-  const isActive = false;
-  const isPending = false;
+
+  const { mutate: handleSwitchTheme, isPending } = useMutation({
+    mutationFn: (themeId: number) => switchTheme(themeId),
+    onSuccess: () => {
+      toast({
+        title: 'Theme Enabled',
+        description: 'The theme has been enabled successfully.',
+        variant: 'default',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description:
+          error.response?.data?.Message ||
+          error.response?.data?.message ||
+          'Failed to enable theme.',
+        variant: 'destructive',
+      });
+    },
+  });
 
   return (
     <div className="overflow-hidden rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow">
@@ -75,10 +130,10 @@ const ThemeCard: React.FC<{ theme: GuestThemeType }> = ({ theme }) => {
         <h2 className="font-bold text-xl text-slate-800 mb-2">{theme.Name}</h2>
         <p className="text-slate-600 mb-4">{theme.Description}</p>
 
-        {/* Action button */}
+        {/* Action buttons */}
         <div
           className={cn(
-            'flex justify-between items-center p-3 rounded-lg border',
+            'flex flex-col gap-2 p-3 rounded-lg border',
             isActive
               ? 'bg-green-50 border-green-200'
               : 'border-blue-200 hover:border-blue-300'
@@ -92,90 +147,27 @@ const ThemeCard: React.FC<{ theme: GuestThemeType }> = ({ theme }) => {
             <Button
               variant={'outline'}
               className="hover:bg-blue-50"
-              onClick={() => {
-                // handleSwitchTheme(v.Id);
-              }}
+              onClick={() => handleSwitchTheme(theme.Id)}
+              disabled={isPending}
             >
-              {isPending ? 'Applying...' : 'Apply Theme'}
+              {isPending ? 'Applying...' : 'Enable Theme'}
             </Button>
           )}
           {isActive && (
-            <span className="text-green-600 font-medium">✓ Active</span>
+            <>
+              <span className="text-green-600 font-medium">✓ Active</span>
+              <Button
+                variant={'outline'}
+                className="hover:bg-blue-50"
+                onClick={() => handleSwitchTheme(theme.Id)}
+                disabled={isPending}
+              >
+                {isPending ? 'Syncing...' : 'Sync Theme'}
+              </Button>
+            </>
           )}
         </div>
       </div>
-    </div>
-  );
-};
-
-const Version: React.FC<{ ThemeId: number }> = ({ ThemeId }) => {
-  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
-  const { data: themesResponse } = useQuery({
-    queryKey: ['getThemeVersion', ThemeId],
-    queryFn: () => getThemeVersion(ThemeId),
-    enabled: !!ThemeId,
-  });
-
-  const { toast } = useToast();
-
-  const { data: storeDetailsResponse, refetch } = useQuery({
-    queryKey: ['getStoreDetails'],
-    queryFn: () => getStoreDetails(storeKey),
-  });
-
-  const { mutate: handleSwitchTheme, isPending } = useMutation({
-    mutationFn: switchTheme,
-    onSuccess: () => {
-      refetch();
-      toast({
-        title: 'Theme Changes',
-        description: 'Theme switched successfully',
-        variant: 'default',
-      });
-    },
-    onError: (response: { response: { data: { Message: string } } }) => {
-      toast({
-        title: 'Theme change',
-        description: response.response.data.Message,
-        variant: 'destructive',
-      });
-    },
-  });
-
-  const storeData = storeDetailsResponse?.Data;
-
-  const themeVersionsData = themesResponse?.Data;
-
-  return (
-    <div>
-      {themeVersionsData?.map((v) => {
-        const isActive =
-          storeData?.ThemeId === ThemeId && v.Id === storeData.ThemeVersionId;
-        return (
-          <span
-            className={cn(
-              'w-full flex my-2 justify-between items-center border-2 border-blue-400 p-3 rounded-md',
-              isActive && 'bg-green-300'
-            )}
-          >
-            <span>v{v.Version} </span>
-
-            {!isActive && (
-              <Button
-                disabled={isPending}
-                variant={'outline'}
-                onClick={() => {
-                  handleSwitchTheme(v.Id);
-                }}
-              >
-                {isPending && 'Switching...'}
-                {!isPending && 'Switch'}
-              </Button>
-            )}
-            {isActive && 'Current'}
-          </span>
-        );
-      })}
     </div>
   );
 };

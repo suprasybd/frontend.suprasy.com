@@ -31,7 +31,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/index';
 import { MONTHLY_COST } from '@/config/api';
 import { checkSubDomain } from '@/pages/turnstile/api';
 import { useDebounce } from 'use-debounce';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Link2 } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import AddBalanceModal from '@/components/Modals/AddBalanceModal/AddBalanceModal';
 
 const formSchema = z.object({
   StoreName: z
@@ -61,6 +63,7 @@ const CreateStoreModal: React.FC = () => {
   const { modal, clearModalPath } = useModalStore((state) => state);
   const modalName = modal.modal;
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [showAddBalanceModal, setShowAddBalanceModal] = useState(false);
 
   const { toast } = useToast();
 
@@ -148,249 +151,258 @@ const CreateStoreModal: React.FC = () => {
     });
   }
 
+  const planId = form.watch('planId');
+
   const haveBalance = useMemo(() => {
-    if (balance && planResponse?.Data) {
-      const selectedPlan = planResponse.Data.find(
-        (p) => p.Id === form.getValues('planId')
-      );
-      if (selectedPlan) {
-        return (
-          selectedPlan.MonthlyPrice === 0 ||
-          balance.Balance >= selectedPlan.MonthlyPrice
-        );
-      }
-      return false;
-    }
-    return false;
-  }, [balance, planResponse?.Data, form]);
+    if (!planId) return false;
 
-  const getPlanFeatures = (featuresJson: string): string[] => {
-    try {
-      return JSON.parse(featuresJson);
-    } catch {
-      return [];
+    const selectedPlan = planResponse?.Data?.find((p) => p.Id === planId);
+
+    // If no plan is selected, return false@
+    if (!selectedPlan) return false;
+
+    // Free plan should always be allowed
+    if (selectedPlan.MonthlyPrice === 0) return true;
+    // For paid plans, check balance
+    return (balanceResponse?.Data?.Balance ?? 0) >= selectedPlan.MonthlyPrice;
+  }, [balanceResponse?.Data, planResponse?.Data, form]);
+
+  const selectedPlan = useMemo(() => {
+    if (planResponse?.Data) {
+      return planResponse.Data.find((p) => p.Id === form.getValues('planId'));
     }
-  };
-  const selectedPlanId = form.watch('planId');
-  console.log(selectedPlanId);
+    return null;
+  }, [planResponse?.Data, form, planId]);
+
   return (
-    <div>
-      <Dialog
-        open={modalOpen}
-        onOpenChange={(data) => {
-          if (!data) {
-            closeModal();
-          }
-        }}
-      >
-        <DialogContent className="max-w-[500px] h-[90vh] overflow-y-scroll p-0">
-          <div className="flex flex-col h-full">
-            <div className="p-6 pb-2">
-              <DialogHeader className="space-y-2">
-                <DialogTitle className="text-2xl font-semibold">
-                  Create Store
-                </DialogTitle>
-                <DialogDescription className="text-muted-foreground">
-                  Fill in the details below to create your new store.
-                </DialogDescription>
-              </DialogHeader>
-            </div>
+    <Dialog open={modalOpen} onOpenChange={(open) => !open && closeModal()}>
+      <DialogContent className="max-w-[550px] h-[90vh] overflow-scroll p-0 gap-0">
+        <div className="flex flex-col h-full">
+          <div className="p-6 pb-4 border-b">
+            <DialogHeader className="space-y-2">
+              <DialogTitle className="text-2xl font-semibold tracking-tight">
+                Create Store
+              </DialogTitle>
+              <DialogDescription className="text-muted-foreground text-sm">
+                Fill in the details below to create your new store.
+              </DialogDescription>
+            </DialogHeader>
+          </div>
 
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="flex flex-col h-full"
-              >
-                <div className="flex-1 overflow-y-auto px-6 space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="StoreName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="font-medium">
-                          Store Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            FormError={!!form.formState.errors.StoreName}
-                            placeholder="Enter your store name"
-                            className="h-10"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription className="text-xs text-muted-foreground">
-                          This is your public display name.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col h-full"
+            >
+              <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+                <FormField
+                  control={form.control}
+                  name="StoreName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium">
+                        Store Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          FormError={!!form.formState.errors.StoreName}
+                          placeholder="Enter your store name"
+                          className="h-10 transition-colors"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-muted-foreground/80">
+                        This is your public display name.
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
 
-                  <FormField
-                    control={form.control}
-                    name="SubDomain"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="font-medium">
-                          Sub Domain
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            FormError={!!form.formState.errors.StoreName}
-                            placeholder="Enter subdomain"
-                            className="h-10"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription className="text-xs text-muted-foreground">
-                          Your store URL will be: store-{subdomain || 'example'}
-                          .suprasy.com
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="SubDomain"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium">
+                        Sub Domain
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          FormError={!!form.formState.errors.StoreName}
+                          placeholder="Enter subdomain"
+                          className="h-10 transition-colors"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-muted-foreground/80 flex items-center gap-1">
+                        Your store URL will be:{' '}
+                        <span className="font-medium text-foreground">
+                          store-{subdomain || 'example'}.suprasy.com
+                        </span>
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
 
-                  <FormField
-                    control={form.control}
-                    name="planId"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3">
-                        <FormLabel>Select Plan</FormLabel>
-                        <FormControl>
-                          <RadioGroup
-                            onValueChange={(value) => {
-                              field.onChange(parseInt(value));
-                            }}
-                            value={field.value?.toString()}
-                            className="space-y-3"
-                          >
-                            {planResponse?.Data.map((plan) => (
-                              <div
-                                key={plan.Id}
-                                className={cn(
-                                  'flex items-start space-x-3 space-y-0 p-4 border rounded-lg',
-                                  field.value === plan.Id &&
-                                    'border-primary bg-primary/5'
-                                )}
-                              >
-                                <RadioGroupItem
-                                  value={plan.Id.toString()}
-                                  id={`plan-${plan.Id}`}
-                                />
-                                <div className="grid gap-1.5 leading-none">
-                                  <label
-                                    htmlFor={`plan-${plan.Id}`}
-                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                  >
-                                    {plan.Name.charAt(0).toUpperCase() +
-                                      plan.Name.slice(1)}{' '}
-                                    - {plan.MonthlyPrice} BDT/month
-                                  </label>
-                                  <ul className="text-sm text-muted-foreground list-disc pl-4">
-                                    {getPlanFeatures(plan.Features).map(
-                                      (feature, idx) => (
-                                        <li key={idx}>{feature}</li>
-                                      )
-                                    )}
-                                  </ul>
-                                </div>
+                <FormField
+                  control={form.control}
+                  name="planId"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel className="text-sm font-medium">
+                        Select Plan
+                      </FormLabel>
+                      <FormControl>
+                        <div className="grid grid-cols-1 gap-3">
+                          {planResponse?.Data.map((plan) => (
+                            <div
+                              key={plan.Id}
+                              className={cn(
+                                'relative flex flex-col p-4 cursor-pointer border rounded-lg transition-all hover:shadow-sm',
+                                field.value === plan.Id
+                                  ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
+                                  : 'hover:border-primary/50'
+                              )}
+                              onClick={() => field.onChange(plan.Id)}
+                            >
+                              <div className="flex justify-between items-center mb-2">
+                                <h3 className="font-medium">
+                                  {plan.Name.charAt(0).toUpperCase() +
+                                    plan.Name.slice(1)}
+                                </h3>
+                                <span
+                                  className={cn(
+                                    'text-sm font-medium px-2.5 py-0.5 rounded-full',
+                                    plan.MonthlyPrice === 0
+                                      ? 'bg-green-500/10 text-green-600'
+                                      : 'bg-primary/10 text-primary'
+                                  )}
+                                >
+                                  {plan.MonthlyPrice === 0
+                                    ? 'Free'
+                                    : `${plan.MonthlyPrice} BDT/month`}
+                                </span>
                               </div>
-                            ))}
-                          </RadioGroup>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                              <Button
+                                type="button"
+                                variant="link"
+                                className="text-xs p-0 h-auto w-fit flex items-center gap-1.5 text-muted-foreground hover:text-primary"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(
+                                    'https://suprasy.com/pricing',
+                                    '_blank'
+                                  );
+                                }}
+                              >
+                                <Link2 className="h-3 w-3" />
+                                View plan details
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
 
-                  {balanceSuccess && balance && planData && (
+                {selectedPlan &&
+                  selectedPlan.MonthlyPrice > 0 &&
+                  !haveBalance && (
+                    <Alert variant="destructive" className="mx-0">
+                      <AlertTitle className="text-sm font-medium">
+                        Insufficient Balance
+                      </AlertTitle>
+                      <AlertDescription className="flex items-center justify-between mt-1">
+                        <span className="text-sm">
+                          You need{' '}
+                          <span className="font-medium">
+                            {selectedPlan.MonthlyPrice -
+                              (balanceResponse?.Data?.Balance || 0)}{' '}
+                            BDT
+                          </span>{' '}
+                          more to create store with this plan
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowAddBalanceModal(true)}
+                          className="gap-1.5 h-8 text-xs"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          Add Balance
+                        </Button>
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                {balanceSuccess &&
+                  balance &&
+                  planResponse?.Data &&
+                  selectedPlan && (
                     <div className="space-y-4">
-                      {haveBalance ? (
-                        <Alert className="bg-muted/50 border">
-                          <AlertTitle className="font-medium">
-                            Transaction Details
-                          </AlertTitle>
-                          <AlertDescription className="text-sm">
-                            {isSuccess && (
-                              <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <span>Monthly Cost:</span>
-                                  <span className="font-medium">
-                                    {planResponse?.Data.find(
-                                      (p) => p.Id === form.getValues('planId')
-                                    )?.MonthlyPrice ?? 0}{' '}
-                                    BDT
-                                  </span>
-                                </div>
-                                {balanceSuccess && balance && planData && (
-                                  <div className="flex items-center justify-between">
-                                    <span>Remaining Balance:</span>
-                                    <span className="font-medium">
-                                      {balance?.Balance -
-                                        (planResponse?.Data.find(
-                                          (p) =>
-                                            p.Id === form.getValues('planId')
-                                        )?.MonthlyPrice ?? 0)}{' '}
-                                      BDT
-                                    </span>
-                                  </div>
-                                )}
+                      <Alert className="bg-card border shadow-sm">
+                        <AlertTitle className="text-sm font-medium">
+                          Transaction Details
+                        </AlertTitle>
+                        <AlertDescription className="text-sm mt-2">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-muted-foreground">
+                                Monthly Cost:
+                              </span>
+                              <span className="font-medium">
+                                {selectedPlan.MonthlyPrice} BDT
+                              </span>
+                            </div>
+                            {selectedPlan.MonthlyPrice > 0 && (
+                              <div className="flex items-center justify-between">
+                                <span className="text-muted-foreground">
+                                  Remaining Balance:
+                                </span>
+                                <span className="font-medium">
+                                  {balance.Balance - selectedPlan.MonthlyPrice}{' '}
+                                  BDT
+                                </span>
                               </div>
                             )}
-                          </AlertDescription>
-                        </Alert>
-                      ) : (
-                        <Alert
-                          variant="destructive"
-                          className="border-destructive/50"
-                        >
-                          <AlertTitle className="font-medium">
-                            Not enough balance
-                          </AlertTitle>
-                          <AlertDescription>
-                            Please add funds to your account to create a store.
-                          </AlertDescription>
-                        </Alert>
-                      )}
+                          </div>
+                        </AlertDescription>
+                      </Alert>
                     </div>
                   )}
-                </div>
+              </div>
 
-                <div className="p-6 mt-auto border-t">
-                  <div className="flex flex-col gap-3">
-                    <Button
-                      disabled={
-                        isError ||
-                        ((balance?.Balance ?? 0) <
-                          (planResponse?.Data.find(
-                            (p) => p.Id === form.getValues('planId')
-                          )?.MonthlyPrice ?? 0) &&
-                          (planResponse?.Data.find(
-                            (p) => p.Id === form.getValues('planId')
-                          )?.MonthlyPrice ?? 0) !== 0)
-                      }
-                      type="submit"
-                      className="w-full h-10"
-                    >
-                      {isPending ? 'Creating...' : 'Create Store'}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => closeModal()}
-                      className="w-full h-10"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              </form>
-            </Form>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+              <div className="p-6 border-t space-y-3 bg-muted/5">
+                <Button
+                  type="submit"
+                  className="w-full h-10 font-medium"
+                  disabled={isPending}
+                >
+                  {isPending ? 'Creating Store...' : 'Create Store'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={closeModal}
+                  className="w-full h-10"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
+      </DialogContent>
+
+      <AddBalanceModal
+        isOpen={showAddBalanceModal}
+        onClose={() => setShowAddBalanceModal(false)}
+      />
+    </Dialog>
   );
 };
 

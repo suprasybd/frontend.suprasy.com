@@ -23,6 +23,7 @@ import { ReloadIcon } from '@radix-ui/react-icons';
 import logo from './assets/lg-full-blacks.png';
 import useTurnStileHook from '@/hooks/turnstile';
 import { Turnstile } from '@marsidev/react-turnstile';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login: React.FC = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -36,6 +37,8 @@ const Login: React.FC = () => {
   const [turnstileLoaded] = useTurnStileHook();
 
   const navigate = useNavigate();
+
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const { mutate: loginMutation, isPending } = useMutation({
     mutationFn: login,
@@ -85,61 +88,94 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center md:px-6 md:py-12 lg:px-8 ">
-      <div className="bg-white p-4 md:p-20  rounded-2xl">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <div className="w-full flex justify-center">
-            <img width={'250px'} height={'auto'} src={logo} alt="logo" />
+    <div className="flex min-h-full flex-col justify-center md:px-6 md:py-12 lg:px-8">
+      <div className="bg-white p-6 md:p-12 rounded-2xl shadow-xl max-w-md w-full mx-auto">
+        <div className="sm:mx-auto sm:w-full">
+          <div className="w-full flex justify-center mb-6">
+            <img
+              width={200}
+              height="auto"
+              src={logo}
+              alt="logo"
+              className="h-12 object-contain"
+            />
           </div>
 
-          <h2 className="mt-10 mb-2 text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign in to your account
-          </h2>
-          <p>Launch your ecommerce site with suprasy under 1 minute. </p>
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+              Welcome back
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Sign in to your account to continue
+            </p>
+          </div>
         </div>
 
-        <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="w-full">
           <Form {...form}>
-            <form onSubmit={handleFormWrapper} className="space-y-8">
+            <form onSubmit={handleFormWrapper} className="space-y-6">
               <FormField
                 control={form.control}
                 name="Email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Email</FormLabel>
+                    <FormLabel className="text-sm font-medium">Email</FormLabel>
                     <FormControl>
                       <Input
-                        className="h-14"
+                        className="h-11"
                         FormError={!!formErrors.errors.Email}
-                        placeholder="Enter Email"
+                        placeholder="Enter your email"
                         {...field}
                       />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="Password"
                 render={({ field }) => (
-                  <FormItem className="space-y-0 !mt-5">
-                    <FormLabel className="font-bold">Password</FormLabel>
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">
+                      Password
+                    </FormLabel>
                     <FormControl>
-                      <Input
-                        className="h-14"
-                        FormError={!!formErrors.errors.Password}
-                        type="password"
-                        placeholder="Enter Password"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          className="h-11"
+                          FormError={!!formErrors.errors.Password}
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Enter your password"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              <div className="mt-2 text-right">
+                <Link
+                  to="/forgotpassword"
+                  className="text-sm font-medium text-primary hover:text-primary/80"
+                >
+                  Forgot password?
+                </Link>
+              </div>
 
               <Turnstile
                 options={{ size: 'auto' }}
@@ -148,14 +184,14 @@ const Login: React.FC = () => {
 
               <Button
                 type="submit"
-                className="w-full h-14 font-xl font-bold"
+                className="w-full h-11 font-medium"
                 disabled={!turnstileLoaded}
                 variant={'defaultGradiant'}
               >
                 {!turnstileLoaded && (
                   <>
-                    <ReloadIcon className="mr-2 h-7 w-7 animate-spin" />
-                    wait a few moment..
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait...
                   </>
                 )}
 
@@ -164,33 +200,23 @@ const Login: React.FC = () => {
                     {isPending && (
                       <>
                         <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                        Loging In..
+                        Signing in...
                       </>
                     )}
-                    {!isPending && <>Sign In</>}
+                    {!isPending && <>Sign in</>}
                   </>
                 )}
               </Button>
             </form>
           </Form>
 
-          <p className="mt-10 text-center text-sm text-gray-500 ">
-            Forgot Password?
-            <Link
-              to="/forgotpassword"
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 pl-2"
-            >
-              Click here to reset
-            </Link>
-          </p>
-
-          <p className="mt-2 text-center text-sm text-gray-500 ">
-            Not a member?
+          <p className="mt-6 text-center text-sm text-gray-500">
+            Don't have an account?{' '}
             <Link
               to="/register"
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 pl-2"
+              className="font-medium text-primary hover:text-primary/80"
             >
-              Click here to signup
+              Sign up
             </Link>
           </p>
         </div>

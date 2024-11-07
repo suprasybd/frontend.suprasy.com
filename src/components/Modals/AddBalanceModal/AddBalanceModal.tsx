@@ -52,7 +52,7 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({
             <Button
               className="w-full"
               onClick={() =>
-                window.open('https://discord.gg/your-discord', '_blank')
+                window.open('https://discord.gg/J8xEsQKTqC', '_blank')
               }
             >
               <ExternalLink className="mr-2 h-4 w-4" />

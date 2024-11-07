@@ -117,7 +117,7 @@ export const getTransactions = async (
   limit = 10
 ): Promise<TransactionResponseType> => {
   const response = await ApiClient.get('/transactions', {
-    params: { page, limit },
+    params: { Page: page, Limit: limit },
   });
   return response.data;
 };

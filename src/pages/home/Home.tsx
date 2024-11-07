@@ -6,7 +6,7 @@ import {
   Button,
 } from '@/components/index';
 import { useQuery } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   getSubDetails,
   getUserBalance,
@@ -69,6 +69,10 @@ const Home: React.FC = () => {
     queryKey: ['transactions', page, limit],
     queryFn: () => getTransactions(page, limit),
   });
+
+  useEffect(() => {
+    document.body.style.overflow = 'auto';
+  }, []);
 
   return (
     <section className="w-full min-h-[90vh] overflow-auto max-w-[94rem] mx-auto p-6 space-y-6">

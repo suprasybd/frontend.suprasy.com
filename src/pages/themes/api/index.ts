@@ -1,11 +1,13 @@
 import ApiClient from '../../../libs/ApiClient';
 import { ListResponseType } from '../../../libs/types/responseTypes';
+import { getSubDetails, getPlan } from '../../home/api';
 
 export interface GuestThemeType {
   Id: number;
   Name: string;
   Description: string;
   Type: 'free' | 'paid';
+  GithubLink?: string;
   CreatedAt: string;
   UpdatedAt: string;
 }
@@ -33,3 +35,5 @@ export const getThemeImages = async (
   const response = await ApiClient.get(`/themes/${themeId}/images`);
   return response.data;
 };
+
+export { getSubDetails, getPlan };

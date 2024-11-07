@@ -33,6 +33,7 @@ export const adminThemeSchema = z.object({
   Name: z.string().min(2).max(50),
   Description: z.string().min(2).max(50),
   R2Folder: z.string().min(2).max(50),
+  GithubLink: z.string().url().optional(),
   Images: z.array(ImageUrl).min(1),
 });
 
@@ -43,6 +44,7 @@ const AdminThemes = () => {
       Name: '',
       Description: '',
       R2Folder: '',
+      GithubLink: '',
       Images: [],
     },
   });
@@ -129,6 +131,25 @@ const AdminThemes = () => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="GithubLink"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>GitHub Link (Optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter GitHub repository URL"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Link to the theme's GitHub repository if available
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <AdminThemeImage fieldIndex={1} form={form} />
 
@@ -174,6 +195,7 @@ const AdminThemes = () => {
                 form.setValue('Description', theme.Description);
                 form.setValue('Name', theme.Name);
                 form.setValue('R2Folder', theme.R2Folder);
+                form.setValue('GithubLink', theme.GithubLink || '');
                 setThemeId(theme.Id);
                 setIsUpdating(true);
               }}

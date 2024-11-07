@@ -1,11 +1,17 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { getStoreDetails, switchTheme } from '../home/api';
+import { getStoreDetails, switchTheme, getPlan } from '../home/api';
 
 import { Button, toast, useToast } from '@/components';
-import { useParams } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import cn from 'classnames';
-import { getGuestThemes, getThemeImages, GuestThemeType } from './api';
+import {
+  getGuestThemes,
+  getThemeImages,
+  GuestThemeType,
+  getSubDetails,
+} from './api';
+import { Github, Crown, Gift } from 'lucide-react';
 
 const Themes = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
@@ -69,6 +75,27 @@ const ThemeCard: React.FC<{ theme: GuestThemeType; isActive: boolean }> = ({
   theme,
   isActive,
 }) => {
+  const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+
+  // Get subscription details
+  const { data: subResponse } = useQuery({
+    queryKey: ['getStoreSub', storeKey],
+    queryFn: () => getSubDetails(storeKey),
+  });
+
+  // Get plans to determine if current plan is premium
+  const { data: planResponse } = useQuery({
+    queryKey: ['getPlan'],
+    queryFn: getPlan,
+  });
+
+  const subscription = subResponse?.Data;
+  const plans = planResponse?.Data || [];
+
+  // Find current plan details
+  const currentPlan = plans.find((plan) => plan.Id === subscription?.PlanId);
+  const hasValidSubscription = currentPlan && currentPlan.MonthlyPrice > 0;
+
   const { data: themeImagesResponse } = useQuery({
     queryKey: ['getThemeImages', theme.Id],
     queryFn: () => getThemeImages(theme.Id),
@@ -97,16 +124,38 @@ const ThemeCard: React.FC<{ theme: GuestThemeType; isActive: boolean }> = ({
     },
   });
 
+  const navigate = useNavigate();
+
   return (
     <div className="overflow-hidden rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow">
       {/* Image container with overlay */}
       <div className="relative">
         {themeImages.length > 0 ? (
-          <img
-            className="w-[400px] h-[250px] object-cover"
-            src={themeImages[0].ImageUrl}
-            alt={theme.Name}
-          />
+          <div className="relative">
+            <img
+              className="w-[400px] h-[250px] object-cover"
+              src={themeImages[0].ImageUrl}
+              alt={theme.Name}
+            />
+            {theme.Type === 'paid' && !hasValidSubscription && (
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <div className="text-center p-4">
+                  <Crown className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
+                  <p className="text-white font-medium">Premium Theme</p>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="mt-2 bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700"
+                    onClick={() =>
+                      navigate({ to: `/store/${storeKey}/subscription` })
+                    }
+                  >
+                    Upgrade to Access
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         ) : (
           <div className="w-[400px] h-[250px] bg-slate-200 flex items-center justify-center">
             <span className="text-slate-500">No preview available</span>
@@ -115,19 +164,43 @@ const ThemeCard: React.FC<{ theme: GuestThemeType; isActive: boolean }> = ({
         {/* Theme type badge */}
         <span
           className={cn(
-            'absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium',
+            'absolute top-4 right-4 px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2',
             theme.Type === 'free'
               ? 'bg-green-100 text-green-800'
-              : 'bg-purple-100 text-purple-800'
+              : 'bg-gradient-to-r from-yellow-400/90 to-yellow-600/90 text-white shadow-lg'
           )}
         >
-          {theme.Type === 'free' ? 'Free' : 'Premium'}
+          {theme.Type === 'free' ? (
+            <>
+              <Gift className="w-4 h-4" />
+              <span>Free</span>
+            </>
+          ) : (
+            <>
+              <Crown className="w-4 h-4" />
+              <span>Premium</span>
+            </>
+          )}
         </span>
       </div>
 
       {/* Content section */}
       <div className="p-5">
-        <h2 className="font-bold text-xl text-slate-800 mb-2">{theme.Name}</h2>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-bold text-xl text-slate-800">{theme.Name}</h2>
+          {theme.GithubLink && (
+            <a
+              href={theme.GithubLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+              title="View source code on GitHub"
+            >
+              <Github className="w-4 h-4" />
+              <span>View Source</span>
+            </a>
+          )}
+        </div>
         <p className="text-slate-600 mb-4">{theme.Description}</p>
 
         {/* Action buttons */}
@@ -148,9 +221,15 @@ const ThemeCard: React.FC<{ theme: GuestThemeType; isActive: boolean }> = ({
               variant={'outline'}
               className="hover:bg-blue-50"
               onClick={() => handleSwitchTheme(theme.Id)}
-              disabled={isPending}
+              disabled={
+                isPending || (theme.Type === 'paid' && !hasValidSubscription)
+              }
             >
-              {isPending ? 'Applying...' : 'Enable Theme'}
+              {isPending
+                ? 'Applying...'
+                : theme.Type === 'paid' && !hasValidSubscription
+                ? 'Upgrade to Enable'
+                : 'Enable Theme'}
             </Button>
           )}
           {isActive && (

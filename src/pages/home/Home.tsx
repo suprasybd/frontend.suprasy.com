@@ -30,6 +30,9 @@ import {
   AlertTriangle,
   LayoutDashboard,
 } from 'lucide-react';
+import axios from 'axios';
+import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 const Home: React.FC = () => {
   const { data: storeList, isLoading } = useQuery({
@@ -108,6 +111,7 @@ const Home: React.FC = () => {
 };
 
 const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
+  const { toast } = useToast();
   const { data: subResponse } = useQuery({
     queryKey: ['getStoreSub', store.StoreKey],
     queryFn: () => getSubDetails(store.StoreKey),
@@ -115,6 +119,72 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
 
   const subData = subResponse?.Data;
   const { setModalPath } = useModalStore((state) => state);
+
+  const mainSubDomain = `http://${store.SubDomain}.suprasy.com`;
+  const backupSubDomain = `http://${store.SubDomain.replace('store-', '')}${
+    store.StoreKey
+  }.b-cdn.net`;
+
+  const checkDomainAvailability = (url: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const timeout = setTimeout(() => {
+        img.src = ''; // Cancel image request
+        resolve(false);
+      }, 5000); // 5 second timeout
+
+      img.onload = () => {
+        clearTimeout(timeout);
+        resolve(true);
+      };
+
+      img.onerror = () => {
+        clearTimeout(timeout);
+        resolve(false);
+      };
+
+      // Try to load favicon or a known image path
+      img.src = `${url}/favicon.ico?${new Date().getTime()}`;
+    });
+  };
+
+  const handleVisitStore = async (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    try {
+      // Always open in new tab first, then check availability
+      const win = window.open('about:blank', '_blank');
+
+      // Check main domain
+      const isMainDomainLive = await checkDomainAvailability(mainSubDomain);
+      if (isMainDomainLive) {
+        win?.location.replace(mainSubDomain);
+        return;
+      }
+
+      // Check backup domain
+      const isBackupDomainLive = await checkDomainAvailability(backupSubDomain);
+      if (isBackupDomainLive) {
+        win?.location.replace(backupSubDomain);
+        return;
+      }
+
+      // If neither domain is live, close the blank window and show error
+      win?.close();
+      toast({
+        title: 'Store Unavailable',
+        description:
+          'Your store is still being set up. Please try again in a few minutes.',
+        variant: 'destructive',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to check store availability. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -137,9 +207,8 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
           <div className="flex items-center gap-2">
             <Link2 className="h-4 w-4 text-muted-foreground" />
             <a
-              href={`http://${store.SubDomain}.suprasy.com`}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#"
+              onClick={handleVisitStore}
               className="text-sm text-muted-foreground hover:text-primary"
             >
               Visit Store

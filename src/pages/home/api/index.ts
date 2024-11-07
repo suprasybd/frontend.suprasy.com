@@ -9,7 +9,9 @@ import {
   StoreType,
   SubscriptionResponseType,
   SubscriptionType,
+  TransactionResponseType,
 } from './types';
+import axios from 'axios';
 
 interface ThemeType {
   Id: number;
@@ -107,5 +109,15 @@ export const renewSubscription = async ({
   planId: number;
 }): Promise<ResponseType<string>> => {
   const response = await ApiClient.post(`/store/renew/${StoreKey}`, { planId });
+  return response.data;
+};
+
+export const getTransactions = async (
+  page = 1,
+  limit = 10
+): Promise<TransactionResponseType> => {
+  const response = await ApiClient.get('/transactions', {
+    params: { page, limit },
+  });
   return response.data;
 };

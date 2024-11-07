@@ -13,6 +13,7 @@ import {
   getUserStoresList,
   getSubscriptionList,
   getPlan,
+  getTransactions,
 } from './api';
 
 import {
@@ -26,7 +27,7 @@ import {
 import { LoaderMain } from '../../components/Loader/Loader';
 import { Link } from '@tanstack/react-router';
 import { useModalStore } from '@/store/modalStore';
-import { StoreType } from './api/types';
+import { StoreType, TransactionType } from './api/types';
 import { Key, StoreIcon, Terminal } from 'lucide-react';
 import cn from 'classnames';
 import {
@@ -43,9 +44,13 @@ import { CreditCard } from 'lucide-react';
 import { ExternalLink } from 'lucide-react';
 import AddBalanceModal from '@/components/Modals/AddBalanceModal/AddBalanceModal';
 import { format } from 'date-fns';
+import { ArrowLeft, ArrowRight, Receipt } from 'lucide-react';
+import { Clock, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
 
 const Home: React.FC = () => {
   const [showAddBalanceModal, setShowAddBalanceModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   const { data: storeList, isLoading } = useQuery({
     queryKey: ['getUserStoresList'],
@@ -59,6 +64,11 @@ const Home: React.FC = () => {
 
   const balance = balanceResponse?.Data.Balance;
   const { setModalPath } = useModalStore((state) => state);
+
+  const { data: transactionsData, isLoading: transactionsLoading } = useQuery({
+    queryKey: ['transactions', page, limit],
+    queryFn: () => getTransactions(page, limit),
+  });
 
   return (
     <section className="w-full min-h-[90vh] overflow-auto max-w-[94rem] mx-auto p-6 space-y-6">
@@ -127,6 +137,140 @@ const Home: React.FC = () => {
           </Button>
         </div>
       )}
+
+      <div className="mt-8 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-semibold">Recent Transactions</h2>
+            <Receipt className="h-5 w-5 text-muted-foreground" />
+          </div>
+        </div>
+
+        <Card>
+          {transactionsLoading ? (
+            <div className="p-8 flex justify-center">
+              <LoaderMain />
+            </div>
+          ) : (
+            <>
+              <div className="divide-y">
+                {transactionsData?.Data.map((transaction: TransactionType) => (
+                  <div
+                    key={transaction.Id}
+                    className="p-4 hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={cn(
+                            'p-2 rounded-full',
+                            transaction.Type === 'CREDIT'
+                              ? 'bg-green-500/10'
+                              : 'bg-red-500/10'
+                          )}
+                        >
+                          {transaction.Type === 'CREDIT' ? (
+                            <ArrowDownLeft
+                              className={cn(
+                                'h-5 w-5',
+                                transaction.Type === 'CREDIT'
+                                  ? 'text-green-600'
+                                  : 'text-red-600'
+                              )}
+                            />
+                          ) : (
+                            <ArrowUpRight
+                              className={cn(
+                                'h-5 w-5',
+                                transaction.Type === 'DEBIT'
+                                  ? 'text-red-600'
+                                  : 'text-green-600'
+                              )}
+                            />
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <p className="font-medium">
+                            {transaction.Description ||
+                              (transaction.Type === 'CREDIT'
+                                ? 'Balance Added'
+                                : 'Balance Deducted')}
+                          </p>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Clock className="h-3.5 w-3.5" />
+                            <span>
+                              {format(
+                                new Date(transaction.CreatedAt),
+                                'dd MMM yyyy, hh:mm a'
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <span
+                        className={cn(
+                          'font-medium',
+                          transaction.Type === 'CREDIT'
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                        )}
+                      >
+                        {transaction.Type === 'CREDIT' ? '+' : '-'}{' '}
+                        {transaction.Amount} BDT
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {transactionsData?.Pagination && (
+                <div className="flex items-center justify-between p-4 border-t">
+                  <div className="text-sm text-muted-foreground">
+                    Showing {(page - 1) * limit + 1} to{' '}
+                    {Math.min(
+                      page * limit,
+                      transactionsData.Pagination.TotalItems
+                    )}{' '}
+                    of {transactionsData.Pagination.TotalItems} transactions
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPage((p) => p + 1)}
+                      disabled={page === transactionsData.Pagination.TotalPages}
+                    >
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Empty State */}
+              {!transactionsData?.Data.length && (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <Receipt className="h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">
+                    No transactions yet
+                  </h3>
+                  <p className="text-muted-foreground text-center">
+                    Your transaction history will appear here
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+        </Card>
+      </div>
 
       <AddBalanceModal
         isOpen={showAddBalanceModal}

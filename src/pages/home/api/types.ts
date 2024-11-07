@@ -52,3 +52,25 @@ export interface PlanResponseType {
   Message: string;
   Data: PlanType[];
 }
+
+export interface TransactionType {
+  Id: number;
+  Type: 'CREDIT' | 'DEBIT';
+  Amount: number;
+  UserId: number;
+  Description: string | null;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface TransactionResponseType {
+  Success: boolean;
+  Message: string;
+  Data: TransactionType[];
+  Pagination?: {
+    TotalPages: number;
+    Page: number;
+    TotalItems: number;
+    Limit: number;
+  };
+}

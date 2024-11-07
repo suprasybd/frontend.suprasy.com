@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -23,6 +23,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/index';
 import { cn } from '@/libs/utils';
 import { PlanType } from '../home/api/types';
+import SubscriptionActionModal from '@/components/Modals/SubscriptionActionModal/SubscriptionActionModal';
+import AddBalanceModal from '@/components/Modals/AddBalanceModal/AddBalanceModal';
+import { ExternalLink } from 'lucide-react';
 
 const Subscription = () => {
   const { storeKey } = useParams({ from: '/store/$storeKey/subscription' });
@@ -82,11 +85,23 @@ const Subscription = () => {
     }
   };
 
-  const handleSubscriptionAction = (planId: number) => {
-    handleRenew({
-      StoreKey: storeKey,
-      planId: planId,
-    });
+  const [selectedPlan, setSelectedPlan] = useState<PlanType | null>(null);
+  const [showActionModal, setShowActionModal] = useState(false);
+  const [showAddBalanceModal, setShowAddBalanceModal] = useState(false);
+
+  const handleSubscriptionAction = (plan: PlanType) => {
+    setSelectedPlan(plan);
+    setShowActionModal(true);
+  };
+
+  const handleConfirmAction = () => {
+    if (selectedPlan) {
+      handleRenew({
+        StoreKey: storeKey,
+        planId: selectedPlan.Id,
+      });
+      setShowActionModal(false);
+    }
   };
 
   const isCurrentPlan = (planId: number) => {
@@ -202,8 +217,8 @@ const Subscription = () => {
                 isPaidPlan(plan) ? (
                   <Button
                     className="w-full"
-                    disabled={!canRenew || isPending}
-                    onClick={() => handleSubscriptionAction(plan.Id)}
+                    disabled={isPending}
+                    onClick={() => handleSubscriptionAction(plan)}
                   >
                     {isPending ? 'Processing...' : 'Add More Months'}
                   </Button>
@@ -212,8 +227,8 @@ const Subscription = () => {
                 <Button
                   className="w-full"
                   variant={isPaidPlan(plan) ? 'default' : 'secondary'}
-                  disabled={!canRenew || isPending}
-                  onClick={() => handleSubscriptionAction(plan.Id)}
+                  disabled={isPending}
+                  onClick={() => handleSubscriptionAction(plan)}
                 >
                   {isPending
                     ? 'Processing...'
@@ -232,12 +247,43 @@ const Subscription = () => {
         currentPlan.MonthlyPrice > 0 && (
           <Alert variant="destructive">
             <AlertTitle>Insufficient Balance</AlertTitle>
-            <AlertDescription>
-              Please add more funds to your account to upgrade or renew your
-              subscription.
+            <AlertDescription className="flex items-center justify-between">
+              <span>
+                Please add more funds to your account to upgrade or renew your
+                subscription.
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAddBalanceModal(true)}
+                className="mt-2 gap-2"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Add Balance
+              </Button>
             </AlertDescription>
           </Alert>
         )}
+
+      {/* Add the AddBalanceModal */}
+      <AddBalanceModal
+        isOpen={showAddBalanceModal}
+        onClose={() => setShowAddBalanceModal(false)}
+      />
+
+      {/* Add the modal */}
+      {selectedPlan && (
+        <SubscriptionActionModal
+          isOpen={showActionModal}
+          onClose={() => setShowActionModal(false)}
+          onConfirm={handleConfirmAction}
+          selectedPlan={selectedPlan}
+          currentBalance={balance}
+          isPending={isPending}
+          isUpgrade={selectedPlan.Id !== currentSubscription?.PlanId}
+          onAddBalance={() => setShowAddBalanceModal(true)}
+        />
+      )}
     </div>
   );
 };

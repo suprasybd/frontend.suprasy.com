@@ -95,7 +95,7 @@ export const getPlan = async (): Promise<PlanResponseType> => {
 export const getSubscriptionList = async (
   StoreKey: string
 ): Promise<SubscriptionResponseType> => {
-  const response = await ApiClient.get(`/store/subscription`);
+  const response = await ApiClient.get(`/store/subscription/${StoreKey}`);
   return response.data;
 };
 

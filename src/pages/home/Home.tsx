@@ -6,8 +6,14 @@ import {
   Button,
 } from '@/components/index';
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
-import { getSubDetails, getUserBalance, getUserStoresList } from './api';
+import React, { useState } from 'react';
+import {
+  getSubDetails,
+  getUserBalance,
+  getUserStoresList,
+  getSubscriptionList,
+  getPlan,
+} from './api';
 
 import {
   Card,
@@ -33,8 +39,14 @@ import {
 import axios from 'axios';
 import { toast } from '@/components/ui/use-toast';
 import { useToast } from '@/components/ui/use-toast';
+import { CreditCard } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import AddBalanceModal from '@/components/Modals/AddBalanceModal/AddBalanceModal';
+import { format } from 'date-fns';
 
 const Home: React.FC = () => {
+  const [showAddBalanceModal, setShowAddBalanceModal] = useState(false);
+
   const { data: storeList, isLoading } = useQuery({
     queryKey: ['getUserStoresList'],
     queryFn: getUserStoresList,
@@ -76,6 +88,15 @@ const Home: React.FC = () => {
             <Plus className="h-4 w-4" />
             Create Store
           </Button>
+
+          <Button
+            variant="outline"
+            onClick={() => setShowAddBalanceModal(true)}
+            className="gap-2"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Add Balance
+          </Button>
         </div>
       </div>
 
@@ -106,6 +127,11 @@ const Home: React.FC = () => {
           </Button>
         </div>
       )}
+
+      <AddBalanceModal
+        isOpen={showAddBalanceModal}
+        onClose={() => setShowAddBalanceModal(false)}
+      />
     </section>
   );
 };
@@ -186,6 +212,29 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
     }
   };
 
+  const { data: subscriptionResponse } = useQuery({
+    queryKey: ['getSubscriptionList', store.StoreKey],
+    queryFn: () => getSubscriptionList(store.StoreKey),
+  });
+
+  const { data: planResponse } = useQuery({
+    queryKey: ['getPlan'],
+    queryFn: getPlan,
+  });
+
+  const subscription = subscriptionResponse?.Data;
+  const plans = planResponse?.Data || [];
+
+  // Find current plan details
+  const currentPlan = plans.find((plan) => plan.Id === subscription?.PlanId);
+
+  // Format subscription end date
+  const getSubscriptionEndDate = () => {
+    if (!subscription) return 'No subscription';
+    if (!subscription.EndDate) return 'Lifetime Access';
+    return format(new Date(subscription.EndDate), 'dd MMM yyyy');
+  };
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <CardHeader>
@@ -226,24 +275,38 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
           </div>
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Expires:</span>
-            <span className="font-medium">{subData?.EndDate}</span>
+            <span className="text-muted-foreground">Subscription:</span>
+            <span className="font-medium">
+              {currentPlan?.Name || 'Unknown Plan'} - {getSubscriptionEndDate()}
+            </span>
           </div>
         </div>
       </CardContent>
 
       <CardFooter className="flex flex-col gap-3">
         {store.IsActive ? (
-          <Button className="w-full" variant="default">
-            <Link
-              to="/store/$storeKey/dashboard"
-              params={{ storeKey: store.StoreKey }}
-              className="flex items-center gap-2"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              View Dashboard
-            </Link>
-          </Button>
+          <>
+            <Button className="w-full" variant="default">
+              <Link
+                to="/store/$storeKey/dashboard"
+                params={{ storeKey: store.StoreKey }}
+                className="flex items-center gap-2"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                View Dashboard
+              </Link>
+            </Button>
+            <Button variant="outline" className="w-full">
+              <Link
+                to="/store/$storeKey/subscription"
+                params={{ storeKey: store.StoreKey }}
+                className="flex items-center gap-2"
+              >
+                <CreditCard className="h-4 w-4" />
+                Manage Subscription
+              </Link>
+            </Button>
+          </>
         ) : (
           <>
             <Alert variant="destructive" className="mb-3">
@@ -256,16 +319,15 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
                 restricted. Please renew your subscription to regain access.
               </AlertDescription>
             </Alert>
-            <Button
-              className="w-full"
-              onClick={() =>
-                setModalPath({
-                  modal: 'renew-store',
-                  storeKey: store.StoreKey,
-                })
-              }
-            >
-              Renew Subscription
+            <Button className="w-full" variant="default">
+              <Link
+                to="/store/$storeKey/subscription"
+                params={{ storeKey: store.StoreKey }}
+                className="flex items-center gap-2"
+              >
+                <CreditCard className="h-4 w-4" />
+                Renew Subscription
+              </Link>
             </Button>
           </>
         )}

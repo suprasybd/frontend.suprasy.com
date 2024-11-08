@@ -28,6 +28,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { getTurnstile, updateTurnstile } from './api';
 import Logo from './Logo';
 import { Eye, EyeOff } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/index';
 
 const formSchema = z.object({
   TurnstileKey: z.string().min(2).max(100),
@@ -88,8 +90,43 @@ const TurnstileComponent = () => {
     handleUpdateTurnstile(values);
   }
 
+  const isTurnstileConfigured =
+    turnstileData?.TurnstileKey && turnstileData?.TurnstileSecret;
+
   return (
     <section>
+      {!isTurnstileConfigured && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertTitle className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4" />
+            Action Required: Configure Turnstile
+          </AlertTitle>
+          <AlertDescription className="mt-2">
+            Your Turnstile security is not configured. Forms and authentication
+            will not work properly until you set up both the Turnstile Key and
+            Secret. You can get Cloudflare Turnstile for free at{' '}
+            <a
+              href="https://www.cloudflare.com/products/turnstile/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              cloudflare.com/turnstile
+            </a>
+            . For setup instructions, visit the{' '}
+            <a
+              href="https://developers.cloudflare.com/turnstile/get-started/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              Turnstile documentation
+            </a>
+            .
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* breadcrumbs */}
       <Breadcrumb className="pb-5">
         <BreadcrumbList>

@@ -13,6 +13,9 @@ import {
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbSeparator,
+  Alert,
+  AlertDescription,
+  AlertTitle,
 } from '@/components/index';
 import {
   Package2,
@@ -22,14 +25,27 @@ import {
   Users,
   Image,
   FileText,
+  AlertTriangle,
+  Shield,
 } from 'lucide-react';
 import { getAllCategories } from '../categories/api';
 import { getStoreCustomers } from '../customers/api';
 import { getStoreImages } from '../../components/Modals/MediaModal/api';
 import { getFooter, getAllPage } from '../footer/api';
+import { getTurnstile } from '@/pages/turnstile/api';
 
 const Dashboard = () => {
   const { storeKey } = useParams({ strict: false });
+
+  // Add Turnstile query
+  const { data: turnstileResponse } = useQuery({
+    queryKey: ['getTurnstile'],
+    queryFn: getTurnstile,
+  });
+
+  const isTurnstileConfigured =
+    turnstileResponse?.Data?.TurnstileKey &&
+    turnstileResponse?.Data?.TurnstileSecret;
 
   // Fetch products
   const { data: productsResponse } = useQuery({
@@ -73,6 +89,41 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col gap-6 p-6">
+      {/* Add Turnstile Warning */}
+      {!isTurnstileConfigured && (
+        <Alert
+          variant="destructive"
+          className="bg-destructive/5 border-destructive/20"
+        >
+          <div className="flex items-start gap-4">
+            <Shield className="h-5 w-5 text-destructive mt-0.5" />
+            <div className="flex-1">
+              <AlertTitle className="mb-2 text-destructive">
+                Security Configuration Required
+              </AlertTitle>
+              <AlertDescription className="text-muted-foreground">
+                Your store's security features are not fully configured. To
+                ensure proper functionality of forms and authentication:
+                <div className="mt-2 ml-4">
+                  • Configure Turnstile security settings
+                  <br />• Set up both Turnstile Key and Secret
+                </div>
+                <div className="mt-3">
+                  <Link
+                    to="/store/$storeKey/turnstile"
+                    params={{ storeKey: storeKey || '' }}
+                    className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium"
+                  >
+                    Configure Security Settings
+                    <AlertTriangle className="h-4 w-4" />
+                  </Link>
+                </div>
+              </AlertDescription>
+            </div>
+          </div>
+        </Alert>
+      )}
+
       <div className="flex items-center justify-between">
         <Breadcrumb>
           <BreadcrumbList>

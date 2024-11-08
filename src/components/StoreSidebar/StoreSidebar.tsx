@@ -14,11 +14,14 @@ import {
   Tent,
   Users,
   CreditCard,
+  AlertTriangle,
+  Shield,
 } from 'lucide-react';
 import { Badge } from '@/components/index';
 import { useQuery } from '@tanstack/react-query';
 import { getStoreOrders } from '@/pages/orders/api';
 import { getStoreDetails } from '@/pages/home/api';
+import { getTurnstile } from '@/pages/turnstile/api';
 
 // Improved link styles with better hover and active states
 const linkStyles = `
@@ -46,7 +49,15 @@ const StoreSidebar = () => {
     queryFn: () => getStoreDetails(storeKey),
   });
 
+  const { data: turnstileData } = useQuery({
+    queryKey: ['getTurnstile'],
+    queryFn: getTurnstile,
+  });
+
   const storeData = storeDetailsResponse?.Data;
+
+  const isTurnstileConfigured =
+    turnstileData?.Data?.TurnstileKey && turnstileData?.Data?.TurnstileSecret;
 
   return (
     <div className="hidden border-r bg-background/95 md:block">
@@ -162,10 +173,23 @@ const StoreSidebar = () => {
               <Link
                 to="/store/$storeKey/turnstile"
                 params={{ storeKey }}
-                className={linkStyles}
+                className={`${linkStyles} ${
+                  !isTurnstileConfigured
+                    ? 'bg-destructive/10 hover:bg-destructive/20 border border-destructive/50 font-medium'
+                    : ''
+                }`}
               >
-                <BrickWall className="h-4 w-4" />
-                Turnstile & Logo
+                <Shield
+                  className={`h-4 w-4 ${
+                    !isTurnstileConfigured ? 'text-destructive' : ''
+                  }`}
+                />
+                <span className="flex items-center gap-2">
+                  Turnstile
+                  {!isTurnstileConfigured && (
+                    <AlertTriangle className="h-4 w-4 text-destructive animate-pulse" />
+                  )}
+                </span>
               </Link>
               <Link
                 to="/store/$storeKey/domain"

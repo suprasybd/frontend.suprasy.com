@@ -46,6 +46,7 @@ import AddBalanceModal from '@/components/Modals/AddBalanceModal/AddBalanceModal
 import { format } from 'date-fns';
 import { ArrowLeft, ArrowRight, Receipt } from 'lucide-react';
 import { Clock, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
+import { Crown, Sparkles, Rocket, Gift } from 'lucide-react';
 
 const Home: React.FC = () => {
   const [showAddBalanceModal, setShowAddBalanceModal] = useState(false);
@@ -383,16 +384,69 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
     return format(new Date(subscription.EndDate), 'dd MMM yyyy');
   };
 
+  const getPlanDetails = (planName?: string) => {
+    switch (planName?.toLowerCase()) {
+      case 'enterprise':
+        return {
+          icon: <Rocket className="h-4 w-4 text-violet-500" />,
+          className:
+            'border-violet-200 hover:border-violet-300 bg-gradient-to-br from-violet-50/50 to-purple-50/50',
+          badgeClass: 'bg-violet-100 text-violet-700',
+          titleClass: 'text-violet-700',
+        };
+      case 'pro':
+        return {
+          icon: <Crown className="h-4 w-4 text-amber-500" />,
+          className:
+            'border-amber-200 hover:border-amber-300 bg-gradient-to-br from-amber-50/50 to-yellow-50/50',
+          badgeClass: 'bg-amber-100 text-amber-700',
+          titleClass: 'text-amber-700',
+        };
+      case 'starter':
+        return {
+          icon: <Sparkles className="h-4 w-4 text-blue-500" />,
+          className:
+            'border-blue-200 hover:border-blue-300 bg-gradient-to-br from-blue-50/50 to-cyan-50/50',
+          badgeClass: 'bg-blue-100 text-blue-700',
+          titleClass: 'text-blue-700',
+        };
+      default:
+        return {
+          icon: <Gift className="h-4 w-4 text-gray-500" />,
+          className: 'border-gray-200 hover:border-gray-300',
+          badgeClass: 'bg-gray-100 text-gray-700',
+          titleClass: 'text-gray-700',
+        };
+    }
+  };
+
+  const planStyle = getPlanDetails(currentPlan?.Name);
+
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+    <Card
+      className={cn(
+        'overflow-hidden transition-all hover:shadow-lg',
+        planStyle.className
+      )}
+    >
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-xl mb-2">{store.StoreName}</CardTitle>
+            <div className="flex items-center gap-2 mb-2">
+              {planStyle.icon}
+              <CardTitle className={cn('text-xl', planStyle.titleClass)}>
+                {store.StoreName}
+              </CardTitle>
+            </div>
             <CardDescription className="flex items-center gap-2">
               {store.IsActive ? (
-                <Badge variant="secondary" className="px-2 py-0.5">
-                  Active
+                <Badge
+                  variant="secondary"
+                  className={cn('px-2 py-0.5', planStyle.badgeClass)}
+                >
+                  {currentPlan?.Name?.charAt(0).toUpperCase() +
+                    currentPlan?.Name?.slice(1) || 'Free'}{' '}
+                  Plan • Active
                 </Badge>
               ) : (
                 <Badge variant="destructive" className="px-2 py-0.5">

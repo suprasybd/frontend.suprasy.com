@@ -444,8 +444,10 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
                   variant="secondary"
                   className={cn('px-2 py-0.5', planStyle.badgeClass)}
                 >
-                  {currentPlan?.Name?.charAt(0).toUpperCase() +
-                    currentPlan?.Name?.slice(1) || 'Free'}{' '}
+                  {currentPlan?.Name
+                    ? currentPlan.Name.charAt(0).toUpperCase() +
+                      currentPlan.Name.slice(1)
+                    : 'Free'}{' '}
                   Plan • Active
                 </Badge>
               ) : (

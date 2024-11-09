@@ -25,7 +25,7 @@ import { cn } from '@/libs/utils';
 import { PlanType } from '../home/api/types';
 import SubscriptionActionModal from '@/components/Modals/SubscriptionActionModal/SubscriptionActionModal';
 import AddBalanceModal from '@/components/Modals/AddBalanceModal/AddBalanceModal';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Crown, Sparkles, Rocket, Gift } from 'lucide-react';
 
 const Subscription = () => {
   const { storeKey } = useParams({ from: '/store/$storeKey/subscription' });
@@ -112,6 +112,46 @@ const Subscription = () => {
     return plan.MonthlyPrice > 0;
   };
 
+  const getPlanDetails = (planName?: string) => {
+    switch (planName?.toLowerCase()) {
+      case 'enterprise':
+        return {
+          icon: <Rocket className="h-5 w-5 text-violet-500" />,
+          className:
+            'border-violet-200 hover:border-violet-300 bg-gradient-to-br from-violet-50/50 to-purple-50/50',
+          badgeClass: 'bg-violet-100 text-violet-700',
+          titleClass: 'text-violet-700',
+          checkmarkClass: 'text-violet-500',
+        };
+      case 'pro':
+        return {
+          icon: <Crown className="h-5 w-5 text-amber-500" />,
+          className:
+            'border-amber-200 hover:border-amber-300 bg-gradient-to-br from-amber-50/50 to-yellow-50/50',
+          badgeClass: 'bg-amber-100 text-amber-700',
+          titleClass: 'text-amber-700',
+          checkmarkClass: 'text-amber-500',
+        };
+      case 'starter':
+        return {
+          icon: <Sparkles className="h-5 w-5 text-blue-500" />,
+          className:
+            'border-blue-200 hover:border-blue-300 bg-gradient-to-br from-blue-50/50 to-cyan-50/50',
+          badgeClass: 'bg-blue-100 text-blue-700',
+          titleClass: 'text-blue-700',
+          checkmarkClass: 'text-blue-500',
+        };
+      default:
+        return {
+          icon: <Gift className="h-5 w-5 text-gray-500" />,
+          className: 'border-gray-200 hover:border-gray-300',
+          badgeClass: 'bg-gray-100 text-gray-700',
+          titleClass: 'text-gray-700',
+          checkmarkClass: 'text-gray-500',
+        };
+    }
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-bold">Subscription Management</h1>
@@ -178,68 +218,85 @@ const Subscription = () => {
 
       {/* Available Plans */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {plans.map((plan) => (
-          <Card
-            key={plan.Id}
-            className={cn(
-              'relative',
-              isCurrentPlan(plan.Id) && 'border-primary shadow-md'
-            )}
-          >
-            {isCurrentPlan(plan.Id) && (
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-primary text-primary-foreground text-xs px-3 py-1 rounded-full">
-                  Current Plan
-                </span>
-              </div>
-            )}
-            <CardHeader>
-              <CardTitle>{plan.Name}</CardTitle>
-              <CardDescription>
-                {plan.MonthlyPrice > 0
-                  ? `${plan.MonthlyPrice} BDT/month`
-                  : 'Free'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 mb-6">
-                {getPlanFeatures(plan.Features).map(
-                  (feature: string, idx: number) => (
-                    <li key={idx} className="flex items-start">
-                      <span className="mr-2 mt-1 text-primary">✓</span>
-                      {feature}
-                    </li>
-                  )
-                )}
-              </ul>
+        {plans.map((plan) => {
+          const planStyle = getPlanDetails(plan.Name);
 
-              {isCurrentPlan(plan.Id) ? (
-                isPaidPlan(plan) ? (
+          return (
+            <Card
+              key={plan.Id}
+              className={cn(
+                'relative transition-all hover:shadow-lg',
+                planStyle.className,
+                isCurrentPlan(plan.Id) && 'ring-2 ring-primary ring-offset-2'
+              )}
+            >
+              {isCurrentPlan(plan.Id) && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-primary text-primary-foreground text-xs px-3 py-1 rounded-full">
+                    Current Plan
+                  </span>
+                </div>
+              )}
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  {planStyle.icon}
+                  <CardTitle className={cn('capitalize', planStyle.titleClass)}>
+                    {plan.Name}
+                  </CardTitle>
+                </div>
+                <CardDescription className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      'font-medium text-base',
+                      planStyle.titleClass
+                    )}
+                  >
+                    {plan.MonthlyPrice > 0
+                      ? `${plan.MonthlyPrice} BDT/month`
+                      : 'Free'}
+                  </span>
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 mb-6">
+                  {getPlanFeatures(plan.Features).map(
+                    (feature: string, idx: number) => (
+                      <li key={idx} className="flex items-start">
+                        <span
+                          className={cn('mr-2 mt-1', planStyle.checkmarkClass)}
+                        >
+                          ✓
+                        </span>
+                        {feature}
+                      </li>
+                    )
+                  )}
+                </ul>
+
+                {isCurrentPlan(plan.Id) ? (
+                  isPaidPlan(plan) ? (
+                    <Button
+                      className="w-full"
+                      disabled={isPending}
+                      onClick={() => handleSubscriptionAction(plan)}
+                    >
+                      {isPending ? 'Processing...' : 'Add More Months'}
+                    </Button>
+                  ) : null
+                ) : isPaidPlan(plan) ? (
                   <Button
                     className="w-full"
+                    variant="default"
                     disabled={isPending}
                     onClick={() => handleSubscriptionAction(plan)}
                   >
-                    {isPending ? 'Processing...' : 'Add More Months'}
+                    {isPending ? 'Processing...' : `Upgrade to ${plan.Name}`}
                   </Button>
-                ) : null
-              ) : (
-                <Button
-                  className="w-full"
-                  variant={isPaidPlan(plan) ? 'default' : 'secondary'}
-                  disabled={isPending}
-                  onClick={() => handleSubscriptionAction(plan)}
-                >
-                  {isPending
-                    ? 'Processing...'
-                    : isPaidPlan(plan)
-                    ? `Upgrade to ${plan.Name}`
-                    : 'Switch to Free Plan'}
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+                ) : null}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
       {/* Insufficient Balance Warning */}
       {!canRenew &&

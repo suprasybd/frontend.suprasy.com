@@ -48,9 +48,6 @@ const StoreStoreKeyOrdersLazyImport = createFileRoute(
 )()
 const StoreStoreKeyMediaLazyImport = createFileRoute('/store/$storeKey/media')()
 const StoreStoreKeyHomeLazyImport = createFileRoute('/store/$storeKey/home')()
-const StoreStoreKeyGenlinkLazyImport = createFileRoute(
-  '/store/$storeKey/genlink',
-)()
 const StoreStoreKeyFooterLazyImport = createFileRoute(
   '/store/$storeKey/footer',
 )()
@@ -175,13 +172,6 @@ const StoreStoreKeyHomeLazyRoute = StoreStoreKeyHomeLazyImport.update({
   getParentRoute: () => StoreRoute,
 } as any).lazy(() =>
   import('./routes/store/$storeKey/home.lazy').then((d) => d.Route),
-)
-
-const StoreStoreKeyGenlinkLazyRoute = StoreStoreKeyGenlinkLazyImport.update({
-  path: '/$storeKey/genlink',
-  getParentRoute: () => StoreRoute,
-} as any).lazy(() =>
-  import('./routes/store/$storeKey/genlink.lazy').then((d) => d.Route),
 )
 
 const StoreStoreKeyFooterLazyRoute = StoreStoreKeyFooterLazyImport.update({
@@ -468,13 +458,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreStoreKeyFooterLazyImport
       parentRoute: typeof StoreImport
     }
-    '/store/$storeKey/genlink': {
-      id: '/store/$storeKey/genlink'
-      path: '/$storeKey/genlink'
-      fullPath: '/store/$storeKey/genlink'
-      preLoaderRoute: typeof StoreStoreKeyGenlinkLazyImport
-      parentRoute: typeof StoreImport
-    }
     '/store/$storeKey/home': {
       id: '/store/$storeKey/home'
       path: '/$storeKey/home'
@@ -584,7 +567,6 @@ export const routeTree = rootRoute.addChildren({
     StoreStoreKeyDomainLazyRoute,
     StoreStoreKeyEmailLazyRoute,
     StoreStoreKeyFooterLazyRoute,
-    StoreStoreKeyGenlinkLazyRoute,
     StoreStoreKeyHomeLazyRoute,
     StoreStoreKeyMediaLazyRoute,
     StoreStoreKeyOrdersLazyRoute,
@@ -655,7 +637,6 @@ export const routeTree = rootRoute.addChildren({
         "/store/$storeKey/domain",
         "/store/$storeKey/email",
         "/store/$storeKey/footer",
-        "/store/$storeKey/genlink",
         "/store/$storeKey/home",
         "/store/$storeKey/media",
         "/store/$storeKey/orders",
@@ -729,10 +710,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/store/$storeKey/footer": {
       "filePath": "store/$storeKey/footer.lazy.tsx",
-      "parent": "/store"
-    },
-    "/store/$storeKey/genlink": {
-      "filePath": "store/$storeKey/genlink.lazy.tsx",
       "parent": "/store"
     },
     "/store/$storeKey/home": {

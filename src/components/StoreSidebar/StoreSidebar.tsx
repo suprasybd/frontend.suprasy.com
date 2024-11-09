@@ -151,14 +151,6 @@ const StoreSidebar = () => {
                 <Tent className="h-4 w-4" />
                 Pages & Footer
               </Link>
-              <Link
-                to="/store/$storeKey/genlink"
-                params={{ storeKey }}
-                className={linkStyles}
-              >
-                <Link2 className="h-4 w-4" />
-                Direct Checkout
-              </Link>
             </div>
 
             {/* Settings & Admin */}

@@ -47,7 +47,6 @@ import { Route as ProductsCreateRoute } from '../../../routes/store/$storeKey/pr
 import {
   createStoresProduct,
   getProductsDetails,
-  getProductsImages,
   getVariations,
   updateStoresProduct,
 } from '../api';
@@ -101,26 +100,48 @@ const CreateProduct: React.FC = () => {
     enabled: !!productId && update,
   });
 
-  const { data: productImagesResponse } = useQuery({
-    queryKey: ['getProductImages', productId],
-    queryFn: () => getProductsImages(productId || 0),
-    enabled: !!productId && update,
-  });
-
   const { data: variationsDataResponse } = useQuery({
-    queryKey: ['getVarination', productId],
+    queryKey: ['getVarination', productId, storeKey],
     queryFn: () => getVariations(productId || 0),
     enabled: !!productId && update,
   });
 
   useEffect(() => {
-    if (variationsDataResponse) {
-      form.setValue('ProductVariations', variationsDataResponse.Data as any);
+    if (
+      variationsDataResponse?.Data &&
+      Array.isArray(variationsDataResponse.Data)
+    ) {
+      const validVariations = variationsDataResponse.Data.map((variation) => ({
+        Id: variation.Id,
+        ChoiceName: variation.ChoiceName || 'Default',
+        Price: variation.Price || 0,
+        SalesPrice: variation.SalesPrice || 0,
+        Sku: variation.Sku || '',
+        Inventory: variation.Inventory || 0,
+        Images: variation.Images || [],
+        Deleted: false,
+      }));
+
+      setTimeout(() => {
+        form.setValue('ProductVariations', validVariations, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }, 0);
+
+      console.log('Setting variations:', validVariations);
     }
-  }, [variationsDataResponse, form]);
+  }, [variationsDataResponse?.Data, form]);
+
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      console.log('Form values updated:', value.ProductVariations);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   const productDetails = productDetailsResponse?.Data;
-  const productImagesData = productImagesResponse?.Data;
 
   // Pre fill previous values for update
 
@@ -135,16 +156,7 @@ const CreateProduct: React.FC = () => {
 
       form.setValue('Status', productDetails.Status);
     }
-    if (productImagesData) {
-      const productImagesFormatted = productImagesData.map((image) => ({
-        ImageUrl: image.ImageUrl,
-      }));
-      console.log(productImagesFormatted);
-      // form.setValue('Images', productImagesFormatted);
-
-      // setImageUpdated((prev) => prev + 1);
-    }
-  }, [productDetails, form, productImagesData, isUpdating]);
+  }, [productDetails, form, isUpdating]);
 
   const navigate = useNavigate();
 
@@ -302,6 +314,8 @@ const CreateProduct: React.FC = () => {
     }
   };
 
+  const status = form.watch('Status');
+
   const [turnstileLoaded] = useTurnStileHook();
 
   return (
@@ -396,11 +410,11 @@ const CreateProduct: React.FC = () => {
                 <CardTitle>Product Status</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
+                <div className="space-y-2" key={status}>
                   <Label htmlFor="status">Status</Label>
                   <Select
                     onValueChange={(value) => form.setValue('Status', value)}
-                    defaultValue={productDetails?.Status || 'draft'}
+                    defaultValue={status || 'draft'}
                   >
                     <SelectTrigger id="status">
                       <SelectValue placeholder="Select status" />

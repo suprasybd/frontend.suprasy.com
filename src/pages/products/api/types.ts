@@ -24,6 +24,9 @@ export interface ProductVariationType {
   Deleted: boolean;
   CreatedAt: Date;
   UpdatedAt: Date;
+  Images: {
+    ImageUrl: string;
+  }[];
 }
 
 export interface ProductImagesTypes {

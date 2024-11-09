@@ -1,3 +1,6 @@
+import { ColumnDef } from '@tanstack/react-table';
+import { MoreHorizontal } from 'lucide-react';
+import { PaymentMethodType } from '../../api';
 import {
   Button,
   DropdownMenu,
@@ -7,29 +10,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/index';
-import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal } from 'lucide-react';
-import React from 'react';
-import {
-  formatDate,
-  formatDateToMinutes,
-} from '../../../libs/helpers/formatdate';
-import { AreaType } from '../api';
-import DeleteAreaModal from './DeleteAreaModal';
-import { useShippingStore } from './shippingStore';
+import { usePaymentStore } from './paymentStore';
+import DeletePaymentModal from './DeletePaymentModal';
+import { formatDateToMinutes } from '@/libs/helpers/formatdate';
 
-export const areasColumns: ColumnDef<AreaType>[] = [
+export const paymentColumns: ColumnDef<PaymentMethodType>[] = [
   {
-    accessorKey: 'Area',
-    header: 'Zone/Area Name',
+    accessorKey: 'PaymentMethod',
+    header: 'Payment Method',
   },
   {
     accessorKey: 'Description',
     header: 'Description',
-  },
-  {
-    accessorKey: 'Cost',
-    header: 'Cost (BDT/৳)',
   },
   {
     accessorKey: 'CreatedAt',
@@ -38,11 +30,10 @@ export const areasColumns: ColumnDef<AreaType>[] = [
       return formatDateToMinutes(row.original.CreatedAt);
     },
   },
-
   {
     id: 'actions',
     cell: ({ row }) => {
-      const area = row.original;
+      const payment = row.original;
 
       return (
         <div className="flex justify-center">
@@ -55,14 +46,13 @@ export const areasColumns: ColumnDef<AreaType>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
               <DropdownMenuSeparator />
-              <UpdateWrapper areaId={area.Id} />
+              <UpdateWrapper paymentId={payment.Id} />
               <DropdownMenuItem
                 onClick={(e) => e.preventDefault()}
                 className="hover:!bg-red-500 hover:!text-white"
               >
-                <DeleteAreaModal areaId={area.Id} />
+                <DeletePaymentModal paymentId={payment.Id} />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -72,20 +62,20 @@ export const areasColumns: ColumnDef<AreaType>[] = [
   },
 ];
 
-const UpdateWrapper: React.FC<{ areaId: number }> = ({ areaId }) => {
-  const { setShippingModalParams, toggleModal } = useShippingStore(
+const UpdateWrapper: React.FC<{ paymentId: number }> = ({ paymentId }) => {
+  const { setPaymentModalParams, toggleModal } = usePaymentStore(
     (state) => state
   );
   return (
     <DropdownMenuItem
       onClick={(e) => {
         e.preventDefault();
-        setShippingModalParams({ update: true, areaId: areaId });
+        setPaymentModalParams({ update: true, paymentId });
         toggleModal();
       }}
-      className="  hover:cursor-pointer"
+      className="hover:cursor-pointer"
     >
-      Update Area
+      Update Payment Method
     </DropdownMenuItem>
   );
 };

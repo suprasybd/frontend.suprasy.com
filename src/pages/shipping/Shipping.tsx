@@ -9,6 +9,7 @@ import {
 } from '@/components/index';
 import Area from './components/Area';
 import ShippingMethod from './components/shipping-method/Method';
+import PaymentMethod from './components/payment-method/Method';
 
 const Shipping: React.FC = () => {
   return (
@@ -29,12 +30,21 @@ const Shipping: React.FC = () => {
               >
                 Delivery Method
               </TabsTrigger>
+              <TabsTrigger
+                value="pmethod"
+                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-primary data-[state=active]:border-b-2 rounded-none px-4 py-3"
+              >
+                Payment Method
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="zones" className="w-full mt-4">
               <Area />
             </TabsContent>
             <TabsContent value="dmethod" className="w-full mt-4">
               <ShippingMethod />
+            </TabsContent>
+            <TabsContent value="pmethod" className="w-full mt-4">
+              <PaymentMethod />
             </TabsContent>
           </Tabs>
         </CardContent>

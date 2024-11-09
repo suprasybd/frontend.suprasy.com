@@ -24,6 +24,10 @@ export const areasColumns: ColumnDef<ShippingMethodType>[] = [
     header: 'Delivery Method',
   },
   {
+    accessorKey: 'Description',
+    header: 'Description',
+  },
+  {
     accessorKey: 'Cost',
     header: 'Cost (BDT/৳)',
   },

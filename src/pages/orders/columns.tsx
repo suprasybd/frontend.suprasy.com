@@ -89,6 +89,27 @@ export const ordersColumn: ColumnDef<OrderType>[] = [
     },
   },
   {
+    id: 'payment',
+    header: 'Payment Details',
+    cell: ({ row }) => {
+      const order = row.original;
+      return (
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="font-medium">
+              {order.OrderMethod}
+            </Badge>
+          </div>
+          {order.PaymentType && order.PaymentType !== order.OrderMethod && (
+            <div className="text-sm text-muted-foreground">
+              Via: {order.PaymentType}
+            </div>
+          )}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: 'Status',
     header: 'Status',
     cell: ({ row }) => {

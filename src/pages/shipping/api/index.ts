@@ -9,6 +9,7 @@ export interface AreaType {
   StoreKey: string;
   Area: string;
   Cost: number;
+  Description: string;
   CreatedAt: string;
   UpdatedAt: string;
 }
@@ -18,6 +19,15 @@ export interface ShippingMethodType {
   StoreKey: string;
   DeliveryMethod: string;
   Cost: number;
+  Description: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface PaymentMethodType {
+  Id: number;
+  PaymentMethod: string;
+  Description: string;
   CreatedAt: string;
   UpdatedAt: string;
 }
@@ -39,6 +49,7 @@ export const getAreasById = async (
 export const addArea = async (data: {
   Area: string;
   Cost: number;
+  Description: string;
 }): Promise<ResponseType<AreaType>> => {
   const response = await ApiClient.post(`/shipping/add-area`, data);
 
@@ -49,6 +60,7 @@ export const updateArea = async (data: {
   Id: number;
   Area: string;
   Cost: number;
+  Description: string;
 }): Promise<ResponseType<AreaType>> => {
   const response = await ApiClient.put(
     `/shipping/update-area/${data.Id}`,
@@ -88,6 +100,7 @@ export const getMethodById = async (
 export const addMethod = async (data: {
   DeliveryMethod: string;
   Cost: number;
+  Description: string;
 }): Promise<ResponseType<ShippingMethodType>> => {
   const response = await ApiClient.post(`/shipping/add-method`, data);
 
@@ -98,6 +111,7 @@ export const updateMethod = async (data: {
   Id: number;
   DeliveryMethod: string;
   Cost: number;
+  Description: string;
 }): Promise<ResponseType<ShippingMethodType>> => {
   const response = await ApiClient.put(
     `/shipping/update-method/${data.Id}`,
@@ -112,5 +126,46 @@ export const deleteMethod = async (
 ): Promise<ResponseType<ShippingMethodType>> => {
   const response = await ApiClient.delete(`/shipping/delete-method/${Id}`);
 
+  return response.data;
+};
+
+export const getPaymentsList = async (): Promise<
+  ListResponseType<PaymentMethodType>
+> => {
+  const response = await ApiClient.get(`/shipping/get-payments`);
+  return response.data;
+};
+
+export const getPaymentById = async (
+  paymentId: number
+): Promise<ResponseType<PaymentMethodType>> => {
+  const response = await ApiClient.get(`/shipping/get-payment/${paymentId}`);
+  return response.data;
+};
+
+export const addPayment = async (data: {
+  PaymentMethod: string;
+  Description: string;
+}): Promise<ResponseType<PaymentMethodType>> => {
+  const response = await ApiClient.post(`/shipping/add-payment`, data);
+  return response.data;
+};
+
+export const updatePayment = async (data: {
+  Id: number;
+  PaymentMethod: string;
+  Description: string;
+}): Promise<ResponseType<PaymentMethodType>> => {
+  const response = await ApiClient.put(
+    `/shipping/update-payment/${data.Id}`,
+    data
+  );
+  return response.data;
+};
+
+export const deletePayment = async (
+  Id: number
+): Promise<ResponseType<PaymentMethodType>> => {
+  const response = await ApiClient.delete(`/shipping/delete-payment/${Id}`);
   return response.data;
 };

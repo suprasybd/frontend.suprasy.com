@@ -15,107 +15,101 @@ import {
   useToast,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   Textarea,
 } from '@/components/index';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { addArea, getAreasById, updateArea } from '../api';
-import { areaSchema } from './Area.zod';
-import { useShippingStore } from './shippingStore';
+import { addPayment, getPaymentById, updatePayment } from '../../api';
+import { paymentSchema } from './Method.zod';
+import { usePaymentStore } from './paymentStore';
+import useTurnStileHook from '@/hooks/turnstile';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { ReloadIcon } from '@radix-ui/react-icons';
-import useTurnStileHook from '@/hooks/turnstile';
 
-const AddArea: React.FC = () => {
-  const form = useForm<z.infer<typeof areaSchema>>({
-    resolver: zodResolver(areaSchema),
+const AddPayment: React.FC = () => {
+  const form = useForm<z.infer<typeof paymentSchema>>({
+    resolver: zodResolver(paymentSchema),
     defaultValues: {
-      Cost: 50,
-      Area: 'Dhaka',
+      PaymentMethod: '',
       Description: '',
     },
   });
+  const isModalOpen = usePaymentStore((state) => state.isModalOpen);
+  const toggleModal = usePaymentStore((state) => state.toggleModal);
+  const clearParams = usePaymentStore((state) => state.clearPaymentModalParams);
 
-  const isModalOpen = useShippingStore((state) => state.isModalOpen);
-  const toggleModal = useShippingStore((state) => state.toggleModal);
-  const clearParams = useShippingStore(
-    (state) => state.clearShippingModalParams
-  );
-
-  const update = useShippingStore((state) => state.params).update;
-  const areaId = useShippingStore((state) => state.params).areaId;
+  const update = usePaymentStore((state) => state.params).update;
+  const paymentId = usePaymentStore((state) => state.params).paymentId;
 
   const { toast } = useToast();
   const closeBtn = useRef(null);
   const queryClient = useQueryClient();
 
-  const { data: areaDataResponse } = useQuery({
-    queryKey: ['getAreaDeatils', areaId],
-    queryFn: () => getAreasById(areaId || 0),
-    enabled: !!areaId,
+  const { data: paymentDataResponse } = useQuery({
+    queryKey: ['getPaymentDetails', paymentId],
+    queryFn: () => getPaymentById(paymentId || 0),
+    enabled: !!paymentId,
   });
 
-  const areaData = areaDataResponse?.Data;
+  const paymentData = paymentDataResponse?.Data;
 
   useEffect(() => {
-    if (areaData) {
-      form.setValue('Cost', areaData.Cost);
-      form.setValue('Area', areaData.Area);
-      form.setValue('Description', areaData.Description);
+    if (paymentData) {
+      form.setValue('PaymentMethod', paymentData.PaymentMethod);
+      form.setValue('Description', paymentData.Description);
     }
-  }, [areaData, form]);
+  }, [paymentData, form]);
 
-  const { mutate: handleAddArea, isPending } = useMutation({
-    mutationFn: addArea,
+  const { mutate: handleAddPayment, isPending } = useMutation({
+    mutationFn: addPayment,
     onSuccess: (response) => {
       if (closeBtn.current) {
         (closeBtn.current as { click: () => void }).click();
       }
-      toggleModal();
-      clearParams();
 
-      void queryClient.refetchQueries({ queryKey: ['getStoreAreasZones'] });
+      void queryClient.refetchQueries({
+        queryKey: ['getStorePaymentsList'],
+      });
 
       toast({
-        title: 'Add Area',
+        title: 'Add Payment Method',
         description: response.Message,
         variant: 'default',
       });
     },
     onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Add Area',
+        title: 'Add Payment Method',
         description: response.response.data.Message,
         variant: 'destructive',
       });
     },
   });
 
-  const { mutate: handleUpdateArea, isPending: isUpdating } = useMutation({
-    mutationFn: updateArea,
+  const { mutate: handleUpdatePayment, isPending: isUpdating } = useMutation({
+    mutationFn: updatePayment,
     onSuccess: (response) => {
       if (closeBtn.current) {
         (closeBtn.current as { click: () => void }).click();
       }
-      toggleModal();
-      clearParams();
 
-      void queryClient.refetchQueries({ queryKey: ['getStoreAreasZones'] });
+      void queryClient.refetchQueries({
+        queryKey: ['getStorePaymentsList'],
+      });
 
       toast({
-        title: 'Update Area',
+        title: 'Update Payment Method',
         description: response.Message,
         variant: 'default',
       });
     },
     onError: (response: { response: { data: { Message: string } } }) => {
       toast({
-        title: 'Update Area',
+        title: 'Update Payment Method',
         description: response.response.data.Message,
         variant: 'destructive',
       });
@@ -123,21 +117,20 @@ const AddArea: React.FC = () => {
   });
 
   function onSubmit(
-    values: z.infer<typeof areaSchema>,
+    values: z.infer<typeof paymentSchema>,
     turnstileResponse: string | null
   ) {
     if (update) {
-      handleUpdateArea({
-        Id: areaId,
+      handleUpdatePayment({
+        Id: paymentId,
         ...values,
         'cf-turnstile-response': turnstileResponse,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
     } else {
-      handleAddArea({
+      handleAddPayment({
         ...values,
         'cf-turnstile-response': turnstileResponse,
-      } as z.infer<typeof areaSchema>);
+      } as z.infer<typeof paymentSchema>);
     }
   }
 
@@ -145,7 +138,6 @@ const AddArea: React.FC = () => {
     window.location.reload();
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFormWrapper = (e: any) => {
     e.preventDefault();
     try {
@@ -153,7 +145,7 @@ const AddArea: React.FC = () => {
 
       if (!tRes) return;
 
-      form.handleSubmit((values: z.infer<typeof areaSchema>) =>
+      form.handleSubmit((values: z.infer<typeof paymentSchema>) =>
         onSubmit(values, tRes)
       )(e);
     } catch (error) {
@@ -175,51 +167,31 @@ const AddArea: React.FC = () => {
     >
       <DialogTrigger onClick={() => toggleModal()}>
         <Button className="my-3" variant="gradiantT">
-          Add Area/Zone
+          Add Payment Method
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{!update ? 'Add' : 'Update'} Area/Zone</DialogTitle>
-          <DialogDescription>
-            Add shipping areas and set delivery costs for different zones.
-          </DialogDescription>
+          <DialogTitle className="text-xl font-semibold">
+            {!update ? 'Add' : 'Update'} Payment Method
+          </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={handleFormWrapper} className="space-y-6">
             <FormField
               control={form.control}
-              name="Area"
+              name="PaymentMethod"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Area Name</FormLabel>
+                  <FormLabel className="text-sm font-medium">
+                    Payment Method
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter area name" {...field} />
+                    <Input placeholder="Enter payment method name" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    The name of the delivery zone or area
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="Cost"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Delivery Cost</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter delivery cost"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The delivery cost for this area in your currency
+                  <FormDescription className="text-xs text-muted-foreground">
+                    Enter a name for this payment method
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -236,13 +208,13 @@ const AddArea: React.FC = () => {
                   </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Enter area description"
+                      placeholder="Enter payment method description"
                       className="resize-none"
                       {...field}
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-muted-foreground">
-                    Provide details about this area/zone
+                    Provide details about this payment method
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -256,9 +228,8 @@ const AddArea: React.FC = () => {
             />
 
             <div className="flex gap-4 mt-6">
-              <DialogClose asChild>
+              <DialogClose ref={closeBtn}>
                 <Button
-                  ref={closeBtn}
                   onClick={(e) => {
                     e.preventDefault();
                     if (closeBtn.current) {
@@ -266,15 +237,14 @@ const AddArea: React.FC = () => {
                     }
                   }}
                   variant="outline"
-                  className="w-full"
+                  className="w-[120px]"
                 >
                   Cancel
                 </Button>
               </DialogClose>
-
               <Button
                 variant="defaultGradiant"
-                className="w-full"
+                className="flex-1"
                 type="submit"
                 disabled={isPending || isUpdating || !turnstileLoaded}
               >
@@ -286,8 +256,8 @@ const AddArea: React.FC = () => {
                 ) : (
                   <span>
                     {isPending || isUpdating
-                      ? `${update ? 'Updating' : 'Adding'}...`
-                      : `${update ? 'Update' : 'Add'} Area`}
+                      ? `${update ? 'Updating' : 'Adding'} Payment Method...`
+                      : `${update ? 'Update' : 'Add'} Payment Method`}
                   </span>
                 )}
               </Button>
@@ -299,4 +269,4 @@ const AddArea: React.FC = () => {
   );
 };
 
-export default AddArea;
+export default AddPayment;

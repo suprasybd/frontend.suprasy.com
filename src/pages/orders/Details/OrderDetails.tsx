@@ -125,6 +125,30 @@ const OrderDetails = () => {
           </div>
         </div>
 
+        {/* Payment Information */}
+        <div className="bg-white rounded-lg border border-gray-200">
+          <div className="p-6">
+            <h2 className="text-lg font-semibold mb-4">Payment Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-sm text-gray-500">Payment Method</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="outline" className="font-medium">
+                    {order?.OrderMethod}
+                  </Badge>
+                </div>
+              </div>
+              {order?.PaymentType &&
+                order.PaymentType !== order.OrderMethod && (
+                  <div>
+                    <h3 className="text-sm text-gray-500">Payment Via</h3>
+                    <p className="font-medium mt-1">{order?.PaymentType}</p>
+                  </div>
+                )}
+            </div>
+          </div>
+        </div>
+
         {/* Products List */}
         <div className="bg-white rounded-lg border border-gray-200">
           <div className="p-6">

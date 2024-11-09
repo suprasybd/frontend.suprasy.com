@@ -15,6 +15,7 @@ import {
   useToast,
   DialogHeader,
   DialogTitle,
+  Textarea,
 } from '@/components/index';
 import React, { useEffect, useRef } from 'react';
 
@@ -33,8 +34,9 @@ const AddMethod: React.FC = () => {
   const form = useForm<z.infer<typeof methodSchema>>({
     resolver: zodResolver(methodSchema),
     defaultValues: {
-      Cost: 50,
       DeliveryMethod: 'COD',
+      Cost: 50,
+      Description: '',
     },
   });
   const isModalOpen = useShippingStoreMethod((state) => state.isModalOpen);
@@ -60,8 +62,9 @@ const AddMethod: React.FC = () => {
 
   useEffect(() => {
     if (methodData) {
-      form.setValue('Cost', methodData.Cost);
       form.setValue('DeliveryMethod', methodData.DeliveryMethod);
+      form.setValue('Cost', methodData.Cost);
+      form.setValue('Description', methodData.Description);
     }
   }, [methodData, form]);
 
@@ -215,6 +218,29 @@ const AddMethod: React.FC = () => {
                   </FormControl>
                   <FormDescription className="text-xs text-muted-foreground">
                     Enter the delivery cost for this method
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="Description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
+                    Description
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Enter delivery method description"
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs text-muted-foreground">
+                    Provide details about this delivery method
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

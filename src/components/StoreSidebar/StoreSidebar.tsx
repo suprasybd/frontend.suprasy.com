@@ -22,6 +22,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getStoreOrders } from '@/pages/orders/api';
 import { getStoreDetails } from '@/pages/home/api';
 import { getTurnstile } from '@/pages/turnstile/api';
+import { useAuthStore } from '@/store/authStore';
 
 // Improved link styles with better hover and active states
 const linkStyles = `
@@ -38,6 +39,7 @@ const sectionHeaderStyles = `
 
 const StoreSidebar = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
+  const user = useAuthStore((state) => state.user);
 
   const { data: ordersResponse, isLoading } = useQuery({
     queryKey: ['getStoreOrders', 1, 5, 'pending'],
@@ -207,14 +209,16 @@ const StoreSidebar = () => {
                 <Palette className="h-4 w-4" />
                 Themes
               </Link>
-              <Link
-                to="/store/$storeKey/adminThemes"
-                params={{ storeKey }}
-                className={linkStyles}
-              >
-                <Settings className="h-4 w-4" />
-                Admin Themes
-              </Link>
+              {user?.Role === 'admin' && (
+                <Link
+                  to="/store/$storeKey/adminThemes"
+                  params={{ storeKey }}
+                  className={linkStyles}
+                >
+                  <Settings className="h-4 w-4" />
+                  Admin Themes
+                </Link>
+              )}
             </div>
           </nav>
         </div>

@@ -19,6 +19,7 @@ import { Route as RenderImport } from './routes/render'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as ForgotpasswordImport } from './routes/forgotpassword'
+import { Route as IndexImport } from './routes/index'
 import { Route as RenderProductionDescriptionImport } from './routes/render/productionDescription'
 import { Route as PasswordresetCodeIndexImport } from './routes/passwordreset/$code/index'
 import { Route as StoreStoreKeyThemesImport } from './routes/store/$storeKey/themes'
@@ -113,6 +114,11 @@ const LoginRoute = LoginImport.update({
 
 const ForgotpasswordRoute = ForgotpasswordImport.update({
   path: '/forgotpassword',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const IndexRoute = IndexImport.update({
+  path: '/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -308,6 +314,13 @@ const StoreStoreKeyProductsProductIdDetailsLazyRoute =
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
     '/forgotpassword': {
       id: '/forgotpassword'
       path: '/forgotpassword'
@@ -552,6 +565,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
+  IndexRoute,
   ForgotpasswordRoute,
   LoginRoute,
   RegisterRoute,
@@ -596,6 +610,7 @@ export const routeTree = rootRoute.addChildren({
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
+        "/",
         "/forgotpassword",
         "/login",
         "/register",
@@ -605,6 +620,9 @@ export const routeTree = rootRoute.addChildren({
         "/about",
         "/passwordreset/$code/"
       ]
+    },
+    "/": {
+      "filePath": "index.tsx"
     },
     "/forgotpassword": {
       "filePath": "forgotpassword.tsx"

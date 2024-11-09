@@ -1,6 +1,6 @@
 import { useMediaFormStore } from '@/store/mediaFormStore';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { createHero, getHero, updateHero } from './api';
 import { useModalStore } from '@/store/modalStore';
 
@@ -94,24 +94,36 @@ const Hero = () => {
     },
   });
 
-  useEffect(() => {
-    if (heroImages && heroImages.length) {
-      form.setValue('Images', heroImages);
-    }
-  }, [heroImages]);
+  // Add a ref to track initial load
+  const initialLoadRef = useRef(true);
 
   const { move: moveImage, remove: removeImage } = useFieldArray({
     control: form.control,
     name: 'Images',
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    if (values.Images.length === 0) {
-      handleUpdateHero({ data: {} });
-    } else {
-      handleUpdateHero({ data: { Images: values.Images } });
+  // Custom handlers for move and remove that trigger API updates
+  const handleMove = (fromIndex: number, toIndex: number) => {
+    moveImage(fromIndex, toIndex);
+    const currentImages = form.getValues('Images');
+    handleUpdateHero({ data: { Images: currentImages } });
+  };
+
+  const handleRemove = (index: number) => {
+    removeImage(index);
+    const currentImages = form.getValues('Images');
+    handleUpdateHero({
+      data: currentImages.length ? { Images: currentImages } : {},
+    });
+  };
+
+  // Remove the form watch effect since we'll update directly
+  useEffect(() => {
+    if (heroImages && heroImages.length) {
+      initialLoadRef.current = true;
+      form.setValue('Images', heroImages, { shouldDirty: false });
     }
-  }
+  }, [heroImages, form]);
 
   const productImages = form.watch('Images');
 
@@ -133,67 +145,63 @@ const Hero = () => {
         <CardContent>
           {productImages.length === 0 && <h1>No slider image found!</h1>}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="my-10 flex flex-wrap gap-[10px]">
-                {productImages.map((image, index) => {
-                  return (
-                    <div className="rounded-sm relative  border-gray-300 border-2">
-                      <div className="relative h-[160px] w-[200px] rounded-sm border broder-b-4 border-blue-400">
-                        <img
-                          src={image.ImageLink}
-                          alt="product"
-                          className="object-cover w-full h-full "
-                        />
-                      </div>
-                      {index === 0 && (
-                        <div className="absolute top-[-10px] left-[-10px] bg-yellow-300 text-red-600 rounded-lg p-1">
-                          {' '}
-                          <Star />
-                        </div>
-                      )}
-                      <div className="flex w-full ">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (index !== 0) {
-                              moveImage(index, index - 1);
-                            } else {
-                              moveImage(index, productImages.length - 1);
-                            }
-                          }}
-                          className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2 "
-                        >
-                          <ArrowLeft />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (index !== productImages.length - 1) {
-                              moveImage(index, index + 1);
-                            } else {
-                              moveImage(index, 0);
-                            }
-                          }}
-                          className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2 "
-                        >
-                          <ArrowRight />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            removeImage(index);
-                          }}
-                          className="w-full flex justify-center hover:bg-slate-300 p-2 "
-                        >
-                          <Trash2 />
-                        </button>
-                      </div>
+            <div className="my-10 flex flex-wrap gap-[10px]">
+              {productImages.map((image, index) => (
+                <div
+                  key={index}
+                  className="rounded-sm relative border-gray-300 border-2"
+                >
+                  <div className="relative h-[160px] w-[200px] rounded-sm border broder-b-4 border-blue-400">
+                    <img
+                      src={image.ImageLink}
+                      alt="product"
+                      className="object-cover w-full h-full "
+                    />
+                  </div>
+                  {index === 0 && (
+                    <div className="absolute top-[-10px] left-[-10px] bg-yellow-300 text-red-600 rounded-lg p-1">
+                      {' '}
+                      <Star />
                     </div>
-                  );
-                })}
-              </div>
-              <Button type="submit">Update Hero</Button>
-            </form>
+                  )}
+                  <div className="flex w-full">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (index !== 0) {
+                          handleMove(index, index - 1);
+                        } else {
+                          handleMove(index, productImages.length - 1);
+                        }
+                      }}
+                      className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2"
+                    >
+                      <ArrowLeft />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (index !== productImages.length - 1) {
+                          handleMove(index, index + 1);
+                        } else {
+                          handleMove(index, 0);
+                        }
+                      }}
+                      className="w-full flex justify-center hover:bg-slate-300 border border-r-1 border-t-0 border-l-0 border-b-0 border-gray-500  p-2"
+                    >
+                      <ArrowRight />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemove(index)}
+                      className="w-full flex justify-center hover:bg-slate-300 p-2"
+                    >
+                      <Trash2 />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </Form>
         </CardContent>
       </Card>

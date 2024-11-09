@@ -12,6 +12,8 @@ import {
   TabsList,
   TabsTrigger,
   useToast,
+  DialogDescription,
+  cn,
 } from '@/components/index';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -28,6 +30,7 @@ import ReactCrop, {
 } from 'react-image-crop';
 import { useDebounceEffect } from './useDebounceEffect';
 import { canvasPreview } from './canvasPreview';
+import PaginationMain from '@/components/Pagination/Pagination';
 
 const MediaModal: React.FC<{
   Editor?: boolean;
@@ -53,6 +56,8 @@ const MediaModal: React.FC<{
   const [rotate, setRotate] = useState(0);
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const { toast } = useToast();
+  const [page, setPage] = useState<number>(1);
+  const limit = 10; // Fixed limit of 10 items per page
 
   useEffect(() => {
     if (defaultAspect) {
@@ -92,8 +97,8 @@ const MediaModal: React.FC<{
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ['getStoreImagesList', modalOpen],
-    queryFn: () => getStoreImages(1, 20),
+    queryKey: ['getStoreImagesList', modalOpen, page],
+    queryFn: () => getStoreImages(page, limit),
     enabled: modalOpen,
   });
 
@@ -238,36 +243,66 @@ const MediaModal: React.FC<{
           }
         }}
       >
-        <DialogContent className="sm:min-w-[700px]">
-          <DialogHeader>
-            <DialogTitle>Media Managment</DialogTitle>
+        <DialogContent className="sm:max-w-[900px] h-[80vh] overflow-y-scroll flex flex-col">
+          <DialogHeader className="pb-4 border-b">
+            <DialogTitle className="text-xl font-semibold">
+              Media Library
+            </DialogTitle>
+            <DialogDescription>
+              Upload or select images from your media library
+            </DialogDescription>
           </DialogHeader>
 
           <Tabs
             defaultValue="browse"
             value={tab}
             onValueChange={(value) => setTab(value)}
-            className="w-full"
+            className="flex-1 flex flex-col"
           >
-            <TabsList>
-              <TabsTrigger value="browse">browse</TabsTrigger>
-              <TabsTrigger value="upload">upload</TabsTrigger>
+            <TabsList className="w-full justify-start border-b px-1">
+              <TabsTrigger
+                value="browse"
+                className="data-[state=active]:bg-primary/10"
+              >
+                Browse Library
+              </TabsTrigger>
+              <TabsTrigger
+                value="upload"
+                className="data-[state=active]:bg-primary/10"
+              >
+                Upload New
+              </TabsTrigger>
             </TabsList>
-            <TabsContent value="browse">
-              {isLoading && <Loader />}
+
+            <TabsContent value="browse" className="flex-1 mt-0">
+              {isLoading && (
+                <div className="h-full flex items-center justify-center">
+                  <Loader />
+                </div>
+              )}
+
               {!isLoading && !storeImagesResponse?.Data?.length && (
-                <div>You don't have any images please upload</div>
+                <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
+                  <Upload className="h-12 w-12 mb-4" />
+                  <p className="text-lg font-medium">No images found</p>
+                  <p className="text-sm">Upload some images to get started</p>
+                </div>
               )}
 
               {!isLoading &&
                 storeImagesResponse?.Data &&
-                storeImagesResponse?.Data?.length > 0 && (
-                  <div className="max-h-[80vh] flex gap-[10px] flex-wrap overflow-auto">
-                    {storeImagesResponse.Data.map((image) => {
-                      return (
+                storeImagesResponse.Data.length > 0 && (
+                  <div className="flex-1 flex flex-col h-full">
+                    <div className="flex-1 grid grid-cols-3 md:grid-cols-4 gap-4 p-4">
+                      {storeImagesResponse.Data.map((image) => (
                         <div
                           key={image.Id}
-                          className="w-[200px] relative h-[160px] cursor-pointer rounded-sm hover:border-blue-500 hover:border-2"
+                          className={cn(
+                            'relative aspect-square cursor-pointer rounded-lg border-2 overflow-hidden transition-all',
+                            selectedImages?.includes(image.ImageUrl)
+                              ? 'border-primary ring-2 ring-primary/30'
+                              : 'border-transparent hover:border-primary/50'
+                          )}
                           onClick={() => {
                             if (!selectedImages?.includes(image.ImageUrl)) {
                               setSelectedImages((prev) => {
@@ -288,129 +323,143 @@ const MediaModal: React.FC<{
                           }}
                         >
                           {selectedImages?.includes(image.ImageUrl) && (
-                            <CheckCheckIcon className="absolute top-[5px] right-[5px] text-green-300" />
+                            <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
+                              <CheckCheckIcon className="h-8 w-8 text-primary" />
+                            </div>
                           )}
-
                           <img
-                            className="object-cover w-full h-full rounded-sm"
+                            className="object-cover w-full h-full"
                             src={image.ImageUrl}
                             alt="media"
                           />
                         </div>
-                      );
-                    })}
+                      ))}
+                    </div>
+
+                    {storeImagesResponse.Pagination && (
+                      <div className="p-4 border-t">
+                        <PaginationMain
+                          PaginationDetails={storeImagesResponse.Pagination}
+                          setPage={setPage}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
-              <Button
-                className="mt-3 w-full"
-                disabled={!selectedImages}
-                onClick={() => {
-                  if (!Editor) {
-                    if (selectedImages) {
-                      setImagesList(selectedImages);
+
+              <div className="p-4 border-t mt-auto">
+                <Button
+                  className="w-full"
+                  size="lg"
+                  disabled={!selectedImages?.length}
+                  onClick={() => {
+                    if (!Editor) {
+                      if (selectedImages) {
+                        setImagesList(selectedImages);
+                      }
+
+                      setSelectedImages([]);
+
+                      closeModal();
                     }
 
-                    setSelectedImages([]);
+                    if (
+                      Editor &&
+                      setFormData &&
+                      selectedImages &&
+                      ModalImageSubmit
+                    ) {
+                      console.log('updates', selectedImages);
 
-                    closeModal();
-                  }
+                      ModalImageSubmit(selectedImages[0]);
+                      setSelectedImages([]);
 
-                  if (
-                    Editor &&
-                    setFormData &&
-                    selectedImages &&
-                    ModalImageSubmit
-                  ) {
-                    console.log('updates', selectedImages);
-
-                    ModalImageSubmit(selectedImages[0]);
-                    setSelectedImages([]);
-
-                    closeModal();
-                  }
-                }}
-              >
-                Pick Selected
-              </Button>
+                      closeModal();
+                    }
+                  }}
+                >
+                  {selectedImages?.length
+                    ? `Use Selected (${selectedImages.length})`
+                    : 'Select Images'}
+                </Button>
+              </div>
             </TabsContent>
-            <TabsContent value="upload">
+
+            <TabsContent value="upload" className="flex-1 mt-0">
               {!imgSrc && (
-                <div className="w-full flex justify-center my-10">
-                  {!isPending && !imgSrc && (
-                    <>
-                      <Label
-                        className="w-full hover:cursor-pointer rounded h-full  flex justify-center items-center"
-                        htmlFor="picture"
-                      >
-                        <div className="flex aspect-square w-[170px] h-[170px] items-center justify-center rounded-md border border-dashed">
-                          <div className="w-full flex flex-col gap-[5px] justify-center items-center">
-                            <Upload className="h-4 w-4 text-muted-foreground" />
-                            <p className="sr-only">Upload</p>
-                            <p>Max Size: 5 MB</p>
-                          </div>
+                <div className="h-full flex items-center justify-center p-8">
+                  <Label
+                    className="w-full max-w-md hover:cursor-pointer"
+                    htmlFor="picture"
+                  >
+                    <div className="border-2 border-dashed border-primary/50 rounded-lg p-8 text-center hover:border-primary transition-colors">
+                      <div className="flex flex-col items-center gap-4">
+                        <Upload className="h-12 w-12 text-muted-foreground" />
+                        <div>
+                          <p className="text-lg font-medium">Click to upload</p>
+                          <p className="text-sm text-muted-foreground">
+                            Maximum file size: 5MB
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Supported formats: JPG, PNG, GIF
+                          </p>
                         </div>
-                      </Label>
-                      <Input
-                        onChange={handleImageUpload}
-                        className="hidden"
-                        id="picture"
-                        name="image"
-                        type="file"
-                        accept="image/*"
-                      />
-                    </>
-                  )}
-                  {isPending && <Loader />}
+                      </div>
+                    </div>
+                  </Label>
+                  <Input
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    id="picture"
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                  />
                 </div>
               )}
 
               {imgSrc && (
-                <div>
-                  <ReactCrop
-                    aspect={aspect}
-                    crop={crop}
-                    onChange={(c) => setCrop(c)}
-                    onComplete={(c) => setCompletedCrop(c)}
-                  >
-                    <img
-                      onLoad={onImageLoad}
-                      ref={imgRef}
-                      src={imgSrc}
-                      alt="crop"
-                    />
-                  </ReactCrop>
+                <div className="flex-1 p-4 flex flex-col gap-4">
+                  <div className="flex-1 min-h-0">
+                    <ReactCrop
+                      aspect={aspect}
+                      crop={crop}
+                      onChange={(c) => setCrop(c)}
+                      onComplete={(c) => setCompletedCrop(c)}
+                      className="max-h-full"
+                    >
+                      <img
+                        onLoad={onImageLoad}
+                        ref={imgRef}
+                        src={imgSrc}
+                        alt="crop"
+                        className="max-h-[60vh] mx-auto"
+                      />
+                    </ReactCrop>
+                  </div>
 
-                  <Button
-                    disabled={isPending}
-                    onClick={() => {
-                      uploadCropedImage();
-                    }}
-                    className="w-full my-2"
-                  >
-                    {!isPending && 'Complete Crop & Upload'}
-
-                    {isPending && <Loader />}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => setImgSrc('')}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      className="flex-1"
+                      disabled={isPending}
+                      onClick={uploadCropedImage}
+                    >
+                      {isPending ? <Loader /> : 'Upload Image'}
+                    </Button>
+                  </div>
                 </div>
               )}
-              <div>
-                {completedCrop && (
-                  <canvas
-                    className="hidden"
-                    ref={previewCanvasRef}
-                    style={{
-                      border: '1px solid black',
-                      objectFit: 'contain',
-                      width: completedCrop.width,
-                      height: completedCrop.height,
-                    }}
-                  />
-                )}
-              </div>
+
+              <canvas ref={previewCanvasRef} className="hidden" />
             </TabsContent>
           </Tabs>
-
-          <Button onClick={() => closeModal()}>Close</Button>
         </DialogContent>
       </Dialog>
     </div>

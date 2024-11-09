@@ -185,7 +185,7 @@ const StoreSidebar = () => {
                   }`}
                 />
                 <span className="flex items-center gap-2">
-                  Turnstile
+                  Turnstile & Logo
                   {!isTurnstileConfigured && (
                     <AlertTriangle className="h-4 w-4 text-destructive animate-pulse" />
                   )}

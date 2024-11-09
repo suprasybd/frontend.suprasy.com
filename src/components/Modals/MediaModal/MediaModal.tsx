@@ -386,7 +386,13 @@ const MediaModal: React.FC<{
             </TabsContent>
 
             <TabsContent value="upload" className="flex-1 mt-0">
-              {!imgSrc && (
+              {isPending && (
+                <div className="h-full flex items-center justify-center">
+                  <Loader />
+                </div>
+              )}
+
+              {!isPending && !imgSrc && (
                 <div className="h-full flex items-center justify-center p-8">
                   <Label
                     className="w-full max-w-md hover:cursor-pointer"
@@ -418,7 +424,7 @@ const MediaModal: React.FC<{
                 </div>
               )}
 
-              {imgSrc && (
+              {!isPending && imgSrc && (
                 <div className="flex-1 p-4 flex flex-col gap-4">
                   <div className="flex-1 min-h-0">
                     <ReactCrop
@@ -451,7 +457,7 @@ const MediaModal: React.FC<{
                       disabled={isPending}
                       onClick={uploadCropedImage}
                     >
-                      {isPending ? <Loader /> : 'Upload Image'}
+                      Upload Image
                     </Button>
                   </div>
                 </div>

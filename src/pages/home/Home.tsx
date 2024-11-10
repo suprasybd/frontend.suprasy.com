@@ -488,53 +488,34 @@ const StoreCard: React.FC<{ store: StoreType }> = ({ store }) => {
       </CardContent>
 
       <CardFooter className="flex flex-col gap-3">
-        {store.IsActive ? (
-          <>
-            <Button className="w-full" variant="default">
-              <Link
-                to="/store/$storeKey/dashboard"
-                params={{ storeKey: store.StoreKey }}
-                className="flex items-center gap-2"
-              >
-                <LayoutDashboard className="h-4 w-4" />
-                View Dashboard
-              </Link>
+        <>
+          <Link
+            to="/store/$storeKey/dashboard"
+            params={{ storeKey: store.StoreKey }}
+            className="w-full"
+          >
+            <Button
+              className="flex items-center gap-2 w-full"
+              variant="default"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              View Dashboard
             </Button>
-            <Button variant="outline" className="w-full">
-              <Link
-                to="/store/$storeKey/subscription"
-                params={{ storeKey: store.StoreKey }}
-                className="flex items-center gap-2"
-              >
-                <CreditCard className="h-4 w-4" />
-                Manage Subscription
-              </Link>
+          </Link>
+          <Link
+            to="/store/$storeKey/subscription"
+            params={{ storeKey: store.StoreKey }}
+            className="w-full"
+          >
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 w-full"
+            >
+              <CreditCard className="h-4 w-4" />
+              Manage Subscription
             </Button>
-          </>
-        ) : (
-          <>
-            <Alert variant="destructive" className="mb-3">
-              <AlertTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" />
-                Subscription Expired
-              </AlertTitle>
-              <AlertDescription className="mt-2 text-sm">
-                Your website is still running but dashboard access is
-                restricted. Please renew your subscription to regain access.
-              </AlertDescription>
-            </Alert>
-            <Button className="w-full" variant="default">
-              <Link
-                to="/store/$storeKey/subscription"
-                params={{ storeKey: store.StoreKey }}
-                className="flex items-center gap-2"
-              >
-                <CreditCard className="h-4 w-4" />
-                Renew Subscription
-              </Link>
-            </Button>
-          </>
-        )}
+          </Link>
+        </>
       </CardFooter>
     </Card>
   );

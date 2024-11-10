@@ -33,8 +33,8 @@ export const adminThemeSchema = z.object({
   Name: z.string().min(2).max(50),
   Description: z.string().min(2).max(50),
   R2Folder: z.string().min(2).max(50),
-  GithubLink: z.string().url().optional(),
-  PreviewUrl: z.string().url().optional(),
+  GithubLink: z.string().optional(),
+  PreviewUrl: z.string().optional(),
   Images: z.array(ImageUrl).min(1),
 });
 

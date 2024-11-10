@@ -17,6 +17,7 @@ const Themes = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
   const [page, setPage] = useState(1);
   const limit = 5;
+  const [isThemeSwitching, setIsThemeSwitching] = useState(false);
 
   const { data: themeResponse } = useQuery({
     queryKey: ['getThemesList', page, limit],
@@ -41,6 +42,8 @@ const Themes = () => {
             key={theme.Id}
             theme={theme}
             isActive={theme.Id === activeThemeId}
+            isThemeSwitching={isThemeSwitching}
+            setIsThemeSwitching={setIsThemeSwitching}
           />
         ))}
       </div>
@@ -71,10 +74,12 @@ const Themes = () => {
   );
 };
 
-const ThemeCard: React.FC<{ theme: GuestThemeType; isActive: boolean }> = ({
-  theme,
-  isActive,
-}) => {
+const ThemeCard: React.FC<{
+  theme: GuestThemeType;
+  isActive: boolean;
+  isThemeSwitching: boolean;
+  setIsThemeSwitching: (value: boolean) => void;
+}> = ({ theme, isActive, isThemeSwitching, setIsThemeSwitching }) => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
 
   // Get subscription details
@@ -105,6 +110,12 @@ const ThemeCard: React.FC<{ theme: GuestThemeType; isActive: boolean }> = ({
 
   const { mutate: handleSwitchTheme, isPending } = useMutation({
     mutationFn: (themeId: number) => switchTheme(themeId),
+    onMutate: () => {
+      setIsThemeSwitching(true);
+    },
+    onSettled: () => {
+      setIsThemeSwitching(false);
+    },
     onSuccess: () => {
       toast({
         title: 'Theme Enabled',
@@ -236,7 +247,9 @@ const ThemeCard: React.FC<{ theme: GuestThemeType; isActive: boolean }> = ({
               className="hover:bg-blue-50"
               onClick={() => handleSwitchTheme(theme.Id)}
               disabled={
-                isPending || (theme.Type === 'paid' && !hasValidSubscription)
+                isThemeSwitching ||
+                isPending ||
+                (theme.Type === 'paid' && !hasValidSubscription)
               }
             >
               {isPending
@@ -253,7 +266,7 @@ const ThemeCard: React.FC<{ theme: GuestThemeType; isActive: boolean }> = ({
                 variant={'outline'}
                 className="hover:bg-blue-50"
                 onClick={() => handleSwitchTheme(theme.Id)}
-                disabled={isPending}
+                disabled={isThemeSwitching || isPending}
               >
                 {isPending ? 'Syncing...' : 'Sync Theme'}
               </Button>

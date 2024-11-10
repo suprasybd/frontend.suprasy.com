@@ -117,7 +117,7 @@ const AdminThemeImage: React.FC<{
               // set modal here
               e.preventDefault();
 
-              setModalPath({ modal: 'media', aspect: 1 });
+              setModalPath({ modal: 'media', aspect: 1.5 });
             }}
             className="flex aspect-square mt-10 w-[200px] h-[160px] items-center justify-center rounded-md border border-dashed"
           >

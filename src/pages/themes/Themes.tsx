@@ -11,7 +11,7 @@ import {
   GuestThemeType,
   getSubDetails,
 } from './api';
-import { Github, Crown, Gift } from 'lucide-react';
+import { Github, Crown, Gift, ExternalLink } from 'lucide-react';
 
 const Themes = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
@@ -188,18 +188,32 @@ const ThemeCard: React.FC<{ theme: GuestThemeType; isActive: boolean }> = ({
       <div className="p-5">
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-bold text-xl text-slate-800">{theme.Name}</h2>
-          {theme.GithubLink && (
-            <a
-              href={theme.GithubLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
-              title="View source code on GitHub"
-            >
-              <Github className="w-4 h-4" />
-              <span>View Source</span>
-            </a>
-          )}
+          <div className="flex items-center gap-2">
+            {theme.PreviewUrl && (
+              <a
+                href={theme.PreviewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+                title="Visit live preview"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span>Preview</span>
+              </a>
+            )}
+            {theme.GithubLink && (
+              <a
+                href={theme.GithubLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+                title="View source code on GitHub"
+              >
+                <Github className="w-4 h-4" />
+                <span>View Source</span>
+              </a>
+            )}
+          </div>
         </div>
         <p className="text-slate-600 mb-4">{theme.Description}</p>
 

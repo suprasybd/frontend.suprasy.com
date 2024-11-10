@@ -12,6 +12,7 @@ export interface ThemeResponse {
   Description: string;
   R2Folder: string;
   GithubLink?: string;
+  PreviewUrl?: string;
   Images: Image[];
 }
 

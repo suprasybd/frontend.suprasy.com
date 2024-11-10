@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Button, Label } from '@/components/index';
+import { Button, Label, toast } from '@/components/index';
 import {
   Form,
   FormControl,
@@ -34,6 +34,7 @@ export const adminThemeSchema = z.object({
   Description: z.string().min(2).max(50),
   R2Folder: z.string().min(2).max(50),
   GithubLink: z.string().url().optional(),
+  PreviewUrl: z.string().url().optional(),
   Images: z.array(ImageUrl).min(1),
 });
 
@@ -45,6 +46,7 @@ const AdminThemes = () => {
       Description: '',
       R2Folder: '',
       GithubLink: '',
+      PreviewUrl: '',
       Images: [],
     },
   });
@@ -54,10 +56,41 @@ const AdminThemes = () => {
 
   const { mutate: createThemeMutate } = useMutation({
     mutationFn: createTheme,
+    onSuccess: () => {
+      toast({
+        title: 'Theme Created',
+        description: 'Theme has been created successfully.',
+        variant: 'default',
+      });
+      form.reset();
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.Message || 'Failed to create theme.',
+        variant: 'destructive',
+      });
+    },
   });
 
   const { mutate: updateThemeMutate } = useMutation({
     mutationFn: updateTheme,
+    onSuccess: () => {
+      toast({
+        title: 'Theme Updated',
+        description: 'Theme has been updated successfully.',
+        variant: 'default',
+      });
+      setIsUpdating(false);
+      form.reset();
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.Message || 'Failed to update theme.',
+        variant: 'destructive',
+      });
+    },
   });
 
   const { data: themeResponse } = useQuery({
@@ -150,6 +183,22 @@ const AdminThemes = () => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="PreviewUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Preview URL (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter theme preview URL" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Link to a live preview of the theme if available
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <AdminThemeImage fieldIndex={1} form={form} />
 
@@ -172,6 +221,20 @@ const AdminThemes = () => {
               <Label className="text-sm font-medium">R2 Folder:</Label>
               <p className="text-muted-foreground">{theme.R2Folder}</p>
             </div>
+
+            {theme.PreviewUrl && (
+              <div className="mb-4">
+                <Label className="text-sm font-medium">Preview URL:</Label>
+                <a
+                  href={theme.PreviewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:text-blue-600 block"
+                >
+                  {theme.PreviewUrl}
+                </a>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {theme.Images?.map((image, index) => (
@@ -196,6 +259,7 @@ const AdminThemes = () => {
                 form.setValue('Name', theme.Name);
                 form.setValue('R2Folder', theme.R2Folder);
                 form.setValue('GithubLink', theme.GithubLink || '');
+                form.setValue('PreviewUrl', theme.PreviewUrl || '');
                 setThemeId(theme.Id);
                 setIsUpdating(true);
               }}

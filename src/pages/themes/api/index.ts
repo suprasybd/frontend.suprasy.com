@@ -8,6 +8,7 @@ export interface GuestThemeType {
   Description: string;
   Type: 'free' | 'paid';
   GithubLink?: string;
+  PreviewUrl?: string;
   CreatedAt: string;
   UpdatedAt: string;
 }

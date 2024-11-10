@@ -186,9 +186,6 @@ const MediaModal: React.FC<{
       throw new Error('Crop canvas does not exist');
     }
 
-    // This will size relative to the uploaded image
-    // size. If you want to size according to what they
-    // are looking at on screen, remove scaleX + scaleY
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
 
@@ -212,13 +209,14 @@ const MediaModal: React.FC<{
       offscreen.width,
       offscreen.height
     );
-    // You might want { type: "image/jpeg", quality: <0 to 1> } to
-    // reduce image size
+
+    // Convert to JPEG with compression
     const blob = await offscreen.convertToBlob({
-      type: 'image/png',
+      type: 'image/jpeg',
+      quality: 0.8, // Adjust quality (0.0 to 1.0) to balance size and quality
     });
 
-    const imgFile = new File([blob], 'cropedimage', { type: blob.type });
+    const imgFile = new File([blob], 'cropedimage.jpg', { type: 'image/jpeg' });
 
     const formData = new FormData();
     formData.append('ProductImage', imgFile);

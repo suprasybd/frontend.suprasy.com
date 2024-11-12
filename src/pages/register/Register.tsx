@@ -28,11 +28,15 @@ import { Eye, EyeOff } from 'lucide-react';
 const Register: React.FC = () => {
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { Password: '', Email: '' },
+    defaultValues: { Password: '', Email: '', FullName: '' },
   });
 
   const { toast } = useToast();
   const formErrors = form.formState;
+
+  const [turnstileLoaded] = useTurnStileHook();
+
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const {
     mutate: registerMutation,
@@ -42,8 +46,8 @@ const Register: React.FC = () => {
     mutationFn: register,
     onSuccess: (data) => {
       toast({
-        title: 'Registration succecssfull',
-        description: 'We have sent you an verification email!',
+        title: 'Registration successful',
+        description: 'We have sent you a verification email!',
         variant: 'default',
       });
     },
@@ -60,11 +64,10 @@ const Register: React.FC = () => {
     values: z.infer<typeof registerSchema>,
     turnstileResponse: string | null
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     registerMutation({
       ...values,
       'cf-turnstile-response': turnstileResponse,
-    } as any);
+    } as z.infer<typeof registerSchema>);
   }
 
   const usersEmail = form.watch('Email');
@@ -73,11 +76,10 @@ const Register: React.FC = () => {
     window.location.reload();
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleFormWrapper = (e: any) => {
+  const handleFormWrapper = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const tRes = e.target['cf-turnstile-response'].value;
+      const tRes = (e.target as any)['cf-turnstile-response'].value;
 
       if (!tRes) return;
 
@@ -88,9 +90,6 @@ const Register: React.FC = () => {
       forceUpdate();
     }
   };
-  const [turnstileLoaded] = useTurnStileHook();
-
-  const [showPassword, setShowPassword] = React.useState(false);
 
   return (
     <div className="flex min-h-full flex-col justify-center md:px-6 md:py-12 lg:px-8">
@@ -99,13 +98,19 @@ const Register: React.FC = () => {
           <div>
             <div className="sm:mx-auto sm:w-full">
               <div className="w-full flex justify-center mb-6">
-                <img
-                  width={200}
-                  height="auto"
-                  src={logo}
-                  alt="logo"
-                  className="h-12 object-contain"
-                />
+                <a
+                  href="https://suprasy.com"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer"
+                >
+                  <img
+                    width={200}
+                    height="auto"
+                    src={logo}
+                    alt="logo"
+                    className="h-12 object-contain"
+                  />
+                </a>
               </div>
 
               <div className="text-center mb-8">

@@ -92,13 +92,19 @@ const Login: React.FC = () => {
       <div className="bg-white p-6 md:p-12 rounded-2xl shadow-xl max-w-md w-full mx-auto">
         <div className="sm:mx-auto sm:w-full">
           <div className="w-full flex justify-center mb-6">
-            <img
-              width={200}
-              height="auto"
-              src={logo}
-              alt="logo"
-              className="h-12 object-contain"
-            />
+            <a
+              href="https://suprasy.com"
+              rel="noopener noreferrer"
+              className="cursor-pointer"
+            >
+              <img
+                width={200}
+                height="auto"
+                src={logo}
+                alt="logo"
+                className="h-12 object-contain"
+              />
+            </a>
           </div>
 
           <div className="text-center mb-8">

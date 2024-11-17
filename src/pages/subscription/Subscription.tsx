@@ -141,6 +141,14 @@ const Subscription = () => {
           titleClass: 'text-blue-700',
           checkmarkClass: 'text-blue-500',
         };
+      case 'basic':
+        return {
+          icon: <Gift className="h-5 w-5 text-gray-500" />,
+          className: 'border-gray-200 hover:border-gray-300',
+          badgeClass: 'bg-gray-100 text-gray-700',
+          titleClass: 'text-gray-700',
+          checkmarkClass: 'text-gray-500',
+        };
       default:
         return {
           icon: <Gift className="h-5 w-5 text-gray-500" />,
@@ -251,9 +259,7 @@ const Subscription = () => {
                       planStyle.titleClass
                     )}
                   >
-                    {plan.MonthlyPrice > 0
-                      ? `${plan.MonthlyPrice} BDT/month`
-                      : 'Free'}
+                    {`${plan.MonthlyPrice} BDT/month`}
                   </span>
                 </CardDescription>
               </CardHeader>
@@ -274,16 +280,14 @@ const Subscription = () => {
                 </ul>
 
                 {isCurrentPlan(plan.Id) ? (
-                  isPaidPlan(plan) ? (
-                    <Button
-                      className="w-full"
-                      disabled={isPending}
-                      onClick={() => handleSubscriptionAction(plan)}
-                    >
-                      {isPending ? 'Processing...' : 'Add More Months'}
-                    </Button>
-                  ) : null
-                ) : isPaidPlan(plan) ? (
+                  <Button
+                    className="w-full"
+                    disabled={isPending}
+                    onClick={() => handleSubscriptionAction(plan)}
+                  >
+                    {isPending ? 'Processing...' : 'Add More Months'}
+                  </Button>
+                ) : (
                   <Button
                     className="w-full"
                     variant="default"
@@ -292,7 +296,7 @@ const Subscription = () => {
                   >
                     {isPending ? 'Processing...' : `Upgrade to ${plan.Name}`}
                   </Button>
-                ) : null}
+                )}
               </CardContent>
             </Card>
           );

@@ -19,6 +19,9 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Alert,
+  AlertTitle,
+  AlertDescription,
 } from '@/components/index';
 import { Link, useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -28,7 +31,8 @@ import { ordersColumn } from './columns';
 import PaginationMain from '@/components/Pagination/Pagination';
 import { LoaderMain } from '@/components/Loader/Loader';
 import { activeFilters } from '@/libs/helpers/filters';
-import { Search } from 'lucide-react';
+import { Search, CreditCard } from 'lucide-react';
+
 const Orders = () => {
   const { storeKey } = useParams({ strict: false }) as { storeKey: string };
 
@@ -41,7 +45,11 @@ const Orders = () => {
   const [email, setEmail] = useState<string>();
   const [id, setId] = useState<string>();
 
-  const { data: ordersResponse, isLoading } = useQuery({
+  const {
+    data: ordersResponse,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['getStoreOrders', storeKey, page, limit, tab, phone, email, id],
     queryFn: () =>
       getStoreOrders({
@@ -58,6 +66,35 @@ const Orders = () => {
   });
 
   const orders = ordersResponse?.Data;
+  const isSubscriptionExpired = (error as any)?.response?.status === 406;
+
+  if (isSubscriptionExpired) {
+    return (
+      <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+        <Alert variant="destructive" className="mb-6">
+          <AlertTitle className="flex items-center gap-2 mb-2">
+            Subscription Expired
+          </AlertTitle>
+          <AlertDescription className="flex items-center justify-between">
+            <span>
+              Your subscription has expired. Please renew your subscription to
+              access the orders.
+            </span>
+            <Link
+              to="/store/$storeKey/subscription"
+              params={{ storeKey }}
+              className="mt-2"
+            >
+              <Button variant="outline" size="sm" className="gap-2">
+                <CreditCard className="h-4 w-4" />
+                Renew Subscription
+              </Button>
+            </Link>
+          </AlertDescription>
+        </Alert>
+      </section>
+    );
+  }
 
   return (
     <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">

@@ -10,7 +10,7 @@ import {
   AlertTitle,
   AlertDescription,
 } from '@/components/index';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Facebook } from 'lucide-react';
 
 interface AddBalanceModalProps {
   isOpen: boolean;
@@ -22,10 +22,13 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({
   onClose,
 }) => {
   const openTawkChat = () => {
-    // Assuming Tawk.to's global object is available
     if (window.Tawk_API) {
       window.Tawk_API.maximize();
     }
+  };
+
+  const openFacebook = () => {
+    window.open('https://www.facebook.com/suprasy.com.bd', '_blank');
   };
 
   return (
@@ -47,7 +50,7 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({
             <AlertDescription className="mt-2 space-y-4">
               <p>To add balance to your account, please follow these steps:</p>
               <ol className="list-decimal pl-4 space-y-2">
-                <li>Click the chat button below</li>
+                <li>Click any of the contact options below</li>
                 <li>Mention the amount you want to add</li>
                 <li>
                   Our support team will assist you with the payment process
@@ -59,7 +62,15 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({
           <div className="flex flex-col gap-3">
             <Button className="w-full" onClick={openTawkChat}>
               <MessageCircle className="mr-2 h-4 w-4" />
-              Open Chat
+              Chat with Support
+            </Button>
+            <Button
+              className="w-full"
+              variant="secondary"
+              onClick={openFacebook}
+            >
+              <Facebook className="mr-2 h-4 w-4" />
+              Contact on Facebook
             </Button>
             <Button variant="outline" onClick={onClose} className="w-full">
               Close

@@ -10,7 +10,7 @@ import {
   AlertTitle,
   AlertDescription,
 } from '@/components/index';
-import { ExternalLink, MessagesSquare } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 
 interface AddBalanceModalProps {
   isOpen: boolean;
@@ -21,6 +21,13 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const openTawkChat = () => {
+    // Assuming Tawk.to's global object is available
+    if (window.Tawk_API) {
+      window.Tawk_API.maximize();
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
@@ -34,29 +41,25 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({
         <div className="space-y-4">
           <Alert>
             <AlertTitle className="flex items-center gap-2">
-              <MessagesSquare className="h-4 w-4" />
-              Join Our Discord Community
+              <MessageCircle className="h-4 w-4" />
+              Contact Support
             </AlertTitle>
             <AlertDescription className="mt-2 space-y-4">
               <p>To add balance to your account, please follow these steps:</p>
               <ol className="list-decimal pl-4 space-y-2">
-                <li>Join our Discord community</li>
-                <li>Create a support ticket</li>
+                <li>Click the chat button below</li>
                 <li>Mention the amount you want to add</li>
-                <li>Our team will assist you with the payment process</li>
+                <li>
+                  Our support team will assist you with the payment process
+                </li>
               </ol>
             </AlertDescription>
           </Alert>
 
           <div className="flex flex-col gap-3">
-            <Button
-              className="w-full"
-              onClick={() =>
-                window.open('https://discord.gg/J8xEsQKTqC', '_blank')
-              }
-            >
-              <ExternalLink className="mr-2 h-4 w-4" />
-              Join Discord
+            <Button className="w-full" onClick={openTawkChat}>
+              <MessageCircle className="mr-2 h-4 w-4" />
+              Open Chat
             </Button>
             <Button variant="outline" onClick={onClose} className="w-full">
               Close

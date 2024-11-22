@@ -6,6 +6,7 @@ import {
   FormControl,
   Input,
   FormMessage,
+  Button,
 } from '@/components/index';
 import { Trash2 } from 'lucide-react';
 import VariationImage from './VariationImage';
@@ -16,6 +17,7 @@ interface VariationCardProps {
   form: any;
   formErrors: any;
   onDelete: () => void;
+  onGenerateSku: () => void;
 }
 
 export const VariationCard: React.FC<VariationCardProps> = ({
@@ -24,10 +26,11 @@ export const VariationCard: React.FC<VariationCardProps> = ({
   form,
   formErrors,
   onDelete,
+  onGenerateSku,
 }) => {
   return (
     <Card className="p-4">
-      <div className="flex justify-between items-start mb-4">
+      <div className="flex justify-between items-center mb-3">
         <h3 className="font-medium">Variation #{index + 1}</h3>
         <button
           onClick={onDelete}
@@ -37,15 +40,25 @@ export const VariationCard: React.FC<VariationCardProps> = ({
         </button>
       </div>
 
-      <VariationImage fieldIndex={index} form={form} />
+      {/* Images Section */}
+      <div className="mb-6">
+        <FormLabel className="mb-2 block">Variation Images</FormLabel>
+        <VariationImage fieldIndex={index} form={form} />
+        {formErrors?.ProductVariations?.[index]?.Images && (
+          <p className="text-sm text-destructive mt-2">
+            At least one image is required
+          </p>
+        )}
+      </div>
 
-      <div className="grid gap-4 mt-4 sm:grid-cols-2">
+      {/* Form Fields */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
         <FormField
           control={form.control}
           name={`ProductVariations.${index}.ChoiceName`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Variation Name</FormLabel>
+              <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input
                   FormError={
@@ -66,18 +79,29 @@ export const VariationCard: React.FC<VariationCardProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel>SKU</FormLabel>
-              <FormControl>
-                <Input
-                  FormError={!!formErrors?.ProductVariations?.[index]?.Sku}
-                  placeholder="SKU-123"
-                  {...field}
-                />
-              </FormControl>
+              <div className="flex gap-2">
+                <FormControl>
+                  <Input
+                    FormError={!!formErrors?.ProductVariations?.[index]?.Sku}
+                    placeholder="SKU-123"
+                    {...field}
+                  />
+                </FormControl>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onGenerateSku}
+                  className="shrink-0"
+                >
+                  Gen
+                </Button>
+              </div>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* Price row */}
         <FormField
           control={form.control}
           name={`ProductVariations.${index}.Price`}
@@ -102,7 +126,7 @@ export const VariationCard: React.FC<VariationCardProps> = ({
           name={`ProductVariations.${index}.SalesPrice`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Sales Price (BDT)</FormLabel>
+              <FormLabel>Sales Price</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -118,6 +142,7 @@ export const VariationCard: React.FC<VariationCardProps> = ({
           )}
         />
 
+        {/* Stock */}
         <FormField
           control={form.control}
           name={`ProductVariations.${index}.Inventory`}

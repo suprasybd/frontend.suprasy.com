@@ -55,6 +55,7 @@ import useTurnStileHook from '@/hooks/turnstile';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { Plus } from 'lucide-react';
 import { VariationCard } from './components/VariationCard';
+import { slugify } from '@/lib/utils';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -71,7 +72,9 @@ const CreateProduct: React.FC = () => {
           Inventory: 0,
           Price: 0,
           ChoiceName: 'default',
-          Sku: 'SF-34526KP',
+          Sku: '',
+          Images: [],
+          SalesPrice: 0,
           Deleted: false,
         },
       ],
@@ -79,6 +82,8 @@ const CreateProduct: React.FC = () => {
   });
 
   const { errors: formErrors } = form.formState;
+
+  console.log('form errors', formErrors);
 
   const { toast } = useToast();
   const { storeKey } = useParams({ strict: false }) as {
@@ -271,8 +276,7 @@ const CreateProduct: React.FC = () => {
   const {
     fields: variationsFields,
     append: appendVariation,
-    remove,
-    update: updateVariation,
+    remove: removeVariation,
   } = useFieldArray({
     control: form.control,
     name: 'ProductVariations',
@@ -318,6 +322,20 @@ const CreateProduct: React.FC = () => {
 
   const [turnstileLoaded] = useTurnStileHook();
 
+  const generateSlug = () => {
+    const title = form.getValues('Title');
+    if (title) {
+      const slug = slugify(title);
+      form.setValue('Slug', slug);
+    }
+  };
+
+  const generateSku = (index: number) => {
+    const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const sku = `SKU-${randomStr}`;
+    form.setValue(`ProductVariations.${index}.Sku`, sku);
+  };
+
   return (
     <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       {/* breadcrumbs */}
@@ -350,164 +368,203 @@ const CreateProduct: React.FC = () => {
 
       <Form {...form}>
         <form onSubmit={handleFormWrapper} className="space-y-8">
-          {/* Basic Info Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {isUpdating ? 'Update Product' : 'Create Product'}
-              </CardTitle>
-              <CardDescription>Enter Product Info Carefully!</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <FormField
-                control={form.control}
-                name="Title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        FormError={!!formErrors.Title}
-                        placeholder="Title"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          {/* Main content grid */}
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Left Column */}
+            <div className="space-y-6">
+              {/* Basic Info Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    {isUpdating ? 'Update Product' : 'Create Product'}
+                  </CardTitle>
+                  <CardDescription>
+                    Enter Product Info Carefully!
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="Title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input
+                            FormError={!!formErrors.Title}
+                            placeholder="Title"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              {/* Description Editor */}
-              <div className="space-y-2">
-                <FormLabel>Description</FormLabel>
-                <FormMessage>{errors.Description?.message}</FormMessage>
-                <RichTextEditor
-                  initialVal={productDescription}
-                  onValChange={(data) =>
-                    form.setValue('Description', JSON.stringify(data))
-                  }
-                />
-              </div>
-
-              {/* Summary Editor */}
-              <div className="space-y-2">
-                <FormLabel>Summary</FormLabel>
-                <FormMessage>{errors.Summary?.message}</FormMessage>
-                <RichTextEditor
-                  initialVal={productSummary}
-                  onValChange={(data) =>
-                    form.setValue('Summary', JSON.stringify(data))
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Product Settings */}
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Product Status</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2" key={status}>
-                  <Label htmlFor="status">Status</Label>
-                  <Select
-                    onValueChange={(value) => form.setValue('Status', value)}
-                    defaultValue={status || 'draft'}
-                  >
-                    <SelectTrigger id="status">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="archived">Archived</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Product URL</CardTitle>
-                <CardDescription>
-                  e.g. mydomain.com/blue-t-shirt-special
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="Slug"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Slug</FormLabel>
-                      <FormControl>
-                        <Input
-                          FormError={!!formErrors.Slug}
-                          placeholder="product-url-slug"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Product Variations */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Product Variations</CardTitle>
-              <CardDescription>
-                Manage product options like size, color etc.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {variationsFields
-                  .filter((v) => !v.Deleted)
-                  .map((option, index) => (
-                    <VariationCard
-                      key={option.id}
-                      option={option}
-                      index={index}
-                      form={form}
-                      formErrors={formErrors}
-                      onDelete={() =>
-                        updateVariation(index, {
-                          ...option,
-                          Deleted: true,
-                        })
-                      }
+                  {/* Description Editor */}
+                  <div className="space-y-2">
+                    <FormLabel>Description</FormLabel>
+                    <FormField
+                      control={form.control}
+                      name="Description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <RichTextEditor
+                              initialVal={productDescription}
+                              onValChange={(data) => {
+                                const jsonString = JSON.stringify(data);
+                                form.setValue('Description', jsonString, {
+                                  shouldValidate: true,
+                                  shouldDirty: true,
+                                });
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage>
+                            {errors.Description?.message}
+                          </FormMessage>
+                        </FormItem>
+                      )}
                     />
-                  ))}
+                  </div>
 
-                <Button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    appendVariation({
-                      ChoiceName: 'default',
-                      Price: 0,
-                      SalesPrice: 0,
-                      Sku: '',
-                      Images: [],
-                      Inventory: 0,
-                      Deleted: false,
-                    });
-                  }}
-                  variant="outline"
-                  className="w-full"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Variation
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                  {/* Summary Editor */}
+                  <div className="space-y-2">
+                    <FormLabel>Summary</FormLabel>
+                    <FormField
+                      control={form.control}
+                      name="Summary"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <RichTextEditor
+                              initialVal={productSummary}
+                              onValChange={(data) => {
+                                const jsonString = JSON.stringify(data);
+                                form.setValue('Summary', jsonString, {
+                                  shouldValidate: true,
+                                  shouldDirty: true,
+                                });
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage>{errors.Summary?.message}</FormMessage>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Product Settings */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Product Settings</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Status Select */}
+                  <div className="space-y-2" key={status}>
+                    <Label htmlFor="status">Status</Label>
+                    <Select
+                      onValueChange={(value) => form.setValue('Status', value)}
+                      defaultValue={status || 'draft'}
+                    >
+                      <SelectTrigger id="status">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="archived">Archived</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Slug with Generate Button */}
+                  <FormField
+                    control={form.control}
+                    name="Slug"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Slug</FormLabel>
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input
+                              FormError={!!formErrors.Slug}
+                              placeholder="product-url-slug"
+                              {...field}
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={generateSlug}
+                          >
+                            Generate
+                          </Button>
+                        </div>
+                        <FormDescription>
+                          e.g. mydomain.com/blue-t-shirt-special
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column */}
+            <div className="space-y-6">
+              {/* Product Variations */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Product Variations</CardTitle>
+                  <CardDescription>
+                    Manage product options like size, color etc.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {variationsFields.map((option, index) => (
+                      <VariationCard
+                        key={option.id}
+                        option={option}
+                        index={index}
+                        form={form}
+                        formErrors={formErrors}
+                        onDelete={() => {
+                          removeVariation(index);
+                        }}
+                        onGenerateSku={() => generateSku(index)}
+                      />
+                    ))}
+
+                    <Button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        appendVariation({
+                          ChoiceName: 'default',
+                          Price: 0,
+                          SalesPrice: 0,
+                          Sku: '',
+                          Images: [],
+                          Inventory: 0,
+                          Deleted: false,
+                        });
+                      }}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Variation
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
 
           {/* Form Actions */}
           <div className="flex justify-end gap-4">

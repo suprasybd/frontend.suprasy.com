@@ -63,7 +63,7 @@ const StoreSidebar = () => {
 
   return (
     <div className="hidden border-r bg-background/95 md:block">
-      <div className="flex h-full max-h-[93vh] flex-col">
+      <div className="flex h-full  flex-col">
         {/* Store Header */}
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <span className="flex items-center gap-2.5 font-semibold">

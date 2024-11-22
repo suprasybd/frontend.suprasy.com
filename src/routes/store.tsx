@@ -14,12 +14,12 @@ export const Route = createFileRoute('/store')({
     Cookies.set('storeKey', (params as { storeKey: string }).storeKey);
   },
   component: () => (
-    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] max-h-[93vh] overflow-hidden">
+    <div className="grid w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] ">
       <StoreSidebar />
       <div className="h-full flex flex-col ">
         <StoreModals />
         <StoreHeader />
-        <section className="min-h-[87vh] max-h-[87vh] overflow-auto">
+        <section className="">
           <Outlet />
         </section>
       </div>

@@ -35,9 +35,6 @@ const VariationSchema = z.object({
 });
 
 export const productSchema = z.object({
-  Type: z.string().min(1, {
-    message: 'Product type is required',
-  }),
   CategoryId: z.number().optional(),
   Slug: z.string().min(1, {
     message: 'Slug is required',
@@ -45,22 +42,32 @@ export const productSchema = z.object({
   Title: z.string().min(1, {
     message: 'Title is required',
   }),
-  Description: z
-    .string()
-    .min(1, {
+  Description: z.string().refine(
+    (val) => {
+      try {
+        const parsed = JSON.parse(val);
+        return parsed && parsed.length > 0;
+      } catch {
+        return val.length > 0;
+      }
+    },
+    {
       message: 'Description is required',
-    })
-    .max(7000, {
-      message: 'Description must be less than 7000 characters',
-    }),
-  Summary: z
-    .string()
-    .min(1, {
+    }
+  ),
+  Summary: z.string().refine(
+    (val) => {
+      try {
+        const parsed = JSON.parse(val);
+        return parsed && parsed.length > 0;
+      } catch {
+        return val.length > 0;
+      }
+    },
+    {
       message: 'Summary is required',
-    })
-    .max(1000, {
-      message: 'Summary must be less than 1000 characters',
-    }),
+    }
+  ),
   Status: z.string().min(1, {
     message: 'Status is required',
   }),

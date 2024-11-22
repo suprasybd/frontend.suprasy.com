@@ -26,6 +26,7 @@ import { Route as StoreStoreKeyThemesImport } from './routes/store/$storeKey/the
 import { Route as StoreStoreKeySubscriptionImport } from './routes/store/$storeKey/subscription'
 import { Route as StoreStoreKeyShippingImport } from './routes/store/$storeKey/shipping'
 import { Route as StoreStoreKeyLandingImport } from './routes/store/$storeKey/landing'
+import { Route as AuthGoogleCallbackImport } from './routes/auth/google/callback'
 import { Route as StoreStoreKeySectionCreateImport } from './routes/store/$storeKey/section_/create'
 import { Route as StoreStoreKeyProductsCreateImport } from './routes/store/$storeKey/products_/create'
 import { Route as StoreStoreKeyFooterCreatepageImport } from './routes/store/$storeKey/footer_/createpage'
@@ -265,6 +266,11 @@ const StoreStoreKeyLandingRoute = StoreStoreKeyLandingImport.update({
   getParentRoute: () => StoreRoute,
 } as any)
 
+const AuthGoogleCallbackRoute = AuthGoogleCallbackImport.update({
+  path: '/auth/google/callback',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const StoreStoreKeySectionCreateRoute = StoreStoreKeySectionCreateImport.update(
   {
     path: '/$storeKey/section/create',
@@ -366,6 +372,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/render/productionDescription'
       preLoaderRoute: typeof RenderProductionDescriptionImport
       parentRoute: typeof RenderImport
+    }
+    '/auth/google/callback': {
+      id: '/auth/google/callback'
+      path: '/auth/google/callback'
+      fullPath: '/auth/google/callback'
+      preLoaderRoute: typeof AuthGoogleCallbackImport
+      parentRoute: typeof rootRoute
     }
     '/store/$storeKey/landing': {
       id: '/store/$storeKey/landing'
@@ -581,6 +594,7 @@ export const routeTree = rootRoute.addChildren({
   }),
   TestRoute,
   AboutLazyRoute,
+  AuthGoogleCallbackRoute,
   PasswordresetCodeIndexRoute,
 })
 
@@ -600,6 +614,7 @@ export const routeTree = rootRoute.addChildren({
         "/store",
         "/test",
         "/about",
+        "/auth/google/callback",
         "/passwordreset/$code/"
       ]
     },
@@ -659,6 +674,9 @@ export const routeTree = rootRoute.addChildren({
     "/render/productionDescription": {
       "filePath": "render/productionDescription.tsx",
       "parent": "/render"
+    },
+    "/auth/google/callback": {
+      "filePath": "auth/google/callback.tsx"
     },
     "/store/$storeKey/landing": {
       "filePath": "store/$storeKey/landing.tsx",

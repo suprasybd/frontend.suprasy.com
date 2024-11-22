@@ -7,6 +7,17 @@ import loadCurrentUser from './config/profile/loadUser';
 import { hasCookie } from './config/profile/hasCookie';
 import { Toaster } from '@/components/index';
 
+// Add Tawk.to chat widget
+const initTawkTo = () => {
+  const script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.async = true;
+  script.src = 'https://embed.tawk.to/667d7627eaf3bd8d4d150266/1i1d1b2m5';
+  script.charset = 'UTF-8';
+  script.setAttribute('crossorigin', '*');
+  document.body.appendChild(script);
+};
+
 export const router = createRouter({
   routeTree,
   context: {
@@ -28,6 +39,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     loadCurrentUser();
+    initTawkTo(); // Initialize Tawk.to chat widget
   }, []);
 
   const hasCookie_ = hasCookie();

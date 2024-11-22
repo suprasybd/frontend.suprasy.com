@@ -27,8 +27,17 @@ import {
   SelectTrigger,
   SelectValue,
   useToast,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  CommandList,
 } from '@/components/index';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Check, ChevronsUpDown } from 'lucide-react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReloadIcon } from '@radix-ui/react-icons';
@@ -39,7 +48,7 @@ import {
   useParams,
   useSearch,
 } from '@tanstack/react-router';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -49,6 +58,7 @@ import {
   getProductsDetails,
   getVariations,
   updateStoresProduct,
+  getAllCategories,
 } from '../api';
 import { productSchema } from './zod/productSchema';
 import useTurnStileHook from '@/hooks/turnstile';
@@ -56,6 +66,7 @@ import { Turnstile } from '@marsidev/react-turnstile';
 import { Plus } from 'lucide-react';
 import { VariationCard } from './components/VariationCard';
 import { slugify } from '@/lib/utils';
+import cn from 'classnames';
 
 const CreateProduct: React.FC = () => {
   const form = useForm<z.infer<typeof productSchema>>({
@@ -111,6 +122,14 @@ const CreateProduct: React.FC = () => {
     enabled: !!productId && update,
   });
 
+  const { data: categoriesResponse, isLoading: categoriesLoading } = useQuery({
+    queryKey: ['getCategoriesAllModal'],
+    queryFn: getAllCategories,
+  });
+
+  const categories = categoriesResponse?.Data || [];
+  console.log('categoriesResponse', categoriesResponse);
+  console.log('categories', categories);
   useEffect(() => {
     if (
       variationsDataResponse?.Data &&
@@ -158,8 +177,8 @@ const CreateProduct: React.FC = () => {
       form.setValue('Description', productDetails.Description);
       form.setValue('Summary', productDetails.Summary);
       form.setValue('Slug', productDetails.Slug);
-
       form.setValue('Status', productDetails.Status);
+      form.setValue('CategoryId', productDetails.CategoryId);
     }
   }, [productDetails, form, isUpdating]);
 
@@ -336,6 +355,19 @@ const CreateProduct: React.FC = () => {
     form.setValue(`ProductVariations.${index}.Sku`, sku);
   };
 
+  const [open, setOpen] = useState(false);
+
+  // Add search state
+  const [search, setSearch] = useState('');
+
+  // Filter categories based on search
+  const filteredCategories = useMemo(() => {
+    if (!categories) return [];
+    return categories.filter((category) =>
+      category.Name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [categories, search]);
+
   return (
     <section className="w-full min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       {/* breadcrumbs */}
@@ -506,6 +538,97 @@ const CreateProduct: React.FC = () => {
                         </div>
                         <FormDescription>
                           e.g. mydomain.com/blue-t-shirt-special
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <FormField
+                    control={form.control}
+                    name="CategoryId"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Category</FormLabel>
+                        <Popover open={open} onOpenChange={setOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className="w-full justify-between"
+                              disabled={categoriesLoading}
+                            >
+                              {field.value && categories?.length > 0
+                                ? categories.find((c) => c.Id === field.value)
+                                    ?.Name || 'Select category...'
+                                : 'Select category...'}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-full p-0" align="start">
+                            <Command>
+                              <CommandInput
+                                placeholder="Search category..."
+                                value={search}
+                                onValueChange={setSearch}
+                              />
+                              <CommandList>
+                                <CommandEmpty>No category found.</CommandEmpty>
+                                <CommandGroup>
+                                  <CommandItem
+                                    value="none"
+                                    onSelect={() => {
+                                      form.setValue('CategoryId', undefined);
+                                      setOpen(false);
+                                      setSearch('');
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        'mr-2 h-4 w-4',
+                                        !field.value
+                                          ? 'opacity-100'
+                                          : 'opacity-0'
+                                      )}
+                                    />
+                                    None
+                                  </CommandItem>
+                                  {filteredCategories.map((category) => (
+                                    <CommandItem
+                                      key={category.Id}
+                                      value={category.Name}
+                                      onSelect={() => {
+                                        form.setValue(
+                                          'CategoryId',
+                                          category.Id
+                                        );
+                                        setOpen(false);
+                                        setSearch('');
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          'mr-2 h-4 w-4',
+                                          field.value === category.Id
+                                            ? 'opacity-100'
+                                            : 'opacity-0'
+                                        )}
+                                      />
+                                      {category.Name}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                        <FormDescription>
+                          Select a category for your product
                         </FormDescription>
                         <FormMessage />
                       </FormItem>

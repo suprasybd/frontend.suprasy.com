@@ -83,8 +83,9 @@ const Products: React.FC = () => {
           className="w-full md:w-auto"
         >
           <TabsList className="w-full md:w-auto">
-            <TabsTrigger value="draft">Draft</TabsTrigger>
             <TabsTrigger value="active">Active</TabsTrigger>
+            <TabsTrigger value="draft">Draft</TabsTrigger>
+
             <TabsTrigger value="archived">Archived</TabsTrigger>
           </TabsList>
         </Tabs>

@@ -119,3 +119,21 @@ export const deleteProduct = async (
 
   return response.data;
 };
+
+export const getAllCategories = async (): Promise<
+  ResponseType<CategoryType[]>
+> => {
+  const response = await ApiClient.get('/categories/all');
+  return response.data;
+};
+
+export interface CategoryType {
+  Id: number;
+  ParentCategoryId: number | null;
+  Name: string;
+  Icon: string | null;
+  Thumbnail: string | null;
+  Deleted: boolean;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
